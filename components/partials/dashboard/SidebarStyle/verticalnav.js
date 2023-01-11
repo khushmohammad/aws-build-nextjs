@@ -82,7 +82,7 @@ const VerticalNav = React.memo(() => {
             <span className="item-name">Newsfeed</span>
           </Link>
         </li>
-        <Accordion.Item
+        {/* <Accordion.Item
           as="li"
           eventKey="profile-menu"
           bsPrefix={`nav-item ${active === "profile" ? "active" : ""} `}
@@ -140,7 +140,7 @@ const VerticalNav = React.memo(() => {
                   <span className="item-name">My Profile </span>
                 </Link>
               </Nav.Item>
-              {/* <Nav.Item as="li">
+              <Nav.Item as="li">
                 <Link
                   className={`${
                     location.pathname === "/dashboards/profiles/profile1"
@@ -419,11 +419,11 @@ const VerticalNav = React.memo(() => {
                   </OverlayTrigger>
                   <span className="item-name"> Profile Forum</span>
                 </Link>
-              </Nav.Item> */}
+              </Nav.Item>
             </ul>
           </Accordion.Collapse>
-        </Accordion.Item>
-        <Accordion.Item as="li" eventKey="friends-menu" bsPrefix="nav-item">
+        </Accordion.Item> */}
+        {/* <Accordion.Item as="li" eventKey="friends-menu" bsPrefix="nav-item">
           <CustomToggle
             eventKey="friends-menu"
             onClick={(activeKey) => setActiveMenu(activeKey)}
@@ -489,7 +489,7 @@ const VerticalNav = React.memo(() => {
                   <span className="item-name">Friend List</span>
                 </Link>
               </Nav.Item>
-              {/* <Nav.Item as="li">
+              <Nav.Item as="li">
                 <Link
                   className={`${
                     location.pathname === "/dashboard/app/friend-profile"
@@ -558,11 +558,11 @@ const VerticalNav = React.memo(() => {
                   </OverlayTrigger>
                   <span className="item-name">Friend Request</span>
                 </Link>
-              </Nav.Item> */}
+              </Nav.Item>
             </ul>
           </Accordion.Collapse>
-        </Accordion.Item>
-        <Nav.Item as="li">
+        </Accordion.Item> */}
+        {/* <Nav.Item as="li">
           <Link
             className={`${
               location.pathname === "/groups" ? "active" : ""
@@ -578,8 +578,8 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Group</span>
           </Link>
-        </Nav.Item>
-        <Nav.Item as="li">
+        </Nav.Item> */}
+        {/* <Nav.Item as="li">
           <Link
             className={`${
               location.pathname === "/notification"
@@ -597,8 +597,8 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Notification</span>
           </Link>
-        </Nav.Item>
-        <li className="nav-item static-item">
+        </Nav.Item> */}
+        {/* <li className="nav-item static-item">
           <Link
             className="nav-link static-item disabled"
             href="#"
@@ -614,7 +614,7 @@ const VerticalNav = React.memo(() => {
               -
             </span>
           </Link>
-        </li>
+        </li> */}
         {/* <Nav.Item as="li">
           <Link
             className={`${
@@ -634,7 +634,7 @@ const VerticalNav = React.memo(() => {
             <span className="item-name">Files</span>
           </Link>
         </Nav.Item> */}
-        <Nav.Item as="li">
+        {/* <Nav.Item as="li">
           <Link
             className={`${
               location.pathname === "/chat" ? "active" : ""
@@ -648,7 +648,7 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Chat</span>
           </Link>
-        </Nav.Item>
+        </Nav.Item> */}
         {/* <Nav.Item as="li">
           <Link
             className={`${
@@ -662,7 +662,7 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Todo</span>
           </Link>
-        </Nav.Item> */}
+        </Nav.Item>
         <Nav.Item as="li">
           <Link
             className={`${
@@ -713,7 +713,7 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Donations</span>
           </Link>
-        </Nav.Item>
+        </Nav.Item> */}
         {/* <Nav.Item as="li">
           <Link
             className={`${

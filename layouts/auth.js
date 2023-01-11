@@ -40,12 +40,13 @@ const Auth = ({ children }) => {
             <Col md="6" className="text-center pt-5">
               <div className="sign-in-detail text-white">
                 <Link className="sign-in-logo mb-5" href="#">
-                  <Image
+                  {/* <Image
                     src={logo}
                     className="img-fluid"
                     alt="logo"
                     width={214}
-                  />
+                  /> */}
+                  {/* IWL */}
                 </Link>
                 <div className="sign-slider overflow-hidden ">
                   <Swiper
