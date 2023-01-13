@@ -535,10 +535,10 @@ const Post = ({ activePage }) => {
                   </ul>
                   <form className="comment-text d-flex align-items-center mt-3"  >
 
-                    <div class="input-group mb-3">
+                    <div className="input-group mb-3">
                       <input type="text"  className="form-control rounded" placeholder="Enter Your Comment" />
-                      {/* <div class="input-group-append">
-                        <button type="submit" class="input-group-text" id="basic-addon2">Submit</button>
+                      {/* <div className="input-group-append">
+                        <button type="submit" className="input-group-text" id="basic-addon2">Submit</button>
                       </div> */}
                     </div>
 

@@ -51,7 +51,7 @@ const Header = () => {
   const user = useSelector((state) => state?.user?.data?.body?.userInfo
   );
 
-  const LogedInUserName = `${user.firstName}  ${user.lastName.substring(0,2)}...`
+  const LogedInUserName = user && `${user.firstName}  ${user.lastName.substring(0, 2)}...`
   return (
     <>
       <div className="iq-top-navbar">

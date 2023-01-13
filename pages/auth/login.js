@@ -71,7 +71,7 @@ const Login = () => {
 
   const loginWithProvider = async (loginProvider) => {
     await signIn(loginProvider, {
-      callbackUrl: "http://localhost:3000/auth/lock-screen",
+      callbackUrl: `${NEXT_PUBLIC_DOMAIN_PATH}/auth/lock-scree`,
     });
   };
 
