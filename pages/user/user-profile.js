@@ -2430,9 +2430,9 @@ const UserProfile = () => {
                                     <h6>Relationship Status:</h6>
                                   </div>
                                   <div className="col-9">
-                                    {user && user.maritalStatusInfo.dropdownValue ? (
+                                    {user && user?.maritalStatusInfo?.dropdownValue ? (
                                       <p className="mb-0">
-                                        {user.maritalStatusInfo.dropdownValue}
+                                        {user?.maritalStatusInfo?.dropdownValue}
                                       </p>
                                     ) : (
                                       "---"
