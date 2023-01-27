@@ -98,7 +98,7 @@ const CreatePost = (props) => {
           <div className="user-img">
             <Image
               loading="lazy"
-              src={user?.profilePictureInfo?.file?.location}
+              src={user?.profilePictureInfo?.file?.location || user1}
               alt="userimg"
               className="avatar-60 rounded-circle"
               height={100}
@@ -207,7 +207,7 @@ const CreatePost = (props) => {
               <div className="user-img">
                 <Image
                   loading="lazy"
-                  src={user?.profilePictureInfo?.file?.location}
+                  src={user?.profilePictureInfo?.file?.location || user1}
                   alt="userimg"
                   className="avatar-60 rounded-circle img-fluid"
                   width={100}
