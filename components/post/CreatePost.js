@@ -58,7 +58,7 @@ const CreatePost = (props) => {
 
   const user = useSelector((state) => state?.user?.data);
 
-  console.log("path: ", router.pathname);
+  // console.log("path: ", router.pathname);
   const submitPost = async (e) => {
     e.preventDefault();
     if (router.pathname === "/groups/[groupId]") {
@@ -242,7 +242,7 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
-                      {console.log(file, "file")}
+                      {/* {console.log(file, "file")} */}
                       <img
                         loading="lazy"
                         src={file.base64}

@@ -100,7 +100,7 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
 
     if (response.status == 200) {
       const postslist = await response?.data?.body?.allBody?.docs;
-      console.log(postslist, "postslist");
+      // console.log(postslist, "postslist");
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
