@@ -2,11 +2,17 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "./ImageCrop";
-import { Card } from "react-bootstrap";
+import { Card, Modal } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { updateProfilePic } from "../../store/profile";
+import {
+  getUserDetails,
+  updateProfileAndCoverPicture,
+  updateProfilePic,
+} from "../../store/profile";
+import axios from "axios";
+import { updateProfileAndCoverPic } from "../../services/user.service";
 
-export const Uploader = ({ closeDropzone }) => {
+export const Uploader = (props) => {
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -36,9 +42,12 @@ export const Uploader = ({ closeDropzone }) => {
         rotation
       );
       setCroppedImage(croppedImage);
-      dispatch(updateProfilePic(croppedImage));
-
-      // console.log("croppedImage: ", croppedImage);
+      await updateProfileAndCoverPic("profileImage", croppedImage)
+        .then((res) => {
+          dispatch(getUserDetails());
+          setImgSrc("");
+        })
+        .catch((err) => console.log(err));
     } catch (err) {
       console.log(err);
     }
@@ -67,40 +76,42 @@ export const Uploader = ({ closeDropzone }) => {
 
   return (
     <>
-      <div
-        style={{
-          position: "absolute",
-          top: "10%",
-          left: "30%",
-          padding: "10px",
-          border: "2px dotted",
-          width: "65%",
-          height: "auto",
-          backgroundColor: "#fff",
-          zIndex: 111,
-        }}
-      >
+      <Modal {...props} size="lg" style={{ top: "10%" }}>
+        <Modal.Header className="d-flex justify-content-between d-flex flex-row-reverse">
+          {/* <h5 className="modal-title" id="post-modalLabel">
+                  Profile Crop
+                </h5> */}
+          <button
+            type="button"
+            className="btn btn-secondary lh-1 "
+            onClick={props.onHide}
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </Modal.Header>
+
         {imgSrc == "" ? (
-          <div {...getRootProps()} style={{ textAlign: "center" }}>
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <p>Drop the files here ...</p>
-            ) : (
-              <>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "50px", color: "#48badd" }}
-                >
-                  download
-                </span>
-                <p>Drag 'n' drop some files here, or click to select files</p>
-              </>
-            )}
-          </div>
+          <Modal.Body>
+            <div {...getRootProps()} style={{ textAlign: "center" }}>
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Drop the files here ...</p>
+              ) : (
+                <>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "50px", color: "#48badd" }}
+                  >
+                    download
+                  </span>
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                </>
+              )}
+            </div>
+          </Modal.Body>
         ) : (
           <div className="container">
             <Card>
-              <Card.Header>Profile Crop</Card.Header>
               <Card.Body style={{ height: "500px", minHeight: "250px" }}>
                 <div
                   className="text-center h-100"
@@ -181,12 +192,14 @@ export const Uploader = ({ closeDropzone }) => {
                   />
                 </div>
                 <div className="d-flex justify-content-end">
-                  <button className="btn btn-danger" onClick={closeDropzone}>
+                  <button className="btn btn-danger" onClick={props.onHide}>
                     Cancel
                   </button>
                   <button
                     className="btn btn-primary ms-2"
-                    onClick={showCroppedImage}
+                    onClick={() => {
+                      showCroppedImage(), props.onHide();
+                    }}
                   >
                     Crop
                   </button>
@@ -195,9 +208,8 @@ export const Uploader = ({ closeDropzone }) => {
             </Card>
           </div>
         )}
-      </div>
-      <span
-        onClick={closeDropzone}
+        {/* <span
+        onClick={props.onHide}
         className="material-symbols-outlined  cursor-pointer"
         style={{
           position: "absolute",
@@ -209,7 +221,8 @@ export const Uploader = ({ closeDropzone }) => {
         role="button"
       >
         close
-      </span>
+      </span> */}
+      </Modal>
     </>
   );
 };

@@ -26,8 +26,9 @@ import { useRouter } from "next/router";
 import { getUserDetails } from "../store/profile";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import { getAllFriendList } from "../store/friends";
 
-const Default = ({ children }) => {
+const Default = ({ children, tokenExpired }) => {
   const [ShowPage, setShowPage] = useState(null);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -39,6 +40,9 @@ const Default = ({ children }) => {
     if (!session) {
       router.push("/auth/login");
     } else {
+      if (tokenExpired !== undefined) {
+        router.push("/auth/login");
+      }
       setShowPage(true);
     }
   };
@@ -46,6 +50,7 @@ const Default = ({ children }) => {
   useEffect(() => {
     GetSession();
     dispatch(getUserDetails());
+    dispatch(getAllFriendList());
   }, [dispatch]);
   return (
     <>
@@ -68,3 +73,14 @@ const Default = ({ children }) => {
 };
 
 export default Default;
+
+export const getServerSideProps = async () => {
+  const res = await axios.get("/api/handler");
+  const tokenExpired = res.data.accessTokenExpires;
+
+  return {
+    props: {
+      tokenExpired,
+    },
+  };
+};

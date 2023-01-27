@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import Form from "react-bootstrap/Form";
 import { Card, Dropdown, Modal, Button } from "react-bootstrap";
 import FileBase64 from "react-filebase64";
-
+import { FaUserFriends } from "react-icons/fa";
+import ModalPop from "../popupModal/ModalPop.js";
 // images
 import user1 from "../../public/assets/images/user/1.jpg";
 import small07 from "../../public/assets/images/small/07.png";
@@ -19,31 +21,71 @@ import small8 from "../../public/assets/images/small/14.png";
 import user9 from "../../public/assets/images/user/1.jpg";
 import CustomToggle from "../dropdowns";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { createPost } from "../../services/posts.service";
+import { createPost, getAllFeeds } from "../../services/posts.service";
 import { useRouter } from "next/router";
+import { getAllFeedsList } from "../../store/post/allFeeds";
+import { createGroupPost } from "../../services/groups.service.js";
 
-const CreatePost = () => {
+const CreatePost = (props) => {
+  const [postData, setPostData] = useState({ description: "" });
+  const [modalShowFriendList, setModalShowFriendList] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [show, setShow] = useState(false);
   const [progress, setProgress] = useState();
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const router = useRouter();
-
-  const [postData, setPostData] = useState({ description: "" });
-  const profileImage = useSelector((state) => state.user.profile_picture);
-  // console.log("postData: ", postData);
-
-  const submitPost = async (e) => {
-    e.preventDefault();
-
-    await createPost(postData);
-    setPostData({ description: "" });
-    // handleClose();
-    router.reload(window.location.pathname);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(false);
+  const handleClose = () => {
+    setShow(false);
+    setSelectedFile("");
+    setPostData("");
+  };
+  const handleShow = () => {
+    setShow(true);
+  };
+  const showHandle = () => {
+    setShowPopup(true);
+    setShow(false);
+  };
+  const closeHandle = () => {
+    setShowPopup(false);
+    setShow(true);
   };
 
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state?.user?.data);
+
+  console.log("path: ", router.pathname);
+  const submitPost = async (e) => {
+    e.preventDefault();
+    if (router.pathname === "/groups/[groupId]") {
+      await createGroupPost(postData, props.groupId).then((res) => {
+        setPostData({ description: "", file: null });
+        handleClose();
+      });
+    } else {
+      await createPost(postData).then((res) => {
+        setPostData({ description: "", file: null });
+        handleClose();
+      });
+    }
+    props.refreshPostList();
+  };
+
+  const deleteImageKey = (img, imgIndex) => {
+    const newArr = selectedFile.filter((item, index) => {
+      return index != imgIndex;
+    });
+    const showImageByPosts = postData?.file?.filter((item,index)=>{
+      return index!=imgIndex
+    })
+    setPostData(showImageByPosts)
+    setSelectedFile(newArr);
+    
+  };
   return (
     <Card id="post-modal-data">
       <div className="card-header d-flex justify-content-between">
@@ -56,7 +98,7 @@ const CreatePost = () => {
           <div className="user-img">
             <Image
               loading="lazy"
-              src={profileImage}
+              src={user?.profilePictureInfo?.file?.location}
               alt="userimg"
               className="avatar-60 rounded-circle"
               height={100}
@@ -65,6 +107,7 @@ const CreatePost = () => {
           </div>
           <form className="post-text ms-3 w-100 " onClick={handleShow}>
             <input
+              maxLength="0"
               type="text"
               className="form-control rounded"
               placeholder="Write something here..."
@@ -73,8 +116,13 @@ const CreatePost = () => {
           </form>
         </div>
         <hr />
+
         <ul className=" post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
-          <li className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2">
+          <li
+            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
+            role="button"
+            onClick={handleShow}
+          >
             <Image
               loading="lazy"
               src={small07}
@@ -83,7 +131,11 @@ const CreatePost = () => {
             />
             Photo/Video
           </li>
-          <li className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2">
+          <li
+            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
+            role="button"
+            onClick={handleShow}
+          >
             <Image
               loading="lazy"
               src={small08}
@@ -92,7 +144,11 @@ const CreatePost = () => {
             />
             Tag Friend
           </li>
-          <li className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3">
+          <li
+            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3"
+            role="button"
+            onClick={handleShow}
+          >
             <Image
               loading="lazy"
               src={small09}
@@ -111,19 +167,19 @@ const CreatePost = () => {
                   className=" dropdown-menu-right"
                   aria-labelledby="post-option"
                 >
-                  <Dropdown.Item onClick={handleShow} href="/">
+                  {/* <Dropdown.Item onClick={handleShow} href="">
                     Check in
-                  </Dropdown.Item>
-                  {/* <Dropdown.Item onClick={handleShow} href="/">
+                  </Dropdown.Item> */}
+                  {/* <Dropdown.Item onClick={handleShow} href="">
                     Live Video
                   </Dropdown.Item> */}
-                  <Dropdown.Item onClick={handleShow} href="/">
+                  <Dropdown.Item onClick={handleShow} href="">
                     Gif
                   </Dropdown.Item>
-                  {/* <Dropdown.Item onClick={handleShow} href="/">
+                  {/* <Dropdown.Item onClick={handleShow} href="">
                     Watch Party
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={handleShow} href="/">
+                  <Dropdown.Item onClick={handleShow} href="">
                     Play with Friend
                   </Dropdown.Item> */}
                 </Dropdown.Menu>
@@ -151,7 +207,7 @@ const CreatePost = () => {
               <div className="user-img">
                 <Image
                   loading="lazy"
-                  src={profileImage}
+                  src={user?.profilePictureInfo?.file?.location}
                   alt="userimg"
                   className="avatar-60 rounded-circle img-fluid"
                   width={100}
@@ -162,7 +218,8 @@ const CreatePost = () => {
                 <input
                   name="description"
                   type="text"
-                  value={postData.description}
+                  autoFocus
+                  value={postData?.description}
                   onChange={(e) =>
                     setPostData({ ...postData, description: e.target.value })
                   }
@@ -173,6 +230,54 @@ const CreatePost = () => {
               </div>
             </div>
             <hr />
+            {selectedFile?.length > 0 ? (
+              <>
+                <div className="row gap-2">
+                  {selectedFile.map((file, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        width: "15%",
+                        border: "1px solid #d5d5dc",
+                        position: "relative",
+                      }}
+                    >
+                      {console.log(file, "file")}
+                      <img
+                        loading="lazy"
+                        src={file.base64}
+                        alt="icon"
+                        width={100}
+                        height={100}
+                        style={{
+                          objectFit: "contain",
+                        }}
+                      />
+                      <div
+                        onClick={() => deleteImageKey(file, index)}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                          color: "#000000",
+                          display: "flex",
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <span
+                          role="button"
+                          className="material-symbols-outlined"
+                        >
+                          close
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <hr />
+              </>
+            ) : null}
+
             <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
               <li className="col-md-6 mb-3 position-relative">
                 <div className="bg-soft-primary rounded p-2 pointer me-3 ">
@@ -189,8 +294,8 @@ const CreatePost = () => {
                     multiple={true}
                     onDone={(files) => {
                       // console.log("files onDone: ", files);
+                      setSelectedFile(files);
                       const reqFiles = [];
-
                       for (var i = 0; i < files.length; i++) {
                         reqFiles.push(files[i].file);
                         // console.log("reqFile: ", reqFiles);
@@ -224,7 +329,7 @@ const CreatePost = () => {
                   Feeling/Activity
                 </div>
               </li>
-              <li className="col-md-6 mb-3">
+              {/* <li className="col-md-6 mb-3">
                 <div className="bg-soft-primary rounded p-2 pointer me-3">
                   <Link href="/"></Link>
                   <Image
@@ -235,7 +340,7 @@ const CreatePost = () => {
                   />
                   Check in
                 </div>
-              </li>
+              </li> */}
               {/* <li className="col-md-6 mb-3">
               <div className="bg-soft-primary rounded p-2 pointer me-3">
                 <Link href="/"></Link>
@@ -300,36 +405,49 @@ const CreatePost = () => {
                 <h6>Your Story</h6>
               </div> */}
                 <div className="card-post-toolbar">
-                  <Dropdown>
-                    <Dropdown.Toggle
+                  <>
+                    <Button variant="primary" onClick={showHandle}>
+                      Public
+                    </Button>
+                  </>
+
+                  {/* <Dropdown> */}
+                  {/* <Dropdown.Toggle
                       className="dropdown-toggle"
                       data-bs-toggle="dropdown"
                       aria-haspopup="true"
                       aria-expanded="false"
                       role="button"
                     >
-                      <span className="btn btn-primary">Friend</span>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu clemassName="dropdown-menu m-0 p-0">
-                      <Dropdown.Item className="dropdown-item p-3" href="/">
-                        <div className="d-flex align-items-top">
-                          <i className="ri-save-line h4"></i>
-                          <div className="data ms-2">
-                            <h6>Public</h6>
-                            {/* <p className="mb-0">Anyone on or off Facebook</p> */}
+                      <span className="btn btn-primary">
+                        <FaUserFriends
+                          style={{ fontSize: "1.5em" }}
+                          onClick={()=>{console.log("hello friends chail")}}
+                        />
+                      </span>
+                      
+                    </Dropdown.Toggle> */}
+
+                  {/* <Dropdown.Menu clemassName="dropdown-menu m-0 p-0">
+                        <Dropdown.Item className="dropdown-item p-3">
+                          <div className="d-flex align-items-top">
+                            <i className="ri-save-line h4"></i>
+                            <div className="data ms-2">
+                              <h6>Public</h6> */}
+                  {/* <p className="mb-0">Anyone on or off Facebook</p> */}
+                  {/* </div>
                           </div>
-                        </div>
-                      </Dropdown.Item>
-                      <Dropdown.Item className="dropdown-item p-3" href="/">
-                        <div className="d-flex align-items-top">
-                          <i className="ri-close-circle-line h4"></i>
-                          <div className="data ms-2">
-                            <h6>Friends</h6>
-                            {/* <p className="mb-0">Your Friend on facebook</p> */}
+                        </Dropdown.Item>
+                        <Dropdown.Item className="dropdown-item p-3">
+                          <div className="d-flex align-items-top">
+                            <i className="ri-close-circle-line h4"></i>
+                            <div className="data ms-2">
+                              <h6>Friends</h6>
+                              {/* <p className="mb-0">Your Friend on facebook</p> */}
+                  {/* </div>
                           </div>
-                        </div>
-                      </Dropdown.Item>
-                      {/* <Dropdown.Item className="dropdown-item p-3" href="/">
+                        </Dropdown.Item>  */}
+                  {/* <Dropdown.Item className="dropdown-item p-3" href="/">
                       <div className="d-flex align-items-top">
                         <i className="ri-user-unfollow-line h4"></i>
                         <div className="data ms-2">
@@ -338,17 +456,18 @@ const CreatePost = () => {
                         </div>
                       </div>
                     </Dropdown.Item> */}
-                      <Dropdown.Item className="dropdown-item p-3" href="/">
-                        <div className="d-flex align-items-top">
-                          <i className="ri-notification-line h4"></i>
-                          <div className="data ms-2">
-                            <h6>Only Me</h6>
-                            {/* <p className="mb-0">Only me</p> */}
+                  {/* <Dropdown.Item className="dropdown-item p-3">
+                          <div className="d-flex align-items-top">
+                            <i className="ri-notification-line h4"></i>
+                            <div className="data ms-2">
+                              <h6>Only Me</h6> */}
+                  {/* <p className="mb-0">Only me</p> */}
+                  {/* </div>
                           </div>
-                        </div>
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
+                        </Dropdown.Item>
+                      </Dropdown.Menu> */}
+
+                  {/* </Dropdown> */}
                 </div>
               </div>
             </div>
@@ -362,6 +481,116 @@ const CreatePost = () => {
           </form>
         </Modal.Body>
       </Modal>
+      <Modal
+        show={showPopup}
+        onHide={closeHandle}
+        backdrop="static"
+        keyboard={false}
+        size="md"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Who can see your post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <div>
+              <div className="mb-3 ">
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="Public">{`Public`}</Form.Check.Label>
+                  <Form.Check.Input
+                    type={`radio`}
+                    id="Public"
+                    name="group-1"
+                    defaultChecked
+                  />
+
+                  <Form.Control.Feedback type="valid">
+                    You did it!
+                  </Form.Control.Feedback>
+                </Form.Check>
+              </div>
+
+              <div className="mb-3 ">
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="Friends">{`Friends`}</Form.Check.Label>
+                  <Form.Check.Input type="radio" id="Friends" name="group-1" />
+
+                  {/* <Form.Control.Feedback type="valid">
+                    You did it!
+                  </Form.Control.Feedback> */}
+                </Form.Check>
+              </div>
+              <div className="mb-3 ">
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="only-me">{`Onle me..`}</Form.Check.Label>
+                  <Form.Check.Input
+                    type={`radio`}
+                    name="group-1"
+                    id="only-me"
+                  />
+
+                  {/* <Form.Control.Feedback type="valid">
+                    You did it!
+                  </Form.Control.Feedback> */}
+                </Form.Check>
+              </div>
+
+              <div
+                className="mb-3 "
+                onClick={() => {
+                  setModalShowFriendList(true), setShowPopup(false);
+                }}
+              >
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="friends-except">{`Friends except..`}</Form.Check.Label>
+                  <Form.Check.Input
+                    type="radio"
+                    name="group-1"
+                    id="friends-except"
+                  />
+
+                  <Form.Control.Feedback>You did it!</Form.Control.Feedback>
+                </Form.Check>
+              </div>
+
+              <div
+                className="mb-3 "
+                onClick={() => {
+                  setModalShowFriendList(true), setShowPopup(false);
+                }}
+              >
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="specific-friends">{`Specific friend`}</Form.Check.Label>
+                  <Form.Check.Input
+                    type={`radio`}
+                    name="group-1"
+                    id="specific-friends"
+                  />
+
+                  {/* <Form.Control.Feedback type="valid">
+                    You did it!
+                  </Form.Control.Feedback> */}
+                </Form.Check>
+              </div>
+            </div>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeHandle}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={closeHandle}>
+            Done
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ModalPop
+        show={modalShowFriendList}
+        onHide={() => setModalShowFriendList(false)}
+        closeHandle={() => setShowPopup(true)}
+      />
     </Card>
   );
 };

@@ -25,8 +25,8 @@ import { getPostDetails } from "../../store/post";
 import { useRouter } from "next/router";
 
 const EditPost = (props) => {
-  const profileImage = useSelector((state) => state.user.profile_picture);
-  const postDetails = useSelector((state) => state.post.postDetail);
+  const profileImage = useSelector((state) => state?.user?.data?.profilePictureInfo?.file?.location);
+  const postDetails = useSelector((state) => state?.post?.postDetail?.allBody);
   const [postData, setPostData] = useState({
     description: "",
     share: "",
@@ -38,6 +38,9 @@ const EditPost = (props) => {
   const [imageFileIds, setImageFileIds] = useState([]);
   const [imageAndId, setImageAndId] = useState({ data: [] });
   const [count, setCount] = useState(true);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(false);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -87,7 +90,7 @@ const EditPost = (props) => {
 
     console.log("=============", postData);
     await updatePost(postData, props.postid);
-    // router.reload(window.location.pathname);
+    router.reload(window.location.pathname);
   };
 
   return (
@@ -110,7 +113,7 @@ const EditPost = (props) => {
             <div className="user-img">
               <Image
                 loading="lazy"
-                src={profileImage}
+                src={profileImage || user1}
                 alt="userimg"
                 className="avatar-60 rounded-circle img-fluid"
                 width={100}
@@ -135,6 +138,7 @@ const EditPost = (props) => {
             </div>
           </div>
           <hr />
+
           {imageAndId?.data?.length > 0 ? (
             <>
               <div className="row gap-2">
@@ -198,6 +202,7 @@ const EditPost = (props) => {
                 <FileBase64
                   multiple={true}
                   onDone={(files) => {
+                    setSelectedFile(files);
                     const reqFiles = [];
                     for (var i = 0; i < files.length; i++) {
                       reqFiles.push(files[i].file);

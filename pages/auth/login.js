@@ -10,15 +10,20 @@ import Auth from "../../layouts/auth";
 
 const schema = yup
   .object({
-    userName: yup.string().required("Username is required").email(),
+    userName: yup.string().required("Email is required").email(),
     password: yup.string().required("Password is required").min(8),
   })
   .required();
+
+  // schema.validate({
+  //   userName:"not.a.valid.email"
+  // })
 
 const Login = () => {
   const [ShowPage, setShowPage] = useState(null);
   const [ApiError, setApiError] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [showEmail,setShowEmail] = useState(false)
 
   const router = useRouter();
 
@@ -71,7 +76,7 @@ const Login = () => {
 
   const loginWithProvider = async (loginProvider) => {
     await signIn(loginProvider, {
-      callbackUrl: `${NEXT_PUBLIC_DOMAIN_PATH}/auth/lock-scree`,
+      callbackUrl: "http://localhost:3000/auth/lock-screen",
     });
   };
 
@@ -93,8 +98,10 @@ const Login = () => {
                 <Form.Control
                   {...register("userName")}
                   id="floatingInputCustom"
-                  type="email"
+                  type={showEmail?"text":"email"}
                   placeholder="name@example.com"
+                  className="form-control"
+                  required
                 />
                 <label htmlFor="floatingInputCustom">Email address</label>
                 {errors.userName && (

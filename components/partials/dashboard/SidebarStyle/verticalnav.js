@@ -82,6 +82,23 @@ const VerticalNav = React.memo(() => {
             <span className="item-name">Newsfeed</span>
           </Link>
         </li>
+        <li className={`${location.pathname === "" ? "active" : ""} nav-item `}>
+          <Link
+            className={`${
+              location.pathname === "/ic-registration" ? "active" : ""
+            } nav-link `}
+            aria-current="page"
+            href="/ic-registration"
+          >
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip>ic-registration</Tooltip>}
+            >
+              <i className="material-symbols-outlined">edit_square</i>
+            </OverlayTrigger>
+            <span className="item-name">IC-registration</span>
+          </Link>
+        </li>
         {/* <Accordion.Item
           as="li"
           eventKey="profile-menu"
@@ -423,7 +440,7 @@ const VerticalNav = React.memo(() => {
             </ul>
           </Accordion.Collapse>
         </Accordion.Item> */}
-        {/* <Accordion.Item as="li" eventKey="friends-menu" bsPrefix="nav-item">
+        <Accordion.Item as="li" eventKey="friends-menu" bsPrefix="nav-item">
           <CustomToggle
             eventKey="friends-menu"
             onClick={(activeKey) => setActiveMenu(activeKey)}
@@ -457,11 +474,42 @@ const VerticalNav = React.memo(() => {
               <Nav.Item as="li">
                 <Link
                   className={`${
-                    location.pathname === "/friend-list"
-                      ? "active"
-                      : ""
+                    location.pathname === "/find-friend" ? "active" : ""
                   } nav-link`}
-                  href="/friend-list"
+                  href="/friends/find-friend"
+                >
+                  <i className="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="8"
+                          fill="currentColor"
+                        ></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger
+                    placement="right"
+                    overlay={<Tooltip>Find Friend</Tooltip>}
+                  >
+                    <i className="sidenav-mini-icon"> FF </i>
+                  </OverlayTrigger>
+                  <span className="item-name">Find Friend</span>
+                </Link>
+              </Nav.Item>
+              <Nav.Item as="li">
+                <Link
+                  className={`${
+                    location.pathname === "/friend-list" ? "active" : ""
+                  } nav-link`}
+                  href="/friends/friend-list"
                 >
                   <i className="icon">
                     <svg
@@ -492,46 +540,9 @@ const VerticalNav = React.memo(() => {
               <Nav.Item as="li">
                 <Link
                   className={`${
-                    location.pathname === "/dashboard/app/friend-profile"
-                      ? "active"
-                      : ""
+                    location.pathname === "/friend-request" ? "active" : ""
                   } nav-link`}
-                  href="/dashboard/app/friend-profile"
-                >
-                  <i className="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="10"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <g>
-                        <circle
-                          cx="12"
-                          cy="12"
-                          r="8"
-                          fill="currentColor"
-                        ></circle>
-                      </g>
-                    </svg>
-                  </i>
-                  <OverlayTrigger
-                    placement="right"
-                    overlay={<Tooltip>Friend Profile</Tooltip>}
-                  >
-                    <i className="sidenav-mini-icon"> FP </i>
-                  </OverlayTrigger>
-                  <span className="item-name">Friend Profile</span>
-                </Link>
-              </Nav.Item>
-              <Nav.Item as="li">
-                <Link
-                  className={`${
-                    location.pathname === "/dashboard/app/friend-request"
-                      ? "active"
-                      : ""
-                  } nav-link`}
-                  href="/dashboard/app/friend-request"
+                  href="/friends/friend-request"
                 >
                   <i className="icon">
                     <svg
@@ -561,7 +572,142 @@ const VerticalNav = React.memo(() => {
               </Nav.Item>
             </ul>
           </Accordion.Collapse>
-        </Accordion.Item> */}
+        </Accordion.Item>
+
+        {/* group */}
+        <Accordion.Item as="li" eventKey="group-menu" bsPrefix="nav-item">
+          <CustomToggle
+            eventKey="group-menu"
+            onClick={(activeKey) => setActiveMenu(activeKey)}
+          >
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip>Groups</Tooltip>}
+            >
+              <i className="icon material-symbols-outlined">groups</i>
+            </OverlayTrigger>
+            <span className="item-name">Groups</span>
+            <i className="right-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </i>
+          </CustomToggle>
+          <Accordion.Collapse eventKey="group-menu">
+            <ul className="sub-nav">
+              <Nav.Item as="li">
+                <Link
+                  className={`${
+                    location.pathname === "/all-groups" ? "active" : ""
+                  } nav-link`}
+                  href="/groups/all-groups"
+                >
+                  <i className="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="8"
+                          fill="currentColor"
+                        ></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger
+                    placement="right"
+                    overlay={<Tooltip>All Groups</Tooltip>}
+                  >
+                    <i className="sidenav-mini-icon"> AG </i>
+                  </OverlayTrigger>
+                  <span className="item-name">All Groups</span>
+                </Link>
+              </Nav.Item>
+              <Nav.Item as="li">
+                <Link
+                  className={`${
+                    location.pathname === "/joined-group" ? "active" : ""
+                  } nav-link`}
+                  href="/groups/joined-group"
+                >
+                  <i className="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="8"
+                          fill="currentColor"
+                        ></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger
+                    placement="right"
+                    overlay={<Tooltip>Joined Groups</Tooltip>}
+                  >
+                    <i className="sidenav-mini-icon"> JG </i>
+                  </OverlayTrigger>
+                  <span className="item-name">Joined Groups</span>
+                </Link>
+              </Nav.Item>
+              <Nav.Item as="li">
+                <Link
+                  className={`${
+                    location.pathname === "/create-group" ? "active" : ""
+                  } nav-link`}
+                  href="/groups/create-group"
+                >
+                  <i className="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="8"
+                          fill="currentColor"
+                        ></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger
+                    placement="right"
+                    overlay={<Tooltip>Create Group</Tooltip>}
+                  >
+                    <i className="sidenav-mini-icon"> CG </i>
+                  </OverlayTrigger>
+                  <span className="item-name">Create Group</span>
+                </Link>
+              </Nav.Item>
+            </ul>
+          </Accordion.Collapse>
+        </Accordion.Item>
         {/* <Nav.Item as="li">
           <Link
             className={`${
@@ -597,8 +743,8 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Notification</span>
           </Link>
-        </Nav.Item> */}
-        {/* <li className="nav-item static-item">
+        </Nav.Item>
+        <li className="nav-item static-item">
           <Link
             className="nav-link static-item disabled"
             href="#"
@@ -662,8 +808,8 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Todo</span>
           </Link>
-        </Nav.Item>
-        <Nav.Item as="li">
+        </Nav.Item> */}
+        {/* <Nav.Item as="li">
           <Link
             className={`${
               location.pathname === "/calendar" ? "active" : ""
@@ -696,8 +842,8 @@ const VerticalNav = React.memo(() => {
             </OverlayTrigger>
             <span className="item-name">Birthday</span>
           </Link>
-        </Nav.Item>
-        <Nav.Item as="li">
+        </Nav.Item> */}
+        {/* <Nav.Item as="li">
           <Link
             className={`${
               location.pathname === "/donation" ? "active" : ""

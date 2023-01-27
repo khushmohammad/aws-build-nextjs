@@ -8,6 +8,6 @@ export default async function handler(req, res) {
     body: req.body,
     query: req.query,
     cookies: req.cookies,
-    token: token.user,
+    token: token?.user,
   });
 }

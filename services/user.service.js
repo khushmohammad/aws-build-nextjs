@@ -1,16 +1,14 @@
 import axios from "axios";
 
 export const getToken = async () => {
-  // return await axios.get("/api/get-token");
   const token = await axios.get("/api/handler");
   return token.data.token;
 };
 
 export const getUserData = async () => {
   const token = await getToken();
-  // console.log("new token: ", token);
 
-  const { data } = await axios.get(
+  const res = await axios.get(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfile`,
     {
       headers: {
@@ -18,7 +16,7 @@ export const getUserData = async () => {
       },
     }
   );
-  return data;
+  return res.data.body;
 };
 
 export const updateUserData = async (data) => {
@@ -26,6 +24,26 @@ export const updateUserData = async (data) => {
   const res = await axios.patch(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update`,
     data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }`${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update`,
+    data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};
+
+export const updateProfileAndCoverPic = async (imageType, image) => {
+  const token = await getToken();
+  const res = await axios.patch(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update/images?imageName=${imageType}`,
+    { photo: image },
     {
       headers: {
         authorization: `Bearer ${token}`,

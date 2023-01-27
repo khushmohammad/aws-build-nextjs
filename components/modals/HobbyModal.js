@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 
 const HobbyModal = ({ heading, onHide, ...props }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.data.body);
+  const user = useSelector((state) => state.user.data);
   const allHobbies = user.hobbies;
   const [hobby, setHobby] = useState([]);
   const [userhobbies, setUserhobbies] = useState({
@@ -27,13 +27,15 @@ const HobbyModal = ({ heading, onHide, ...props }) => {
       const token = await getToken("/api/handler");
       // AccessToken();
       // console.log("TOKEN:", token.data);
-       await axios.get(
-        `${process.env.NEXT_PUBLIC_API_PATH}/profiles/dropdowns/values/Hobby`,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      ).then(res =>setHobby(res.data.body)).catch(err => console.log(err))
-      
+      await axios
+        .get(
+          `${process.env.NEXT_PUBLIC_API_PATH}/profiles/dropdowns/values/Hobby`,
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        )
+        .then((res) => setHobby(res.data.body))
+        .catch((err) => console.log(err));
     };
     getHobby();
   }, []);

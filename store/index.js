@@ -3,6 +3,11 @@ import { persistReducer } from "redux-persist";
 import settingReducer from "./setting/reducers";
 import profileReducer from "./profile";
 import postReducer from "./post";
+import allFeedsReducer from "./post/allFeeds";
+import groupReducer from "./groups";
+import friendReducer from "./friends";
+import friendsRequests from "./friends/friendsRequests";
+import nonFriendsLIst from "./friends/nonFriendsList";
 import { persistStore } from "redux-persist";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
@@ -20,6 +25,11 @@ const reducers = combineReducers({
   setting: settingReducer,
   user: profileReducer,
   post: postReducer,
+  allFeed: allFeedsReducer,
+  groups: groupReducer,
+  friends: friendReducer,
+  friendsRequests: friendsRequests,
+  nonFriendsLIst: nonFriendsLIst
 });
 
 const rootReducer = (state, action) => {

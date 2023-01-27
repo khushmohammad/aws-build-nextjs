@@ -101,7 +101,49 @@
   padding: 0.5rem 0.75rem;
   height: auto;
 }
+.edit-profile .form-floating > label {
+  left: auto;
+}
+// .edit-profile .form-floating > .form-control:focus ~ label,
+// .edit-profile .form-floating > .form-control:not(:placeholder-shown) ~ label,
+// .edit-profile .form-floating > .form-select ~ label {
+//   transform: scale(0.85) translateY(-1.2rem) translateX(1.5rem);
+// }
+.edit-profile
+  .form-floating.date-input
+  .form-control:focus
+  ~ label
+  .edit-profile
+  .form-floating.date-input
+  .form-control:not(:placeholder-shown)
+  ~ label
+  .edit-profile
+  .form-floating.date-input
+  .form-select
+  ~ label,
+.edit-profile .form-floating.date-input > label {
+  top: -12px;
+  z-index: 11;
+  background: white;
+  height: auto;
+  display: inline-block;
+  padding: 0px 4px;
+  left: 15px;
+  width: auto;
+}
 
+.edit-profile .form-floating.date-input .form-control {
+  height: calc(3.2rem + 2px);
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+.edit-profile .css-13cymwt-control,
+.edit-profile .css-t3ipsp-control {
+  height: calc(3.2rem + 2px);
+}
+.edit-profile textarea.form-control {
+  height: auto;
+}
 .form-floating > .form-control,
 .form-floating > .form-control-plaintext,
 .form-floating > .form-select {
@@ -146,4 +188,10 @@
   .sign-in-detail {
     height: auto;
   }
+}
+
+.iq-top-navbar .modal.search-modal {
+  z-index: 111;
+  top: 110%;
+  display: block;
 }

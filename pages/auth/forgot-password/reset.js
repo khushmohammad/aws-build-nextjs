@@ -1,15 +1,20 @@
+import Auth from "../../../layouts/auth";
 const Reset = () => {
   return (
-    <div className="container flex flex-col m-12 m-auto mt-40 text-center">
-      <div className="mb-8 text-sky-500">
-        <h1 className="mb-4 text-5xl font-medium leading-tight">
+    <Auth>
+      <div className="sign-in-from justify-content-center align-items-start d-flex flex-column mt-lg-5 pt-lg-5">
+        <h1 className="my-3 h2">
           Link has been sent to your registered email address.
         </h1>
+        <h2 className="h4 mb-4">Check your mail to reset password</h2>
+        <a className="btn btn-primary mt-3" href="index.html">
+          <span className="d-flex align-items-center">
+            <i className="material-symbols-outlined md-18 me-1">home</i>Back to
+            Home
+          </span>
+        </a>
       </div>
-      <div className="mb-12 text-zinc-400">
-        <p className="mb-6">Check your mail to reset password</p>
-      </div>
-    </div>
+    </Auth>
   );
 };
 

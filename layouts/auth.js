@@ -46,7 +46,7 @@ const Auth = ({ children }) => {
                     alt="logo"
                     width={214}
                   /> */}
-                  {/* IWL */}
+                  <h1 className="text-light">IWL</h1>
                 </Link>
                 <div className="sign-slider overflow-hidden ">
                   <Swiper
@@ -100,7 +100,7 @@ const Auth = ({ children }) => {
                 </div>
               </div>
             </Col>
-            <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
+            <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5 sign-up">
               {children}
             </Col>
           </Row>

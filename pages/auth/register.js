@@ -27,7 +27,7 @@ const schema = yup
       .required("Must have minimun 3 characters")
       .min(3)
       .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-    userName: yup.string().email().required("Username is required"),
+    userName: yup.string().email().required("Email is required"),
     country: yup.object().nullable().required("Country is required"),
     dateOfBirth: yup
       .date()
