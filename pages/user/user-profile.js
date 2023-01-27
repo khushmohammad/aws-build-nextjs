@@ -200,7 +200,7 @@ const UserProfile = () => {
                     >
                       <Image
                         loading="lazy"
-                        src={user?.coverPictureInfo?.file?.location}
+                        src={user?.coverPictureInfo?.file?.location || img1}
                         alt="profile-bg"
                         className="rounded img-fluid"
                         layout="fill"
@@ -232,7 +232,7 @@ const UserProfile = () => {
                       >
                         <Image
                           loading="lazy"
-                          src={user?.profilePictureInfo?.file?.location || img1}
+                          src={user?.profilePictureInfo?.file?.location || img2}
                           alt="profile-img1"
                           className="avatar-130 img-fluid"
                           width={100}

@@ -17,6 +17,8 @@ import Select from "react-select";
 
 //image
 import img1 from "../../public/assets/images/user/11.png";
+import img2 from "../../public/assets/images/page-img/profile-bg1.jpg";
+
 import Default from "../../layouts/default";
 import { useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
@@ -355,7 +357,7 @@ const UserProfileEdit = ({ countries }) => {
                                 >
                                   <Image
                                     className=""
-                                    src={user?.coverPictureInfo?.file?.location}
+                                    src={user?.coverPictureInfo?.file?.location || img2}
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
