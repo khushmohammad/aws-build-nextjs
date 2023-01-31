@@ -8,11 +8,14 @@ import {
   Nav,
   Tooltip,
   OverlayTrigger,
+  Button,
 } from "react-bootstrap";
 
 //router
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { signOut } from "next-auth/react";
 
 function CustomToggle({ children, eventKey, onClick }) {
   const { activeEventKey } = useContext(AccordionContext);
@@ -45,8 +48,13 @@ const VerticalNav = React.memo(() => {
   let location = useRouter();
   // console.log(document);
 
+  const userInfo = useSelector((state) => state?.user?.data);
+
   return (
-    <React.Fragment>
+    <div
+      className="d-flex flex-column justify-content-between"
+      style={{ minHeight: "90vh" }}
+    >
       <Accordion as="ul" className="navbar-nav iq-main-menu" id="sidebar-menu">
         <li className="nav-item static-item">
           <Link
@@ -82,23 +90,49 @@ const VerticalNav = React.memo(() => {
             <span className="item-name">Newsfeed</span>
           </Link>
         </li>
-        <li className={`${location.pathname === "" ? "active" : ""} nav-item `}>
+        <li
+          className={`${
+            location.pathname === "/user" ? "active" : ""
+          } nav-item `}
+        >
           <Link
             className={`${
-              location.pathname === "/ic-registration" ? "active" : ""
+              location.pathname === "/user/user-profile" ? "active" : ""
             } nav-link `}
             aria-current="page"
-            href="/ic-registration"
+            href="/user/user-profile"
           >
             <OverlayTrigger
               placement="right"
-              overlay={<Tooltip>ic-registration</Tooltip>}
+              overlay={<Tooltip>My Profile</Tooltip>}
             >
-              <i className="material-symbols-outlined">edit_square</i>
+              <i className="icon material-symbols-outlined">line_style</i>
             </OverlayTrigger>
-            <span className="item-name">IC-registration</span>
+            <span className="item-name">My Profile</span>
           </Link>
         </li>
+        {userInfo?.userInfo?.roleInfo?.dropdownValue ==
+        "Integrating Coach" ? null : (
+          <li
+            className={`${location.pathname === "" ? "active" : ""} nav-item `}
+          >
+            <Link
+              className={`${
+                location.pathname === "/ic-registration" ? "active" : ""
+              } nav-link `}
+              aria-current="page"
+              href="/ic-registration"
+            >
+              <OverlayTrigger
+                placement="right"
+                overlay={<Tooltip>ic-registration</Tooltip>}
+              >
+                <i className="material-symbols-outlined">edit_square</i>
+              </OverlayTrigger>
+              <span className="item-name">IC-registration</span>
+            </Link>
+          </li>
+        )}
         {/* <Accordion.Item
           as="li"
           eventKey="profile-menu"
@@ -672,12 +706,49 @@ const VerticalNav = React.memo(() => {
                   <span className="item-name">Joined Groups</span>
                 </Link>
               </Nav.Item>
+              {userInfo?.userInfo?.roleInfo?.dropdownValue ===
+              "Integrating Coach" ? (
+                <Nav.Item as="li">
+                  <Link
+                    className={`${
+                      location.pathname === "/create-group" ? "active" : ""
+                    } nav-link`}
+                    href="/groups/create-group"
+                  >
+                    <i className="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="8"
+                            fill="currentColor"
+                          ></circle>
+                        </g>
+                      </svg>
+                    </i>
+                    <OverlayTrigger
+                      placement="right"
+                      overlay={<Tooltip>Create Groups</Tooltip>}
+                    >
+                      <i className="sidenav-mini-icon"> CG </i>
+                    </OverlayTrigger>
+                    <span className="item-name">Create Group</span>
+                  </Link>
+                </Nav.Item>
+              ) : null}
+
               <Nav.Item as="li">
                 <Link
                   className={`${
-                    location.pathname === "/create-group" ? "active" : ""
+                    location.pathname === "/group-invitation" ? "active" : ""
                   } nav-link`}
-                  href="/groups/create-group"
+                  href="/groups/group-invitation"
                 >
                   <i className="icon">
                     <svg
@@ -698,11 +769,11 @@ const VerticalNav = React.memo(() => {
                   </i>
                   <OverlayTrigger
                     placement="right"
-                    overlay={<Tooltip>Create Group</Tooltip>}
+                    overlay={<Tooltip>Group Invitation</Tooltip>}
                   >
-                    <i className="sidenav-mini-icon"> CG </i>
+                    <i className="sidenav-mini-icon"> GI </i>
                   </OverlayTrigger>
-                  <span className="item-name">Create Group</span>
+                  <span className="item-name">Group Invitation</span>
                 </Link>
               </Nav.Item>
             </ul>
@@ -3326,7 +3397,30 @@ const VerticalNav = React.memo(() => {
           </Accordion.Collapse>
         </Accordion.Item> */}
       </Accordion>
-    </React.Fragment>
+      <div>
+        <hr />
+        <div
+          className={`${
+            location.pathname === "/user/user-profile" ? "active" : ""
+          } nav-item `}
+        >
+          <Link
+            className={`${location.pathname === "/" ? "active" : ""} nav-link `}
+            aria-current="page"
+            onClick={() => signOut()}
+            href="#"
+          >
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip>Logout</Tooltip>}
+            >
+              <i className="icon material-symbols-outlined">login</i>
+            </OverlayTrigger>
+            <span className="item-name">Logout</span>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 });
 

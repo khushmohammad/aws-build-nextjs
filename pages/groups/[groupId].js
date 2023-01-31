@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Dropdown,
-  Button,
-  Modal,
-  OverlayTrigger,
-  Tooltip,
-  Form,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import ProfileHeader from "../../components/profile-header";
 import CustomToggle from "../../components/dropdowns";
 import ShareOffcanvas from "../../components/share-offcanvas";
@@ -33,15 +22,23 @@ import GroupMemeber from "../../components/group/group-member";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGroupByID } from "../../store/groups";
+import {
+  getGroupByID,
+  groupInvitationList,
+  groupJoinRequestLists,
+} from "../../store/groups";
 import Post from "../../components/post/postView/Post";
 import InviteFriend from "../../components/group/invite-friend";
+import GroupJoinRequest from "../../components/group/join-request";
 
 const GroupDetail = () => {
   const [showGroupMember, setShowGroupMember] = useState(false);
   const [showInviteFriends, setShowInviteFriends] = useState(false);
+  const [showJoinRequest, setShowJoinRequest] = useState(false);
 
   const groupData = useSelector((state) => state?.groups?.groupInfo);
+
+  const userInfo = useSelector((state) => state?.user?.data);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -49,6 +46,8 @@ const GroupDetail = () => {
 
   useEffect(() => {
     dispatch(getGroupByID(groupId));
+    dispatch(groupInvitationList());
+    dispatch(groupJoinRequestLists(groupId));
   }, [groupId]);
 
   return (
@@ -58,12 +57,17 @@ const GroupDetail = () => {
         onHide={() => setShowGroupMember(false)}
       />
       <InviteFriend
-        groupId={groupId}
+        groupid={groupId}
         show={showInviteFriends}
         onHide={() => setShowInviteFriends(false)}
       />
+      <GroupJoinRequest
+        groupid={groupId}
+        show={showJoinRequest}
+        onHide={() => setShowJoinRequest(false)}
+      />
       <Default>
-        <ProfileHeader img={header} />
+        <ProfileHeader img={header} groupid={groupId} />
         <div id="content-page" className="content-page">
           <Container>
             <Row>
@@ -86,92 +90,94 @@ const GroupDetail = () => {
                       <p className="mb-0 text-capitalize">
                         <i className="ri-lock-fill pe-2"></i>
                         {groupData?.privacyTypesInfo?.dropdownValue} Group .{" "}
-                        {/* <Link
-                          href=""
+                        <Link
+                          href="#"
                           className="btn-link"
                           onClick={() => setShowGroupMember(true)}
-                        > */}
-                        20 members
-                        {/* </Link> */}
+                        >
+                          20 members
+                        </Link>
                       </p>
                     </div>
                   </div>
-                  <div
-                    mt-md="0"
-                    mt="2"
-                    className="group-member d-flex align-items-center"
-                  >
-                    <div className="iq-media-group me-3">
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user1}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user2}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user3}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user4}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user5}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user6}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user7}
-                          alt=""
-                        />
-                      </Link>
-                      <Link href="" className="iq-media">
-                        <Image
-                          className="img-fluid avatar-40 rounded-circle"
-                          src={user8}
-                          alt=""
-                        />
-                      </Link>
-                    </div>
-                    <Button
-                      variant="primary"
-                      className="mb-2"
-                      onClick={() => setShowInviteFriends(true)}
+                  {userInfo?.userInfo?.roleInfo?.dropdownValue ===
+                  "Integrating Coach" ? (
+                    <div
+                      mt-md="0"
+                      mt="2"
+                      className="group-member d-flex align-items-center"
                     >
-                      <i className="ri-add-line me-1"></i>Invite
-                    </Button>
-                  </div>
+                      <div className="iq-media-group me-3">
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user1}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user2}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user3}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user4}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user5}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user6}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user7}
+                            alt=""
+                          />
+                        </Link>
+                        <Link href="" className="iq-media">
+                          <Image
+                            className="img-fluid avatar-40 rounded-circle"
+                            src={user8}
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+
+                      <Button
+                        variant="primary"
+                        className="mb-2"
+                        onClick={() => setShowInviteFriends(true)}
+                      >
+                        <i className="ri-add-line me-1"></i>Invite
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               </Col>
               <Col lg="8">
-                {/* <CreatePost groupId={groupId} /> */}
-
                 <Post activePage={"group"} groupId={groupId} />
               </Col>
               <Col lg="4">
@@ -191,34 +197,56 @@ const GroupDetail = () => {
                               className="text search-input bg-grey"
                               placeholder="Type here to search..."
                             />
-                            <Link className="search-link" href="">
+                            <Link className="search-link" href="#">
                               <i className="ri-search-line"></i>
                             </Link>
                           </form>
                         </div>
                       </li>
-                      <li className="mb-3 d-flex align-items-center">
-                        <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
-                          <i className="material-symbols-outlined">
-                            credit_card
-                          </i>
-                        </div>
-                        <h6 className="mb-0">Your Feed</h6>
-                      </li>
-                      <li className="mb-3 d-flex align-items-center">
-                        <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
-                          <i className="material-symbols-outlined">explore</i>
-                        </div>
-                        <h6 className="mb-0">Discover</h6>
-                      </li>
-                      <li>
-                        <Link
-                          href="/groups/create-group"
-                          className="btn btn-primary d-block w-100"
-                        >
-                          <i className="ri-add-line pe-2"></i>Create New Group
-                        </Link>
-                      </li>
+                      <Link href="#">
+                        <li className="mb-3 d-flex align-items-center">
+                          <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
+                            <i className="material-symbols-outlined">
+                              credit_card
+                            </i>
+                          </div>
+                          <h6 className="mb-0">Your Feed</h6>
+                        </li>
+                      </Link>
+                      <Link href="/groups/all-groups">
+                        <li className="mb-3 d-flex align-items-center">
+                          <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
+                            <i className="material-symbols-outlined">explore</i>
+                          </div>
+                          <h6 className="mb-0">Discover</h6>
+                        </li>
+                      </Link>
+                      {userInfo?.userInfo?.roleInfo?.dropdownValue ===
+                      "Integrating Coach" ? (
+                        <>
+                          <li
+                            className="mb-3 text-primary d-flex align-items-center"
+                            onClick={() => setShowJoinRequest(true)}
+                            role="button"
+                          >
+                            <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
+                              <span className="material-symbols-outlined">
+                                add_circle
+                              </span>
+                            </div>
+                            <h6 className="mb-0">Member Requests</h6>
+                          </li>
+                          <li>
+                            <Link
+                              href="/groups/create-group"
+                              className="btn btn-primary d-block w-100"
+                            >
+                              <i className="ri-add-line pe-2"></i>Create New
+                              Group
+                            </Link>
+                          </li>
+                        </>
+                      ) : null}
                     </ul>
                   </Card.Body>
                 </Card>

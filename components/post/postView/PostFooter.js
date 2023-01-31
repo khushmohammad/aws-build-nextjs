@@ -16,7 +16,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
-import { getAllCommentsByPostId, getAllLikesByPostId, getUserInfoByUserId, likePostByUser, postCommentbyPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
+import { getAllCommentsByPostId, getAllLikesByPostId,  likePostByUser, postCommentbyPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
 import { useSelector } from 'react-redux';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -305,7 +305,7 @@ function PostFooter({ postIdForLike }) {
                 {index < 30 &&
                   <li className="mb-2">
                     <div className="d-flex">
-                      <div className="user-img">
+                      <div className="user-img flex-shrink-0">
                         {commentData?.userDetails &&
                           <Image
                             className="avatar-35 rounded-circle img-fluid"
@@ -317,7 +317,7 @@ function PostFooter({ postIdForLike }) {
                         }
 
                       </div>
-                      <div className="comment-data-block ms-3">
+                      <div className="comment-data-block ms-3 flex-grow-1">
                         <h6> {commentData?.userDetails && `${commentData.userDetails?.userInfo?.firstName} ${commentData.userDetails?.userInfo?.lastName}`}</h6>
                         <p className="mb-0">{commentData.mainComment.commentText}</p>
                         <div className="d-flex flex-wrap align-items-center comment-activity">
@@ -327,7 +327,7 @@ function PostFooter({ postIdForLike }) {
                             <><a role="button" className='text-primary' onClick={() => DeleteComment(commentData._id)}>delete </a></>
                             :
                             ""}
-                          <span>{commentData?.createdAt && getPostTime(commentData.createdAt)} </span>
+                          <span className='text-primary'  >{commentData?.createdAt && getPostTime(commentData.createdAt)} </span>
                         </div>
                       </div>
                     </div>

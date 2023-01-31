@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useState } from "react";
 import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 
@@ -9,7 +8,8 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllFriendList } from "../../store/friends";
-import { inviteFriendOnGroup } from "../../services/groups.service";
+import { inviteFriendsOnGroup } from "../../store/groups";
+import { inviteFriend } from "../../services/groups.service";
 
 const InviteFriend = (props) => {
   const [isInvited, setIsInvited] = useState([]);
@@ -21,13 +21,14 @@ const InviteFriend = (props) => {
 
   const friends = useSelector((state) => state?.friends?.friendList);
 
-  const inviteAFriend = async (friendId, groupId) => {
-    const res = await inviteFriendOnGroup(friendId, groupId);
+  const inviteAFriend = async (memberId, groupId) => {
+    const res = await inviteFriend(memberId, groupId);
+    // const res = await dispatch(inviteFriendsOnGroup({ memberId, groupId }));
     if (res?.data?.success) {
       setIsInvited((prev) =>
-        Boolean(!prev[friendId])
-          ? { ...prev, [friendId]: true }
-          : { ...prev, [friendId]: false }
+        Boolean(!prev[memberId])
+          ? { ...prev, [memberId]: true }
+          : { ...prev, [memberId]: false }
       );
     }
   };
@@ -56,7 +57,7 @@ const InviteFriend = (props) => {
                     {friends?.friendsList?.map((friend, index) => (
                       <li
                         key={index}
-                        className="d-flex align-items-center  justify-content-between flex-wrap"
+                        className="d-flex align-items-center justify-content-between flex-wrap"
                       >
                         <div className="user-img img-fluid flex-shrink-0">
                           <Image
@@ -92,7 +93,7 @@ const InviteFriend = (props) => {
                             <div className="confirm-click-btn">
                               <Button
                                 onClick={() =>
-                                  inviteAFriend(friend?._id, props.groupId)
+                                  inviteAFriend(friend?._id, props.groupid)
                                 }
                                 className="me-3 btn btn-primary rounded confirm-btn"
                               >

@@ -1,7 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 const ProfileHeader = (props) => {
+  const router = useRouter();
+
   return (
     <>
       <div className="header-for-bg">
@@ -14,6 +18,19 @@ const ProfileHeader = (props) => {
               </div>
             )}
           </div>
+          {router.pathname === "/groups/[groupId]" ? (
+            <div
+              className="position-absolute"
+              style={{ right: "20%", bottom: "10px" }}
+            >
+              <Link
+                href={`/groups/group-setting/${props.groupid}`}
+                className="btn btn-primary"
+              >
+                Group Setting
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
     </>

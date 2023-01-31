@@ -7,7 +7,7 @@ import PostContentSection from '../../../components/post/postView/PostContentSec
 import PostFooter from '../../../components/post/postView/PostFooter'
 import Default from '../../../layouts/default'
 import user2 from "../../../public/assets/images/user/02.jpg";
-import { getPostByPostId } from "../../../services/posts.service";
+import { getPostsByPostId } from "../../../services/posts.service";
 
 function PostDetailsById() {
     const router = useRouter()
@@ -16,7 +16,7 @@ function PostDetailsById() {
 
     const [postDetail, setPostDetail] = useState("")
     const postData = async () => {
-        const res = await getPostByPostId(PostId)
+        const res = await getPostsByPostId(PostId)
         const data = res
         setPostDetail(data)
     }

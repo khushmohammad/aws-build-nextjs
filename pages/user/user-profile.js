@@ -108,7 +108,7 @@ const UserProfile = () => {
   const [professionalModal, setProfessionalModal] = useState(false);
   const [languageModal, setLanguageModal] = useState(false);
   const [collegeModal, setCollegeModal] = useState(false);
-  const postsLength = useSelector((state) => state?.allFeed.allFeeds.length);
+  const postsLength = useSelector((state) => state?.allFeed?.postcount);
 
   const user = useSelector((state) => state.user.data);
   const allHobbies = user.hobbies;
@@ -403,7 +403,7 @@ const UserProfile = () => {
                     <Card.Body className=" p-0">
                       <Row>
                         <Col lg={4}>
-                          <Card>
+                          {/* <Card>
                             <Card.Body>
                               <Link href="#">
                                 <span className="badge badge-pill bg-primary font-weight-normal ms-auto me-1  material-symbols-outlined md-14">
@@ -412,8 +412,8 @@ const UserProfile = () => {
                                 27 Items for you
                               </Link>
                             </Card.Body>
-                          </Card>
-                          <Card>
+                          </Card> */}
+                          {/* <Card>
                             <div className="card-header d-flex justify-content-between">
                               <div className="header-title">
                                 <h4 className="card-title">Life Event</h4>
@@ -470,7 +470,7 @@ const UserProfile = () => {
                                 </Col>
                               </Row>
                             </Card.Body>
-                          </Card>
+                          </Card> */}
                           <Card>
                             <div className="card-header d-flex justify-content-between">
                               <div className="header-title">
@@ -611,8 +611,8 @@ const UserProfile = () => {
                               </div>
                               <div className="card-header-toolbar d-flex align-items-center">
                                 <p className="m-0">
-                                  <Link href="javacsript:void();">
-                                    Add New{" "}
+                                  <Link href="/friends/find-friend">
+                                    Add New
                                   </Link>
                                 </p>
                               </div>
@@ -986,7 +986,7 @@ const UserProfile = () => {
                                     </div>
                                     <div className="col-9">
                                       {user.maritalStatusInfo &&
-                                        user.maritalStatusInfo.dropdownValue ? (
+                                      user.maritalStatusInfo.dropdownValue ? (
                                         <p className="mb-0">
                                           {user.maritalStatusInfo.dropdownValue}
                                         </p>
@@ -1513,7 +1513,6 @@ const UserProfile = () => {
                                 <Card.Body className="p-0">
                                   <Row>
                                     <FriendCardProfile />
-
                                   </Row>
                                 </Card.Body>
                               </Tab.Pane>

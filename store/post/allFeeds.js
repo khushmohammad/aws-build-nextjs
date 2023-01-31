@@ -20,7 +20,9 @@ const AllFeedsSlice = createSlice({
       })
       .addCase(getAllFeedsList.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.allFeeds = action.payload;
+        // console.log(action.payload.newarray,"action.payload.newarray");
+        state.allFeeds = action.payload.newarray;
+        state.postcount = action.payload.PostCount;
         state.error = "";
       })
       .addCase(getAllFeedsList.rejected, (state, action) => {
@@ -35,7 +37,7 @@ const AllFeedsSlice = createSlice({
 export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
-    //console.log(params);
+    console.log(params);
     const data =
       params.activePage == "home"
         ? await getAllFeeds(params.page, params.limit)

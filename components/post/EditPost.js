@@ -25,7 +25,9 @@ import { getPostDetails } from "../../store/post";
 import { useRouter } from "next/router";
 
 const EditPost = (props) => {
-  const profileImage = useSelector((state) => state?.user?.data?.profilePictureInfo?.file?.location);
+  const profileImage = useSelector(
+    (state) => state?.user?.data?.profilePictureInfo?.file?.location
+  );
   const postDetails = useSelector((state) => state?.post?.postDetail?.allBody);
   const [postData, setPostData] = useState({
     description: "",
@@ -44,6 +46,12 @@ const EditPost = (props) => {
 
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const HandleClose = () => {
+    props.onHide();
+    setPostData({ description: "", file: null });
+    setSelectedFile(null);
+  };
 
   useEffect(() => {
     setPostData(postDetails);
@@ -83,14 +91,24 @@ const EditPost = (props) => {
     setImageFileIds([...imageFileIds, id]);
   };
 
-  // console.log("=============================", postData);
+  const deleteImage = (img, imgIndex) => {
+    const newArr = selectedFile.filter((item, index) => {
+      return index != imgIndex;
+    });
+    const showImageByPosts = postData?.file?.filter((item, index) => {
+      return index != imgIndex;
+    });
+    setPostData(showImageByPosts);
+    setSelectedFile(newArr);
+  };
 
   const updatePostData = async (e) => {
     e.preventDefault();
-
-    console.log("=============", postData);
     await updatePost(postData, props.postid);
-    router.reload(window.location.pathname);
+    setPostData({ description: "", file: null });
+    setSelectedFile(null);
+    props.refreshPostList();
+    props.onHide();
   };
 
   return (
@@ -102,7 +120,7 @@ const EditPost = (props) => {
         <button
           type="button"
           className="btn btn-secondary lh-1"
-          onClick={props.onHide}
+          onClick={HandleClose}
         >
           <span className="material-symbols-outlined">close</span>
         </button>
@@ -139,17 +157,16 @@ const EditPost = (props) => {
           </div>
           <hr />
 
-          {imageAndId?.data?.length > 0 ? (
-            <>
-              <div className="row gap-2">
+          <div className="row gap-2">
+            {imageAndId?.data?.length > 0 ? (
+              <>
                 {imageAndId.data.map((file, index) => {
-                  // console.log("file+_++++++++++++++++++++++>", file);
                   return (
                     <div
                       key={index}
                       style={{
                         width: "15%",
-                        border: "1px dotted #000",
+                        border: "1px solid #000",
                         position: "relative",
                       }}
                     >
@@ -159,6 +176,9 @@ const EditPost = (props) => {
                         alt="icon"
                         width={100}
                         height={100}
+                        style={{
+                          objectFit: "contain",
+                        }}
                       />
                       <div
                         onClick={() => deleteImageKey(file.key, file.fileId)}
@@ -182,9 +202,53 @@ const EditPost = (props) => {
                     </div>
                   );
                 })}
-              </div>
-              <hr />
-            </>
+              </>
+            ) : null}
+            {selectedFile?.length > 0 ? (
+              <>
+                {selectedFile.map((file, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      width: "15%",
+                      border: "1px solid #d5d5dc",
+                      position: "relative",
+                    }}
+                  >
+                    {console.log(file, "file")}
+                    <img
+                      loading="lazy"
+                      src={file.base64}
+                      alt="icon"
+                      width={100}
+                      height={100}
+                      style={{
+                        objectFit: "contain",
+                      }}
+                    />
+                    <div
+                      onClick={() => deleteImage(file, index)}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        backgroundColor: "#000",
+                        color: "#fff",
+                        display: "flex",
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <span role="button" className="material-symbols-outlined">
+                        close
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : null}
+          </div>
+          {imageAndId?.data?.length > 0 || selectedFile?.length > 0 ? (
+            <hr />
           ) : null}
 
           <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">

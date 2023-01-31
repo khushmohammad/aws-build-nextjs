@@ -58,9 +58,9 @@ const Post = ({ activePage, groupId }) => {
 
   useEffect(() => {
     if (page && page == 1) {
-      StorePosts.length == 0 ? setposts("") : setposts(StorePosts);
+      StorePosts?.length == 0 ? setposts("") : setposts(StorePosts);
     } else {
-      StorePosts.length == 0
+      StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
         ? setposts((prev) => [...prev, ...StorePosts])
@@ -104,12 +104,26 @@ const Post = ({ activePage, groupId }) => {
   };
   const pinPost = async (postId) => {
     const res = await pinPostByUser(postId);
-    // console.log("RESPONSE", res);
-    if (res.status == 200) {
-      await getAllPostsByUserId(page, 2),
-        //console.log("ALLL POST POST RESPONSE", await getAllPostsByUserId(page, 2))
-        router.reload();
+
+    if (res.data.success == true) {
+      dispatch(
+        getAllFeedsList({
+          activePage: activePage,
+          page: 1,
+          limit: posts.length,
+        })
+      );
+      setposts(StorePosts);
     }
+
+    //  const res = await pinPostByUser(postId);
+
+    // // //  console.log("RESPONSE", res);
+    // if (res.status == 200) {
+    //   await getAllPostsByUserId(page, 2)
+    //    console.log("ALLL POST POST RESPONSE", await getAllPostsByUserId(page, 2))
+    //     //  router.reload();
+    // }
   };
   // console.log(posts, StorePosts, "posts");
   return (
@@ -120,6 +134,7 @@ const Post = ({ activePage, groupId }) => {
           show={showModal}
           onHide={() => setShowModal(false)}
           postid={postID}
+          refreshPostList={() => GetPostNet()}
         />
 
         {posts &&

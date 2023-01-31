@@ -51,6 +51,8 @@ const CreatePost = (props) => {
   const closeHandle = () => {
     setShowPopup(false);
     setShow(true);
+    setPostData({ description: "", file: null });
+    setSelectedFile(null);
   };
 
   const router = useRouter();
@@ -58,20 +60,20 @@ const CreatePost = (props) => {
 
   const user = useSelector((state) => state?.user?.data);
 
-  // console.log("path: ", router.pathname);
   const submitPost = async (e) => {
     e.preventDefault();
     if (router.pathname === "/groups/[groupId]") {
       await createGroupPost(postData, props.groupId).then((res) => {
         setPostData({ description: "", file: null });
-        handleClose();
+        setSelectedFile(null);
       });
     } else {
       await createPost(postData).then((res) => {
         setPostData({ description: "", file: null });
-        handleClose();
+        setSelectedFile(null);
       });
     }
+    handleClose();
     props.refreshPostList();
   };
 
@@ -79,12 +81,11 @@ const CreatePost = (props) => {
     const newArr = selectedFile.filter((item, index) => {
       return index != imgIndex;
     });
-    const showImageByPosts = postData?.file?.filter((item,index)=>{
-      return index!=imgIndex
-    })
-    setPostData(showImageByPosts)
+    const showImageByPosts = postData?.file?.filter((item, index) => {
+      return index != imgIndex;
+    });
+    setPostData(showImageByPosts);
     setSelectedFile(newArr);
-    
   };
   return (
     <Card id="post-modal-data">
@@ -242,7 +243,7 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
-                      {/* {console.log(file, "file")} */}
+                      {console.log(file, "file")}
                       <img
                         loading="lazy"
                         src={file.base64}
@@ -410,64 +411,6 @@ const CreatePost = (props) => {
                       Public
                     </Button>
                   </>
-
-                  {/* <Dropdown> */}
-                  {/* <Dropdown.Toggle
-                      className="dropdown-toggle"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                      role="button"
-                    >
-                      <span className="btn btn-primary">
-                        <FaUserFriends
-                          style={{ fontSize: "1.5em" }}
-                          onClick={()=>{console.log("hello friends chail")}}
-                        />
-                      </span>
-                      
-                    </Dropdown.Toggle> */}
-
-                  {/* <Dropdown.Menu clemassName="dropdown-menu m-0 p-0">
-                        <Dropdown.Item className="dropdown-item p-3">
-                          <div className="d-flex align-items-top">
-                            <i className="ri-save-line h4"></i>
-                            <div className="data ms-2">
-                              <h6>Public</h6> */}
-                  {/* <p className="mb-0">Anyone on or off Facebook</p> */}
-                  {/* </div>
-                          </div>
-                        </Dropdown.Item>
-                        <Dropdown.Item className="dropdown-item p-3">
-                          <div className="d-flex align-items-top">
-                            <i className="ri-close-circle-line h4"></i>
-                            <div className="data ms-2">
-                              <h6>Friends</h6>
-                              {/* <p className="mb-0">Your Friend on facebook</p> */}
-                  {/* </div>
-                          </div>
-                        </Dropdown.Item>  */}
-                  {/* <Dropdown.Item className="dropdown-item p-3" href="/">
-                      <div className="d-flex align-items-top">
-                        <i className="ri-user-unfollow-line h4"></i>
-                        <div className="data ms-2">
-                          <h6>Friends except</h6>
-                          <p className="mb-0">Don't show to some friends</p>
-                        </div>
-                      </div>
-                    </Dropdown.Item> */}
-                  {/* <Dropdown.Item className="dropdown-item p-3">
-                          <div className="d-flex align-items-top">
-                            <i className="ri-notification-line h4"></i>
-                            <div className="data ms-2">
-                              <h6>Only Me</h6> */}
-                  {/* <p className="mb-0">Only me</p> */}
-                  {/* </div>
-                          </div>
-                        </Dropdown.Item>
-                      </Dropdown.Menu> */}
-
-                  {/* </Dropdown> */}
                 </div>
               </div>
             </div>
@@ -540,7 +483,11 @@ const CreatePost = (props) => {
               <div
                 className="mb-3 "
                 onClick={() => {
-                  setModalShowFriendList(true), setShowPopup(false);
+                  setModalShowFriendList({
+                    show: true,
+                    title: "friends-except",
+                  }),
+                    setShowPopup(false);
                 }}
               >
                 <Form.Check className="d-block text-start fs-4" reverse>
@@ -558,7 +505,11 @@ const CreatePost = (props) => {
               <div
                 className="mb-3 "
                 onClick={() => {
-                  setModalShowFriendList(true), setShowPopup(false);
+                  setModalShowFriendList({
+                    show: true,
+                    title: "specific-friends",
+                  }),
+                    setShowPopup(false);
                 }}
               >
                 <Form.Check className="d-block text-start fs-4" reverse>
@@ -587,9 +538,10 @@ const CreatePost = (props) => {
         </Modal.Footer>
       </Modal>
       <ModalPop
-        show={modalShowFriendList}
-        onHide={() => setModalShowFriendList(false)}
+        show={modalShowFriendList?.show}
+        onHide={() => setModalShowFriendList({ show: false })}
         closeHandle={() => setShowPopup(true)}
+        title={modalShowFriendList?.title}
       />
     </Card>
   );

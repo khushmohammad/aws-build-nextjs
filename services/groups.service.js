@@ -1,8 +1,6 @@
 import axios from "axios";
-// import { getToken } from "./user.service";
 
 export const getToken = async () => {
-  // return await axios.get("/api/get-token");
   const token = await axios.get("/api/handler");
   return token.data.token;
 };
@@ -67,6 +65,21 @@ export const createGroup = async (payload) => {
   }
 };
 
+export const deleteGroupByGroupId = async (groupId) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/delete/${groupId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getAllGroups = async (page = 1, limit = 2) => {
   const token = await getToken();
   try {
@@ -82,7 +95,7 @@ export const getAllGroups = async (page = 1, limit = 2) => {
   }
 };
 
-export const inviteFriendOnGroup = async (memberId, groupId) => {
+export const inviteFriend = async (memberId, groupId) => {
   const token = await getToken();
   try {
     const res = await axios.get(
@@ -228,4 +241,69 @@ export const updatePost = async (postData, groupId, memberId) => {
     )
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
+};
+
+export const getInvitationList = async () => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupInvitationList`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const invitationAcceptAndDelineService = async (
+  invitationId,
+  invitationAction
+) => {
+  const token = await getToken();
+
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/joinGroup/?invitationId=${invitationId}&invitationAction=${invitationAction}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const groupJoinRequestList = async (groupId) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupJoinRequestList/${groupId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const groupJoinAcceptAndDeclineService = async (
+  invitationId,
+  invitationAction
+) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupJoinRequest/?invitationId=${invitationId}&invitationAction=${invitationAction}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {}
 };

@@ -76,9 +76,11 @@ const Groups = () => {
                 <Card.Body className="text-center">
                   <div className="group-icon">
                     <Image
-                      src={gi5}
+                      src={group?.groupImagesInfo?.file?.location || gi5}
                       alt="profile-img"
                       className="rounded-circle img-fluid avatar-120"
+                      height={100}
+                      width={100}
                     />
                   </div>
                   <div className="group-info pt-3 pb-3">

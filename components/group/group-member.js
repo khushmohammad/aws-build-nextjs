@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import { Card, Col, Container, Modal, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 
 // images
 import user5 from "../../public/assets/images/user/05.jpg";
@@ -48,22 +48,22 @@ const GroupMemeber = (props) => {
                       </div>
                       <div className="d-flex align-items-center mt-2 mt-md-0">
                         <div className="confirm-click-btn">
-                          <Link
-                            href=""
+                          <Button
+                            // href=""
                             className="me-3 btn btn-primary rounded confirm-btn"
                           >
                             Visit Profile
-                          </Link>
+                          </Button>
                         </div>
-                        <Link
-                          href=""
+                        <Button
+                          href="#"
                           // onClick={questionAlert}
                           className="btn btn-secondary rounded"
                           data-extra-toggle="delete"
                           data-closest-elem=".item"
                         >
                           Remove
-                        </Link>
+                        </Button>
                       </div>
                     </li>
 

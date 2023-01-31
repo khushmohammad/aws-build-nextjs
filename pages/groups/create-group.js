@@ -13,10 +13,14 @@ import Default from "../../layouts/default";
 import { useDispatch, useSelector } from "react-redux";
 import { getGroupPrivacyKeys } from "../../store/groups";
 import Head from "next/head";
+import { useRouter } from "next/router";
+
 
 const CreateGroup = () => {
   const [selectedFile, setSelectedFile] = useState([]);
   const dispatch = useDispatch();
+  const [isSubmitted, setisSubmitted] = useState();
+  const router = useRouter()
 
   const groupPrivacy = useSelector((state) => state?.groups?.groupPrivacy);
 
@@ -51,7 +55,17 @@ const CreateGroup = () => {
     };
 
     createGroup(payload)
-      .then((res) => console.log("response", res))
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          setisSubmitted({
+            status: true,
+            message: res.data.message,
+            className: "success",
+          });
+           router.push(`/groups/${res?.data?.body?._id}`)
+        }
+      })
       .catch((err) => console.log(err));
   };
 
@@ -65,6 +79,14 @@ const CreateGroup = () => {
         <Default>
           <Container>
             <Card style={{ width: "900px", height: "300px", padding: "20px" }}>
+              {isSubmitted?.status && (
+                <div
+                  className={`alert alert-${isSubmitted.className}`}
+                  role="alert"
+                >
+                  {isSubmitted.message}
+                </div>
+              )}
               <Form
                 className="mt-4"
                 style={{ height: "200px", width: "800px" }}

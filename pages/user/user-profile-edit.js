@@ -13,7 +13,6 @@ import {
   Nav,
 } from "react-bootstrap";
 import moment from "moment";
-import Select from "react-select";
 
 //image
 import img1 from "../../public/assets/images/user/11.png";
@@ -27,166 +26,69 @@ import axios from "axios";
 import { Uploader } from "../../components/ImageDropzone/Uploader";
 import { getToken, updateUserData } from "../../services/user.service";
 import { useDispatch } from "react-redux";
-import { getUserDetails, updateUserInfo } from "../../store/profile";
+
 import { useRouter } from "next/router";
 import { CoverPicUploader } from "../../components/ImageDropzone/CoverPicUploader";
 import {
   getStateData,
   getCityData,
-  getCountryData,
 } from "../../services/profile.service";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AsyncSelect from "react-select/async";
+import { clearEmpties, countriesList, getMaritalStatus } from "../../services/basic.services";
+import _ from 'lodash'
+
 
 const schema = yup
   .object({
-    firstName: yup.string().required("firstname is required").min(3).max(20),
-    lastName: yup.string().required("lastname is required").min(3).max(20),
+    userInfo: yup.object().shape({
+      firstName: yup.string().required("firstname is required").min(3).max(20),
+      lastName: yup.string().required("lastname is required").min(3).max(20),
+      middleName: yup.string().max(20),
+      country: yup.string().max(20),
+    }),
+    Pincode: yup.number().typeError('Pincode must be a number').nullable(true)
   })
-  .required();
 
-const UserProfileEdit = ({ countries }) => {
-  const Router = useRouter();
+const UserProfileEdit = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.data);
-  const [userData, setUserData] = useState();
-
+  const userProfileData = useSelector((state) => state?.user?.data);
   const [profilePicModalShow, setProfilePicModalShow] = useState(false);
   const [coverPicModalShow, setCoverPicModalShow] = useState(false);
-  // const [token,setToken] = useState();
   const [relationStatus, setRelationStatus] = useState([]);
-  // const [countriesDataArrayObj, setCountriesDataArrayObj] = useState(countries)
-
-  const [formdata, setFormdata] = useState({
-    nickName: user.nickName ? user.nickName : null,
-    profileDescription: user.profileDescription
-      ? user.profileDescription
-      : null,
-    phoneNumber: user.phoneNumber ? user.phoneNumber : null,
-    siteUrl: user.siteUrl ? user.siteUrl : null,
-    address: user.address ? user.address : null,
-    city: user.city ? user.city : null,
-    state: user.stateInfo ? user.stateInfo.id : null,
-    pinCode: user.pinCode ? user.pinCode : null,
-    // professionalDetails: null,
-    // schoolDetails: [],
-    userInfo: {
-      firstName: user.userInfo.firstName ? user.userInfo.firstName : null,
-      middleName: user.userInfo.middleName ? user.userInfo.middleName : null,
-      lastName: user.userInfo.lastName ? user.userInfo.lastName : null,
-      gender: user.userInfo.gender,
-      dateOfBirth: user.userInfo.dateOfBirth ? user.userInfo.dateOfBirth : "",
-      country: user.userInfo.countryInfo ? user.userInfo.countryInfo.id : null,
-    },
-    // hobbies: `${user.hobbies && user.hobbies }`,
-    maritalStatus: user.maritalStatusInfo ? user.maritalStatusInfo._id : null,
-  });
-
-  const [allStates, setAllStates] = useState([]);
-  const [allCities, setAllCities] = useState([]);
-
-  // console.log(("my form data:", formdata.userInfo.middleName))
-
-  const handleCountry = async (e) => {
-    await setFormdata({
-      ...formdata,
-      userInfo: { ...formdata.userInfo, country: e.target.value },
-    });
-
-    await getAllStates(e.target.value);
-  };
-
-  const handleState = async (e) => {
-    await setFormdata({
-      ...formdata,
-      state: e.target.value == "" ? null : e.target.value,
-    });
-
-    await getAllCities(e.target.value);
-  };
-
-  // fetching all states
-  const getAllStates = async (id) => {
-    const states = await getStateData(id);
-    setAllStates(states);
-  };
-  // Fetching all citites
-  const getAllCities = async (id) => {
-    const cities = await getCityData(id);
-    setAllCities(cities);
-  };
-  // const [countryLabel,setCountryLabel] = useState({});
-
-  // console.log("country: ",formdata.userInfo.country)
-
-  // country list on search
-  // const promiseOptions = async (inputValue) => {
-  //   console.log("COUNTRY", inputValue);
-  //   const res = await axios.get(`${process.env.NEXT_PUBLIC_API_PATH}/users/country/all/${inputValue}`)
-  //   const countri = await res.data.body
-  //   let newArrayOBj1 = []
-  //   countri.forEach(element => {
-  //     const data = { value: element._id, label: element.name }
-  //     return newArrayOBj1.push(data)
-  //   });
-  //   setCountriesDataArrayObj(newArrayOBj1)
-  //   return newArrayOBj1
-
-  // }
-
-  // const AccessToken = async () => {
-
-  //   setToken(data);
-
-  // }
-
-  useEffect(() => {
-    getAllStates(formdata.userInfo.country);
-    getAllCities(formdata.state);
-    // console.log("SELECTED DATE", moment(formdata.userInfo.dateOfBirth).format('DD-MMM-YYYY'));
-    const MaritalStatus = async () => {
-      const token = await getToken("/api/handler");
-      // AccessToken();
-      // console.log("TOKEN:", token.data);
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_PATH}/profiles/dropdowns/values/MaritalStatus`,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      );
-      setRelationStatus(data.body);
-    };
-    MaritalStatus();
-  }, []);
-
-  // console.log("FormData: ", formdata)
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   control,
-  //   formState: { errors },
-  // } = useForm({
-  //   mode: "onChange",
-  //   defaultValues: userData,
-  // });
-
-  // const onSubmit = async () => {
-  //   // const token = await axios.get("/api/handler");
-
-  //   // await axios.patch(
-  //   //   `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfile/update`,
-  //   //   data,
-  //   //   {
-  //   //     headers: { authorization: `Bearer ${token}` },
-  //   //   }
-  //   // );
-  //   // updateUserData(data);
-  // };
+  const [selectedCountry, setSelectedCountry] = useState({ label: userProfileData?.userInfo?.countryInfo?.name, value: userProfileData?.userInfo?.countryInfo?.id });
+  const [selectedState, setSelectedState] = useState({ label: userProfileData?.stateInfo?.name, value: userProfileData?.stateInfo?.id });
+  const [selectedCity, setSelectedCity] = useState({ label: userProfileData?.cityInfo?.name, value: userProfileData?.cityInfo?.id });
+  const [selectedDob, setSelectedDob] = useState(moment(userProfileData?.userInfo?.dateOfBirth).toDate());
+  const [userGender, setUserGender] = useState(userProfileData?.userInfo?.gender);
   const [countriesDataArrayObj, setCountriesDataArrayObj] = useState();
-  const [selectedCountriesDataArrayObj, setSelectedCountriesDataArrayObj] =
-    useState({ value: 3, label: "ablc" });
+  const [stateDataArrayObj, setStateDataArrayObj] = useState();
+  const [cityDataArrayObj, setCityDataArrayObj] = useState();
+  const [patchForData, setPatchForData] = useState('')
 
+
+
+
+  const getCityStateList = async (type = "", inputValue = "") => {
+    if (type == "state") {
+      const res = selectedCountry?.value && await getStateData(selectedCountry?.value, inputValue)
+      setStateDataArrayObj(res)
+      return res
+    } else if (type = "city") {
+      const res = selectedState?.value && await getCityData(selectedState?.value, inputValue)
+      setCityDataArrayObj(res)
+      return res
+    }
+  }
+
+
+
+  const MaritalStatus = async () => {
+    const data = await getMaritalStatus()
+    setRelationStatus(data?.body);
+  };
   const {
     register,
     handleSubmit,
@@ -196,70 +98,80 @@ const UserProfileEdit = ({ countries }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmit = async (data) => {
-    console.log({ ...data, country: selectedCountriesDataArrayObj }, "dd");
+
+
+  const onSubmit = async () => {
+    const res = await updateUserData(patchForData)
+    if (res.status == 200) {
+      router.push('/user/user-profile')
+    }
   };
 
   const updatePersonalInfo = async (e) => {
     e.preventDefault();
 
-    console.log("dd");
 
-    // await dispatch(updateUserInfo(formdata));
-    // await dispatch(getUserDetails());
-    // Router.push("/user/user-profile-edit");
-  };
-  // console.log("formData state is a ", formdata.state);
-  const promiseOptions = async (inputValue) => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/users/country/all/${inputValue}`
-    );
-    const countri = await res.data.body;
-    let newArrayOBj1 = [];
-    countri.forEach((element) => {
-      const data = { value: element.id, label: element.name };
-      return newArrayOBj1.push(data);
-    });
-    setCountriesDataArrayObj(newArrayOBj1);
-    return newArrayOBj1;
   };
 
-  const getSelectedCountryObj = async (countryId) => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/users/country/${countryId}`
-    );
-    const selectedData = await res.data.body;
-    console.log(selectedData, "res");
-
-    setSelectedCountriesDataArrayObj({
-      value: selectedData.id,
-      label: selectedData.name,
-    });
-
-    //setCountriesDataArrayObj(newArrayOBj1);
+  const countryListOptions = async (inputValue) => {
+    const countries = await countriesList(inputValue)
+    setCountriesDataArrayObj(countries);
+    return countries;
   };
 
   useEffect(() => {
-    formdata.userInfo.country &&
-      getSelectedCountryObj(formdata.userInfo.country);
-  }, []);
+    updateValue("state", selectedState)
+  }, [selectedState])
 
-  const getCountry = async (inputValue) => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/users/country/all`
-    );
-    const countri = await res.data.body;
-    let newArrayOBj1 = [];
-    countri.forEach((element) => {
-      const data = { value: element.id, label: element.name };
-      return newArrayOBj1.push(data);
-    });
-    setCountriesDataArrayObj(newArrayOBj1);
-  };
   useEffect(() => {
-    getCountry();
-  }, []);
+    updateValue("country", selectedCountry)
+  }, [selectedCountry])
 
+  useEffect(() => {
+    updateValue("city", selectedCity)
+  }, [selectedCity])
+
+  useEffect(() => {
+    countryListOptions('')
+    MaritalStatus();
+    getCityStateList("state", "")
+    getCityStateList("city", "")
+    setPatchForData('')
+  }, []);
+  const updateValue = (type, e) => {
+    if (type == "state") {
+      setPatchForData({ ...patchForData, state: selectedState == '' ? null : e?.value?.toString() })
+      getCityStateList("city", "")
+    } else if (type == "country") {
+      setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : selectedCountry?.value?.toString() } })
+      getCityStateList("state", "")
+    }
+    else if (type == "city") {
+      setPatchForData({ ...patchForData, city: selectedCity == '' ? null : e?.value?.toString() })
+      // getCityStateList("city", "")
+    }
+  }
+
+  const handleDropDown = (e, dropdownsType) => {
+    if (dropdownsType == "country") {
+      setSelectedCountry(e)
+    } else if (dropdownsType == "state") {
+      setSelectedState(e)
+    }
+    else if (dropdownsType == "city") {
+      setSelectedCity(e)
+      // setPatchForData({ ...patchForData, city: selectedCity == '' ? null : selectedCity.value.toString() })
+    }
+    else if (dropdownsType == "dateOfBirth") {
+      //const Dob = moment(e).format("DD-MMM-yyyy")
+      setSelectedDob(e)
+      setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, dateOfBirth: e } })
+      // setPatchForData({ ...patchForData, dateOfBirth: e })
+    }
+  }
+
+
+  //console.log(userProfileData, "userProfileData");
   return (
     <>
       <Uploader
@@ -328,7 +240,7 @@ const UserProfileEdit = ({ countries }) => {
                                 <div className="profile-img-edit">
                                   <Image
                                     className="profile-pic"
-                                    src={user?.profilePictureInfo?.file?.location || img1}
+                                    src={userProfileData?.profilePictureInfo?.file?.location || img1}
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
@@ -357,7 +269,7 @@ const UserProfileEdit = ({ countries }) => {
                                 >
                                   <Image
                                     className=""
-                                    src={user?.coverPictureInfo?.file?.location || img2}
+                                    src={userProfileData?.coverPictureInfo?.file?.location || img2}
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
@@ -385,12 +297,14 @@ const UserProfileEdit = ({ countries }) => {
                           <Row className=" p-4">
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                {...register("firstName")}
+                                {...register("userInfo.firstName")}
                                 type="text"
-                                defaultValue={formdata.userInfo.firstName}
+                                defaultValue={userProfileData?.userInfo?.firstName}
                                 className="form-control"
                                 id="firstName"
                                 placeholder="firstName"
+                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, firstName: e.target.value == '' ? null : e.target.value } })}
+
                               />
                               <Form.Label
                                 htmlFor="firstName"
@@ -400,30 +314,20 @@ const UserProfileEdit = ({ countries }) => {
                               </Form.Label>
 
                               <p style={{ color: "red" }}>
-                                {errors.firstName?.message}{" "}
+                                {errors?.userInfo?.firstName?.message}{" "}
                               </p>
                             </Form.Floating>
 
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                // {...register("userInfo.lastName")}
+                                {...register("userInfo.middleName")}
                                 type="text"
-                                defaultValue={formdata.userInfo.middleName}
+                                defaultValue={userProfileData?.userInfo.middleName}
                                 className="form-control"
                                 id="middleName"
                                 placeholder="middleName"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    userInfo: {
-                                      ...formdata.userInfo,
-                                      middleName:
-                                        e.target.value == ""
-                                          ? null
-                                          : e.target.value,
-                                    },
-                                  })
-                                }
+                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, middleName: e.target.value == '' ? null : e.target.value } })}
+
                               />
                               <Form.Label
                                 htmlFor="middleName"
@@ -431,25 +335,23 @@ const UserProfileEdit = ({ countries }) => {
                               >
                                 Middle Name
                               </Form.Label>
+                              <p style={{ color: "red" }}>
+                                {errors?.userInfo?.middleName?.message}
+                              </p>
                             </Form.Floating>
 
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                {...register("lastName")}
+                                {...register("userInfo.lastName")}
                                 type="text"
-                                defaultValue={formdata.userInfo.lastName}
+                                defaultValue={userProfileData?.userInfo?.lastName}
                                 className="form-control"
                                 id="lastName"
                                 placeholder="lName"
-                              // onChange={(e) =>
-                              //   setFormdata({
-                              //     ...formdata,
-                              //     userInfo: {
-                              //       ...formdata.userInfo,
-                              //       lastName: e.target.value == "" ? null : e.target.value,
-                              //     },
-                              //   })
-                              // }
+
+                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, lastName: e.target.value == '' ? null : e.target.value } })}
+
+
                               />
                               <Form.Label
                                 htmlFor="lastName"
@@ -458,26 +360,20 @@ const UserProfileEdit = ({ countries }) => {
                                 Last Name
                               </Form.Label>
                               <p style={{ color: "red" }}>
-                                {errors.lastName?.message}
+                                {errors?.userInfo?.lastName?.message}
                               </p>
                             </Form.Floating>
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                // {...register("userInfo.lastName")}
+                                {...register("nickName")}
                                 type="text"
-                                defaultValue={formdata.nickName}
+                                defaultValue={userProfileData?.nickName}
                                 className="form-control"
                                 id="nickname"
                                 placeholder="nick name"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    nickName:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                  })
-                                }
+                                onChange={(e) => setPatchForData({ ...patchForData, nickName: e.target.value == '' ? null : e.target.value })}
+
+
                               />
                               <Form.Label
                                 htmlFor="lname"
@@ -488,24 +384,18 @@ const UserProfileEdit = ({ countries }) => {
                             </Form.Floating>
                             <Form.Floating className="form-group col-sm-12">
                               <Form.Control
-                                // {...register("userInfo.lastName")}
+                                {...register("profileDescription")}
                                 type="text"
-                                defaultValue={formdata.profileDescription}
+                                defaultValue={userProfileData?.profileDescription}
                                 className="form-control"
-                                id="nickname"
+                                id="profileDescription"
                                 placeholder="Profile Description"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    profileDescription:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                  })
-                                }
+                                onChange={(e) => setPatchForData({ ...patchForData, profileDescription: e.target.value == '' ? null : e.target.value })}
+
+
                               />
                               <Form.Label
-                                htmlFor="lname"
+                                htmlFor="profileDescription"
                                 className="form-label"
                               >
                                 Profile Description
@@ -526,23 +416,14 @@ const UserProfileEdit = ({ countries }) => {
                                   <div className="form-check custom-radio form-check-inline">
                                     <input
                                       type="radio"
-                                      // id="male"
+                                      id="male"
                                       name="gender"
                                       value="Male"
-                                      checked={
-                                        formdata.userInfo.gender == "Male" &&
-                                        true
-                                      }
+                                      {...register("userInfo.gender")}
                                       className="form-check-input"
-                                      onChange={(e) =>
-                                        setFormdata({
-                                          ...formdata,
-                                          userInfo: {
-                                            ...formdata.userInfo,
-                                            gender: e.target.value,
-                                          },
-                                        })
-                                      }
+                                      checked={userGender == "Male"}
+                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
+
                                     />
                                     <label
                                       className="form-check-label"
@@ -554,23 +435,16 @@ const UserProfileEdit = ({ countries }) => {
                                   <div className="form-check custom-radio form-check-inline">
                                     <input
                                       type="radio"
-                                      // id="female"
+                                      id="female"
                                       name="gender"
                                       value="Female"
-                                      checked={
-                                        formdata.userInfo.gender == "Female" &&
-                                        true
-                                      }
+                                      {...register("userInfo.gender")}
                                       className="form-check-input"
-                                      onChange={(e) =>
-                                        setFormdata({
-                                          ...formdata,
-                                          userInfo: {
-                                            ...formdata.userInfo,
-                                            gender: e.target.value,
-                                          },
-                                        })
-                                      }
+                                      checked={userGender == "Female"}
+                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
+
+
+
                                     />
                                     <label
                                       className="form-check-label"
@@ -582,23 +456,13 @@ const UserProfileEdit = ({ countries }) => {
                                   <div className="form-check custom-radio form-check-inline">
                                     <input
                                       type="radio"
-                                      // id="other"
+                                      id="other"
                                       name="gender"
                                       value="Other"
-                                      checked={
-                                        formdata.userInfo.gender == "Other" &&
-                                        true
-                                      }
+                                      {...register("userInfo.gender")}
                                       className="form-check-input"
-                                      onChange={(e) =>
-                                        setFormdata({
-                                          ...formdata,
-                                          userInfo: {
-                                            ...formdata.userInfo,
-                                            gender: e.target.value,
-                                          },
-                                        })
-                                      }
+                                      checked={userGender == "Other"}
+                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
                                     />
                                     <label
                                       className="form-check-label"
@@ -609,193 +473,78 @@ const UserProfileEdit = ({ countries }) => {
                                   </div>
                                 </div>
                               </fieldset>
-                              {/* <Controller
-                              control={control}
-                              name="gender"
-                              render={({ field: { onChange, value } }) => (
-                                <fieldset
-                                  className="form-group"
-                                  value={value}
-                                  checked={value}
-                                  onChange={onChange}
-                                >
-                                  <div>
-                                    <div className="form-check custom-radio form-check-inline">
-                                      <input
-                                        type="radio"
-                                        id="male"
-                                        name="gender"
-                                        value="1"
-                                        className="form-check-input"
-                                      />
-                                      <label
-                                        className="form-check-label"
-                                        htmlFor="male"
-                                      >
-                                        Male
-                                      </label>
-                                    </div>
-                                    <div className="form-check custom-radio form-check-inline">
-                                      <input
-                                        type="radio"
-                                        id="female"
-                                        name="gender"
-                                        value="2"
-                                        className="form-check-input"
-                                      />
-                                      <label
-                                        className="form-check-label"
-                                        htmlFor="female"
-                                      >
-                                        Female
-                                      </label>
-                                    </div>
-                                    <div className="form-check custom-radio form-check-inline">
-                                      <input
-                                        type="radio"
-                                        id="other"
-                                        name="gender"
-                                        value="3"
-                                        className="form-check-input"
-                                      />
-                                      <label
-                                        className="form-check-label"
-                                        htmlFor="other"
-                                      >
-                                        Other
-                                      </label>
-                                    </div>
-                                  </div>
-                                </fieldset>
-                              )}
-                            /> */}
+
                             </Form.Group>
-                            <Form.Group className="form-group col-sm-6 form-floating date-input">
+                            <Form.Group className="form-group col-sm-6 form-floating date-input mt-3">
                               <Form.Label htmlFor="dob" className="form-label">
                                 Date Of Birth
                               </Form.Label>
-                              <DatePicker
-                                selected={moment(
-                                  formdata.userInfo.dateOfBirth
-                                ).toDate()}
-                                preventOpenOnFocus={true}
-                                dateFormat="dd-MMM-yyyy"
-                                placeholderText="DD-MMM-YYYY"
-                                // onBlur={onChange}
-                                onChange={(date) => {
-                                  const formatedDate =
-                                    moment(date).format("dd-MMM-yyyy");
-                                  // console.log("date", formatedDate);
-                                  setFormdata({
-                                    ...formdata,
-                                    userInfo: {
-                                      ...formdata.userInfo,
-                                      dateOfBirth: date,
-                                    },
-                                  });
-                                  // onBlur();
-                                }}
-                                className="form-control"
+                              <Controller
+                                control={control}
+                                name="dateOfBirth"
+                                render={({ field }) => (
+                                  <DatePicker
+                                    selected={selectedDob}
+                                    {...field}
+                                    preventOpenOnFocus={true}
+                                    dateFormat="dd-MMM-yyyy"
+                                    placeholderText="DD-MMM-YYYY"
+                                    // onBlur={onChange}
+                                    onChange={(e) => handleDropDown(e, "dateOfBirth")}
+                                    className="form-control"
+                                    id="dob"
+                                  />
+                                )}
                               />
-                              {/* <Controller
-                              name="userInfo.dateOfBirth"
-                              control={control}
-                              render={({
-                                field: { name, value, onChange, onBlur },
-                              }) => (
-                                <DatePicker
-                                  selected={value}
-                                  preventOpenOnFocus={true}
-                                  dateFormat="dd-MMM-yyyy"
-                                  placeholderText="dd-MMM-yyyy"
-                                  onBlur={onBlur}
-                                  onChange={(date) => {
-                                    onChange(date);
-                                    // onBlur();
-                                  }}
-                                  className="form-control"
-                                />
-                              )}
-                            /> */}
                             </Form.Group>
                             <Form.Floating className="form-group col-sm-6">
-                              <Form.Select
-                                // defaultValue={user.maritalStatusInfo? user.maritalStatusInfo:''}
-                                value={formdata.maritalStatus}
-                                className="form-select"
-                                aria-label="Default select example"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    maritalStatus:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                  })
-                                }
-                              >
-                                <option value="">Select Status</option>
-                                {relationStatus &&
-                                  relationStatus.map((rel) => {
-                                    return (
-                                      <option key={rel._id} value={rel._id}>
-                                        {rel.dropdownValue}
-                                      </option>
-                                    );
-                                  })}
-                              </Form.Select>
+                              {/* {userProfileData?.maritalStatusInfo?._id} */}
+                              {relationStatus &&
+
+                                <Form.Select
+                                  {...register("maritalStatus")}
+                                  // defaultValue={"63a573a698c4e4579c299d37"}
+                                  className="form-select"
+                                  aria-label="Default select example"
+                                  onChange={(e) => setPatchForData({ ...patchForData, maritalStatus: e.target.value == '' ? null : e.target.value })}
+                                >
+                                  <option value="">Select Status</option>
+                                  {relationStatus &&
+                                    relationStatus.map((rel) => {
+                                      return (
+                                        <option selected={userProfileData?.maritalStatusInfo?._id == rel._id ? true : false} key={rel._id} value={rel._id}>
+                                          {rel.dropdownValue}
+                                        </option>
+                                      );
+                                    })}
+                                </Form.Select>
+                              }
                               <Form.Label className="form-label">
                                 Marital Status
                               </Form.Label>
                             </Form.Floating>
 
-                            {/* <Form.Floating className="form-group col-sm-6">
-                            <Form.Select
-                              value={formdata.userInfo.country}
-                              className="form-select"
-                              aria-label="Default select example 3"
-                              onChange={(e) => handleCountry(e)}
-                            >
-                              <option value="" >Select Country</option>
-                              {countries?.map((country) => (
-                                <option key={country.id} value={country.id}>
-                                  {country.name}
-                                </option>
-                              ))}
-                            </Form.Select>
+                            <div className="position-relative form-group col-sm-6 ">
 
+                              {countriesDataArrayObj && selectedCountry &&
+                                (
+                                  <Controller
+                                    name="country"
+                                    control={control}
+                                    render={({ field }) => (
+                                      <AsyncSelect
+                                        {...field}
+                                        defaultOptions={countriesDataArrayObj}
+                                        loadOptions={countryListOptions}
+                                        classNames="form-select"
+                                        id="floatingSelect"
+                                        value={selectedCountry}
+                                        onChange={(e) => handleDropDown(e, "country")}
+                                      // defaultInputValue={{ value: 101, label: "sdjfl" }}
 
-                            <Form.Label className="form-label">
-                              Country
-                            </Form.Label>
-                          </Form.Floating> */}
-
-                            <div className="form-floating form-group col-sm-6">
-                              {countriesDataArrayObj &&
-                                formdata.userInfo.country && (
-                                  <>
-                                    {console.log(
-                                      formdata.userInfo.country,
-                                      "sdfsfsdfd"
+                                      />
                                     )}
-                                    <Controller
-                                      name="country"
-                                      control={control}
-                                      render={({ field }) => (
-                                        <AsyncSelect
-                                          {...field}
-                                          defaultOptions={countriesDataArrayObj}
-                                          loadOptions={promiseOptions}
-                                          classNames="form-select"
-                                          id="floatingSelect"
-                                          defaultValue={
-                                            selectedCountriesDataArrayObj
-                                          }
-                                        // hideSelectedOptions={false}
-                                        />
-                                      )}
-                                    />
-                                  </>
+                                  />
                                 )}
 
                               <label
@@ -809,200 +558,117 @@ const UserProfileEdit = ({ countries }) => {
                                   width: "auto",
                                   height: "auto",
                                 }}
-                                for="floatingSelect"
+                                htmlFor="floatingSelect"
                               >
                                 Country
                               </label>
                             </div>
 
-                            {/* <Form.Floating className="form-group col-sm-6">
-                              <Select
-                                className="basic-single"
-                                classNamePrefix="select"
-                                // defaultValue={colourOptions[0]}
-                                isDisabled={isDisabled}
-                                isLoading={isLoading}
-                                isClearable={isClearable}
-                                isRtl={isRtl}
-                                isSearchable={isSearchable}
-                                name="color"
-                                options={countries}
-                              />
-                          </Form.Floating> */}
-                            {/* <Form.Floating className="form-group col-sm-6">
-                              <AsyncSelect 
-                                // value={formdata.userInfo.country}
-                                // defaultInputValue={setCountryLabel}
-                                defaultOptions={countriesDataArrayObj} 
-                                loadOptions={promiseOptions} 
-                                onChange={(selectedOptions ,e) => {
-                                  setFormdata({
-                                    ...formdata,
-                                    userInfo:{
-                                      ...formdata.userInfo, country:selectedOptions.value
-                                    }
-                                  }),
-                                  setCountryLabel(selectedOptions.label)
-                                }}
-                              />
-                            <Form.Label className="form-label">
-                              Country:
-                            </Form.Label>
-                          </Form.Floating> */}
-                            <Form.Floating className="form-group col-sm-6">
-                              <Form.Select
-                                value={formdata.state}
-                                className="form-select"
-                                aria-label="Default select example 4"
-                                onChange={(e) => handleState(e)}
-                              >
-                                <option value="">Select State</option>
-                                {allStates.map((ele) => {
-                                  return (
-                                    <option key={ele.id} value={ele.id}>
-                                      {ele.name}
-                                    </option>
-                                  );
-                                })}
-                              </Form.Select>
-                              <Form.Label className="form-label">
+
+                            <div className="position-relative  form-group col-sm-6 mt-3">
+
+
+                              <div>
+                                <AsyncSelect
+                                  defaultOptions={stateDataArrayObj}
+                                  loadOptions={(e) => getCityStateList("state", e)}
+                                  classNames="form-select"
+                                  id="floatingSelect"
+                                  value={selectedState}
+                                  onChange={(e) => handleDropDown(e, "state")}
+
+                                />
+
+                              </div>
+
+                              <Form.Label style={{
+                                position: "absolute",
+                                top: "-16px",
+                                left: "11px",
+                                zIndex: "1",
+                                background: "rgb(255, 255, 255)",
+                                padding: "0px 6px",
+                                width: "auto",
+                                height: "auto",
+                              }} className="form-label">
                                 State
                               </Form.Label>
-                            </Form.Floating>
-                            <Form.Floating className="form-group col-sm-6">
-                              {/* <Form.Control
-                              // {...register("city")}
-                              type="text"
-                              defaultValue={formdata.city}
-                              className="form-control"
-                              id="cname"
-                              placeholder="Atlanta"
-                              onChange={(e) =>
-                                setFormdata({
-                                  ...formdata,
-                                  city: null,
-                                })
-                              }
-                            />
-                            <Form.Label htmlFor="cname" className="form-label">
-                              City:
-                            </Form.Label> */}
-                              <Form.Select
-                                value={formdata.city}
-                                className="form-select"
-                                aria-label="Default select example 4"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    city:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                  })
-                                }
-                              >
-                                <option value="">Select City</option>
-                                {allCities.map((ele) => {
-                                  return (
-                                    <option key={ele.id} value={ele.id}>
-                                      {ele.name}
-                                    </option>
-                                  );
-                                })}
-                              </Form.Select>
-                              <Form.Label className="form-label">
+                            </div>
+                            <div className="position-relative  form-group col-sm-6 mt-3 ">
+
+
+                              <div>
+                                <AsyncSelect
+                                  defaultOptions={cityDataArrayObj}
+                                  loadOptions={(e) => getCityStateList("city", e)}
+                                  classNames="form-select"
+                                  id="floatingSelect"
+                                  value={selectedCity}
+                                  onChange={(e) => handleDropDown(e, "city")}
+                                // defaultInputValue={{ value: 101, label: "sdjfl" }}
+
+                                />
+
+                              </div>
+
+                              <Form.Label style={{
+                                position: "absolute",
+                                top: "-16px",
+                                left: "11px",
+                                background: "rgb(255, 255, 255)",
+                                padding: "0px 6px",
+                                width: "auto",
+                                height: "auto",
+                              }} className="form-label">
                                 City
                               </Form.Label>
-                            </Form.Floating>
-                            {/* <Form.Floating className="form-group col-sm-12"> */}
-                            {/* <textarea
-                              // as="textarea"
-                              className="form-control"
-                              rows={5}
-                              
-                              style={{ lineHeight: "32px" }}
-                              placeholder=" 37 Cardinal Lane
-                                                  Petersburg, VA 23803
-                                                  United States of America
-                                                  Zip Code: 85001"
-                              onChange={(e) =>
-                                setFormdata({
-                                  ...formdata,
-                                  address: e.target.value,
-                                })
-                              }
-                            >{formdata.address}</textarea> */}
-                            {/* <Form.Control as="textarea" rows={10}
-                              className="form-control"
+                            </div>
 
-                              onChange={(e) =>
-                                setFormdata({
-                                  ...formdata,
-                                  address: e.target.value,
-                                })
-                              }
-                              style={{ lineHeight: "32px" }}
-                              placeholder="enger"
-                            >
-
-                              dfdf
-                            </Form.Control> */}
-                            {/* <Form.Label className="form-label">
-                              Address:
-                            </Form.Label>
-                          </Form.Floating> */}
-
-                            <Form.Floating className="mb-3">
+                            <Form.Floating className="mb-3 mt-3">
                               <Form.Control
                                 className="form-control"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    address:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                  })
-                                }
+                                {...register("address")}
                                 style={{ lineHeight: "32px" }}
                                 placeholder="Entere Address"
                                 as="textarea"
                                 rows={5}
-                                defaultValue={formdata.address}
+                                onChange={(e) => setPatchForData({ ...patchForData, address: e.target.value == '' ? null : e.target.value })}
+
+                                defaultValue={userProfileData?.address}
                               />
                               <Form.Label>Address</Form.Label>
                             </Form.Floating>
-                            <Form.Floating className="form-group col-sm-6">
+
+                            <Form.Floating className="form-group col-sm-6 mt-3">
                               <Form.Control
                                 // {...register("city")}
+                                {...register("pinCode")}
+
                                 type="text"
-                                defaultValue={formdata.pinCode}
+                                defaultValue={userProfileData?.pinCode == null ? 0 : userProfileData?.pinCode}
                                 className="form-control"
                                 id="cname"
                                 placeholder="Atlanta"
-                                onChange={(e) =>
-                                  setFormdata({
-                                    ...formdata,
-                                    pinCode:
-                                      e.target.value == ""
-                                        ? null
-                                        : e.target.value,
-                                    Label,
-                                  })
-                                }
+                                onChange={(e) => setPatchForData({ ...patchForData, pinCode: e.target.value == '' ? null : e.target.value })}
+
                               />
                               <Form.Label
                                 htmlFor="cname"
                                 className="form-label"
+
                               >
                                 Pincode
                               </Form.Label>
+                              <p style={{ color: "red" }}>
+                                {errors.pinCode?.message}
+                              </p>
                             </Form.Floating>
                           </Row>
                           <div className="p-4 pt-0">
+
                             <Button
                               type="submit"
-                              className="btn btn-primary me-2"
+                              className={`btn btn-primary me-2 ${patchForData == '' ? 'disabled' : ''} `}
                             >
                               Submit
                             </Button>
@@ -1253,51 +919,21 @@ const UserProfileEdit = ({ countries }) => {
                               type="text"
                               className="form-control"
                               id="cno"
-                              defaultValue={formdata.phoneNumber}
-                              onChange={(e) =>
-                                setFormdata({
-                                  ...formdata,
-                                  phoneNumber: e.target.value,
-                                })
-                              }
+                              defaultValue={userProfileData?.phoneNumber}
+
                             />
                             <Form.Label htmlFor="cno" className="form-label">
                               Contact Number
                             </Form.Label>
                           </Form.Floating>
-                          {/* <Form.Floating className="form-group">
-                          <Form.Control
-                            
-                            type="text"
-                            className="form-control"
-                            id="email"
-                            value={formdata.userInfo.userName}
-                            // onChange={(e) =>
-                            //   setFormdata({
-                            //     ...formdata,
-                            //     userInfo: {
-                            //       ...formdata.userInfo,
-                            //       userName: e.target.value,
-                            //     },
-                            //   })
-                            // }
-                          />
-                          <Form.Label htmlFor="email" className="form-label">
-                            Username:
-                          </Form.Label>
-                        </Form.Floating> */}
+
                           <Form.Floating className="form-group">
                             <Form.Control
                               type="text"
                               className="form-control"
                               id="url"
-                              defaultValue={formdata.siteUrl}
-                              onChange={(e) =>
-                                setFormdata({
-                                  ...formdata,
-                                  siteUrl: e.target.value,
-                                })
-                              }
+                              defaultValue={userProfileData?.siteUrl}
+
                             />
                             <Form.Label htmlFor="url" className="form-label">
                               Site Url
@@ -1329,27 +965,4 @@ const UserProfileEdit = ({ countries }) => {
 
 export default UserProfileEdit;
 
-export const getServerSideProps = async () => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/users/country/all`
-  );
-  const countries = await getCountryData();
 
-  // const res = await axios.get(
-  //   `${process.env.NEXT_PUBLIC_API_PATH}/users/country/all`
-  // );
-  // const countries = await res.data.body;
-
-  // let newArrayOBj1 = []
-
-  // countries.forEach(element => {
-  //   const data = { value: element.id, label: element.name }
-  //   return newArrayOBj1.push(data)
-  // });
-
-  return {
-    props: {
-      countries,
-    },
-  };
-};

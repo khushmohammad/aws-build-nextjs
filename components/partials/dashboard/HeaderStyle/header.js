@@ -57,8 +57,9 @@ const Header = () => {
       2
     )}...`;
 
-
-  const friendRequestList = useSelector((state) => state?.friendsRequests?.FriendsRequests)
+  const friendRequestList = useSelector(
+    (state) => state?.friendsRequests?.FriendsRequests
+  );
 
   return (
     <>
@@ -556,8 +557,9 @@ const Header = () => {
             </div>
 
             <div
-              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${show1 === true ? "show" : ""
-                } `}
+              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${
+                show1 === true ? "show" : ""
+              } `}
               tabIndex="-1"
               id="offcanvasBottom"
               style={{ visibility: `${show1 === true ? "visible" : "hidden"}` }}
@@ -720,7 +722,10 @@ const Header = () => {
                             </div>
                           </div> */}
                           <div className="text-center">
-                            <Link href="/friends/friend-request" className=" btn text-primary">
+                            <Link
+                              href="/friends/friend-request"
+                              className=" btn text-primary"
+                            >
                               View More Request
                             </Link>
                           </div>
@@ -996,8 +1001,8 @@ const Header = () => {
                         alt="user"
                         height={100}
                         width={100}
-                      // blurDataURL={profileImage}
-                      // placeholder="blur"
+                        // blurDataURL={profileImage}
+                        // placeholder="blur"
                       />
                       <div className="caption">
                         <h6 className="mb-0 line-height">

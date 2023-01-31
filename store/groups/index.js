@@ -4,8 +4,11 @@ import {
   getAllGroups,
   getGroupByGroupId,
   getGroupPrivacy,
-  inviteFriendOnGroup,
+  inviteFriend,
   getPostByPostId,
+  getInvitationList,
+  invitationAcceptAndDelineService,
+  groupJoinRequestList,
 } from "../../services/groups.service";
 
 const initialState = {
@@ -15,6 +18,8 @@ const initialState = {
   groupPrivacy: null,
   groupFeeds: null,
   postDetails: null,
+  groupInvited: null,
+  joinRequestList: null,
 };
 
 const GroupSlice = createSlice({
@@ -39,6 +44,12 @@ const GroupSlice = createSlice({
       })
       .addCase(getPostDetails.fulfilled, (state, action) => {
         state.postDetails = action.payload;
+      })
+      .addCase(groupInvitationList.fulfilled, (state, action) => {
+        state.groupInvited = action.payload;
+      })
+      .addCase(groupJoinRequestLists.fulfilled, (state, action) => {
+        state.joinRequestList = action.payload;
       });
   },
 });
@@ -53,9 +64,8 @@ export const getAllGroupsList = createAsyncThunk(
 
 export const inviteFriendsOnGroup = createAsyncThunk(
   "grouips/inviteFriend",
-  async (memberId, groupId) => {
-    console.log("gID:", groupId);
-    const data = await inviteFriendOnGroup(memberId, groupId);
+  async ({ memberId, groupId }) => {
+    const data = await inviteFriend(memberId, groupId);
     return data;
   }
 );
@@ -88,6 +98,22 @@ export const getPostDetails = createAsyncThunk(
   "groups/postDetails",
   async (groupId) => {
     const data = await getPostByPostId(groupId);
+    return data;
+  }
+);
+
+export const groupInvitationList = createAsyncThunk(
+  "groups/invitationList",
+  async () => {
+    const data = await getInvitationList();
+    return data;
+  }
+);
+
+export const groupJoinRequestLists = createAsyncThunk(
+  "groups/joinRequestList",
+  async (groupId) => {
+    const data = await groupJoinRequestList(groupId);
     return data;
   }
 );
