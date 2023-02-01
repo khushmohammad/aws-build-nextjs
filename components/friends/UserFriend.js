@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import Card from '../Card'
 import {useSelector} from 'react-redux'
+import user1 from "../../public/assets/images/user/1.jpg";
 
 
 import user05 from "../../public/assets/images/user/05.jpg";
@@ -35,7 +36,7 @@ const UserFriend = () => {
                                     <Image
                                       loading="lazy"
                                       src={
-                                        data.profileInfo?.profilePictureInfo?.file?.location
+                                        data.profileInfo?.profilePictureInfo?.file?.location || user1
                                       }
                                       alt="gallary"
                                       className="img-fluid"
