@@ -213,6 +213,7 @@ const Register = () => {
                 />
                 <label htmlFor="floatingPassword">Password</label>
                 <span
+                  role="button"
                   onClick={() => setShowPassword((prevState) => !prevState)}
                   className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
                 >
@@ -232,6 +233,7 @@ const Register = () => {
                 />
                 <label htmlFor="cfrmPassword">Confirm Password</label>
                 <span
+                  role="button"
                   onClick={() =>
                     setShowConfirmPassword((prevState) => !prevState)
                   }

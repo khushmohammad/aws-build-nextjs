@@ -37,7 +37,7 @@ const AllFeedsSlice = createSlice({
 export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
-    console.log(params);
+    // console.log(params);
     const data =
       params.activePage == "home"
         ? await getAllFeeds(params.page, params.limit)

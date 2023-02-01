@@ -66,7 +66,7 @@ const FriendList = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            {user?.map((user, index) => (
+            {user && user?.map((user, index) => (
               <Col md={6} key={index}>
                 <Card className=" card-block card-stretch card-height">
                   <Card.Body className=" profile-page p-0">

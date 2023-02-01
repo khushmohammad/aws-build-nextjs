@@ -13,7 +13,7 @@ const initialState = {
   allUser: null,
   userInfo: null,
   status: "loading",
-  userProfile: null,
+  userProfileDetail: null,
 };
 
 const ProfileSlice = createSlice({
@@ -50,7 +50,7 @@ const ProfileSlice = createSlice({
         }
       })
       .addCase(getUserInfoById.fulfilled, (state, action) => {
-        state.userProfile = action.payload;
+        state.userProfileDetail = action.payload;
       });
   },
 });

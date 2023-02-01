@@ -17,7 +17,7 @@ function PostMediaGrid({ mediaContent }) {
 
             {mediaContent && mediaContent.file && <>
                 <>
-                    <Link href={`post/post-details/${mediaContent._id}`} >
+                    <Link href={`/post/post-details/${mediaContent._id}`} >
                         <MediaComponent mediaCount={mediaContent.file.length} mediaData={mediaContent.file} />
                     </Link>
                 </>

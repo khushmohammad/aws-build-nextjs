@@ -25,17 +25,17 @@ const Post = ({ activePage, groupId }) => {
   const [postID, setPostID] = useState();
 
   const [page, setPage] = useState(1);
-  const [noMorePost, setNoMorePost] = useState(false);
+
   const [posts, setposts] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
 
   const StorePosts = useSelector((state) => state?.allFeed?.allFeeds);
   const loading = useSelector((state) => state?.allFeed?.status);
-  const apiError = useSelector((state) => state?.allFeed?.error);
+
   const limit = 5;
 
-  // console.log(posts, StorePosts);
+  console.log(activePage, groupId, "activePage");
   const GetPostNet = async () => {
     const userIdFromQueryPath = router?.query?.id;
     if (userIdFromQueryPath && userIdFromQueryPath) {
@@ -47,7 +47,7 @@ const Post = ({ activePage, groupId }) => {
           uerId: userIdFromQueryPath,
         })
       );
-    } else if (router.pathname === "/groups/[groupId]") {
+    } else if (activePage == "group") {
       dispatch(getGroupFeeds(groupId));
     } else {
       dispatch(
@@ -63,8 +63,8 @@ const Post = ({ activePage, groupId }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-        ? setposts((prev) => [...prev, ...StorePosts])
-        : "";
+          ? setposts((prev) => [...prev, ...StorePosts])
+          : "";
     }
   }, [StorePosts]);
 

@@ -15,15 +15,15 @@ const schema = yup
   })
   .required();
 
-  // schema.validate({
-  //   userName:"not.a.valid.email"
-  // })
+// schema.validate({
+//   userName:"not.a.valid.email"
+// })
 
 const Login = () => {
   const [ShowPage, setShowPage] = useState(null);
   const [ApiError, setApiError] = useState();
   const [showPassword, setShowPassword] = useState(false);
-  const [showEmail,setShowEmail] = useState(false)
+  const [showEmail, setShowEmail] = useState(false);
 
   const router = useRouter();
 
@@ -98,7 +98,7 @@ const Login = () => {
                 <Form.Control
                   {...register("userName")}
                   id="floatingInputCustom"
-                  type={showEmail?"text":"email"}
+                  type={showEmail ? "text" : "email"}
                   placeholder="name@example.com"
                   className="form-control"
                   required
@@ -119,6 +119,7 @@ const Login = () => {
                 />
                 <label htmlFor="floatingPassword">Password</label>
                 <span
+                  role="button"
                   onClick={() => setShowPassword((prevState) => !prevState)}
                   className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
                 >
@@ -165,7 +166,10 @@ const Login = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href="" onClick={() => loginWithProvider("google")}>
+                    <Link
+                      href=""
+                      // onClick={() => loginWithProvider("google")}
+                    >
                       <svg
                         version="1.1"
                         xmlns="http://www.w3.org/2000/svg"

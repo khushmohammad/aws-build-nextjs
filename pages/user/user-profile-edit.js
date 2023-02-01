@@ -69,7 +69,34 @@ const UserProfileEdit = () => {
   const [patchForData, setPatchForData] = useState('')
 
 
+  useEffect(() => {
+    updateValue("state", selectedState)
+  }, [selectedState])
 
+  useEffect(() => {
+    updateValue("country", selectedCountry)
+
+
+  }, [selectedCountry])
+
+  useEffect(() => {
+    updateValue("city", selectedCity)
+  }, [selectedCity])
+
+  useEffect(() => {
+    countryListOptions('')
+    MaritalStatus();
+    getCityStateList("state", "")
+    getCityStateList("city", "")
+    setPatchForData('')
+  }, []);
+
+
+  const countryListOptions = async (inputValue) => {
+    const countries = await countriesList(inputValue)
+    setCountriesDataArrayObj(countries);
+    return countries;
+  };
 
   const getCityStateList = async (type = "", inputValue = "") => {
     if (type == "state") {
@@ -100,44 +127,12 @@ const UserProfileEdit = () => {
   });
 
 
-  const onSubmit = async () => {
-    const res = await updateUserData(patchForData)
-    if (res.status == 200) {
-      router.push('/user/user-profile')
-    }
-  };
-
-  const updatePersonalInfo = async (e) => {
-    e.preventDefault();
 
 
-  };
 
-  const countryListOptions = async (inputValue) => {
-    const countries = await countriesList(inputValue)
-    setCountriesDataArrayObj(countries);
-    return countries;
-  };
 
-  useEffect(() => {
-    updateValue("state", selectedState)
-  }, [selectedState])
 
-  useEffect(() => {
-    updateValue("country", selectedCountry)
-  }, [selectedCountry])
-
-  useEffect(() => {
-    updateValue("city", selectedCity)
-  }, [selectedCity])
-
-  useEffect(() => {
-    countryListOptions('')
-    MaritalStatus();
-    getCityStateList("state", "")
-    getCityStateList("city", "")
-    setPatchForData('')
-  }, []);
+ 
   const updateValue = (type, e) => {
     if (type == "state") {
       setPatchForData({ ...patchForData, state: selectedState == '' ? null : e?.value?.toString() })
@@ -155,8 +150,12 @@ const UserProfileEdit = () => {
   const handleDropDown = (e, dropdownsType) => {
     if (dropdownsType == "country") {
       setSelectedCountry(e)
+      setSelectedState('')
+      setSelectedCity('')
     } else if (dropdownsType == "state") {
       setSelectedState(e)
+      setSelectedCity('')
+
     }
     else if (dropdownsType == "city") {
       setSelectedCity(e)
@@ -169,7 +168,13 @@ const UserProfileEdit = () => {
       // setPatchForData({ ...patchForData, dateOfBirth: e })
     }
   }
-
+  
+  const onSubmit = async () => {
+    const res = await updateUserData(patchForData)
+    if (res.status == 200) {
+      router.push('/user/user-profile')
+    }
+  };
 
   //console.log(userProfileData, "userProfileData");
   return (
@@ -913,14 +918,16 @@ const UserProfileEdit = () => {
                         </div>
                       </Card.Header>
                       <Card.Body>
-                        <Form onSubmit={updatePersonalInfo}>
+                        <Form onSubmit={handleSubmit(onSubmit)}>
                           <Form.Floating className="form-group">
                             <Form.Control
+                              {...register("phoneNumber")}
+                              name="phoneNumber"
                               type="text"
                               className="form-control"
                               id="cno"
                               defaultValue={userProfileData?.phoneNumber}
-
+                              onChange={(e) => setPatchForData({ ...patchForData, phoneNumber: e.target.value })}
                             />
                             <Form.Label htmlFor="cno" className="form-label">
                               Contact Number
@@ -932,8 +939,10 @@ const UserProfileEdit = () => {
                               type="text"
                               className="form-control"
                               id="url"
+                              {...register("siteUrl")}
+                              name="siteUrl"
                               defaultValue={userProfileData?.siteUrl}
-
+                              onChange={(e) => setPatchForData({ ...patchForData, siteUrl: e.target.value })}
                             />
                             <Form.Label htmlFor="url" className="form-label">
                               Site Url

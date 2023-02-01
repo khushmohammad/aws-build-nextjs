@@ -3,6 +3,7 @@ import { getNonFriendList } from "../../services/friends.service";
 
 const initialState = {
     status: "loading",
+    NonFriendList: []
 };
 
 const NonFriendListSlice = createSlice({
@@ -15,18 +16,17 @@ const NonFriendListSlice = createSlice({
             .addCase(getNonFriendsList.pending, (state, action) => {
                 state.status = "loading";
                 state.error = "";
-                state.NonFriendList = [];
             })
             .addCase(getNonFriendsList.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.NonFriendList = action.payload;
+               // console.log(action.payload, "action.payload");
+                state.NonFriendList = action.payload ? action.payload : [];
                 state.error = "";
             })
             .addCase(getNonFriendsList.rejected, (state, action) => {
                 state.status = "failed";
                 //console.log(action,"action");
                 state.error = action.error.message;
-                state.NonFriendList = [];
             });
     },
 });

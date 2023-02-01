@@ -31,8 +31,19 @@ import img6 from "../../public/assets/images/page-img/profile-bg6.jpg";
 import img7 from "../../public/assets/images/page-img/profile-bg7.jpg";
 import img9 from "../../public/assets/images/page-img/profile-bg9.jpg";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { allJoinedGroupList } from "../../store/groups";
 
-const Groups = () => {
+const JoinedGroup = () => {
+  const dispatch = useDispatch();
+
+  const groups = useSelector((state) => state?.groups?.joinedGroup);
+
+  useEffect(() => {
+    dispatch(allJoinedGroupList());
+  }, []);
+
   return (
     <Default>
       <Head>
@@ -42,98 +53,114 @@ const Groups = () => {
       <div id="content-page" className="content-page">
         <Container>
           <div className="d-grid gap-3 d-grid-template-1fr-19">
-            {/* <Card className="mb-0">
-              <div className="top-bg-image">
-                <Image src={img1} className="img-fluid w-100" alt="group-bg" />
-              </div>
-              <Card.Body className=" text-center">
-                <div className="group-icon">
+            {groups?.map((group, index) => (
+              <Card className="mb-0">
+                <div className="top-bg-image">
                   <Image
-                    src={gi1}
-                    alt="profile-img"
-                    className="rounded-circle img-fluid avatar-120"
+                    src={img1}
+                    className="img-fluid w-100"
+                    alt="group-bg"
                   />
                 </div>
-                <div className="group-info pt-3 pb-3">
-                  <h4>
-                    <Link href="/groups/groupID">Designer</Link>
-                  </h4>
-                  <p>Lorem Ipsum data</p>
-                </div>
-                <div className="group-details d-inline-block pb-3">
-                  <ul className="d-flex align-items-center justify-content-between list-inline m-0 p-0">
-                    <li className="pe-3 ps-3">
-                      <p className="mb-0">Post</p>
-                      <h6>600</h6>
-                    </li>
-                    <li className="pe-3 ps-3">
-                      <p className="mb-0">Member</p>
-                      <h6>320</h6>
-                    </li>
-                    <li className="pe-3 ps-3">
-                      <p className="mb-0">Visit</p>
-                      <h6>1.2k</h6>
-                    </li>
-                  </ul>
-                </div>
-                <div className="group-member mb-3">
-                  <div className="iq-media-group">
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user05}
-                        alt=""
-                      />
-                    </Link>
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user06}
-                        alt=""
-                      />
-                    </Link>
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user07}
-                        alt=""
-                      />
-                    </Link>
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user08}
-                        alt=""
-                      />
-                    </Link>
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user09}
-                        alt=""
-                      />
-                    </Link>
-                    <Link href="#" className="iq-media">
-                      <Image
-                        className="img-fluid avatar-40 rounded-circle"
-                        src={user10}
-                        alt=""
-                      />
-                    </Link>
+                <Card.Body className=" text-center">
+                  <div className="group-icon">
+                    <Image
+                      src={group?.groupId?.groupImage?.file?.location || gi1}
+                      alt="profile-img"
+                      className="rounded-circle img-fluid avatar-120"
+                      height={100}
+                      width={100}
+                    />
                   </div>
+                  <div className="group-info pt-3 pb-3">
+                    <h4>
+                      <Link href="/groups/groupID">
+                        {group?.groupId?.groupName}
+                      </Link>
+                    </h4>
+                    <p>Lorem Ipsum data</p>
+                  </div>
+                  <div className="group-details d-inline-block pb-3">
+                    <ul className="d-flex align-items-center justify-content-between list-inline m-0 p-0">
+                      <li className="pe-3 ps-3">
+                        <p className="mb-0">Post</p>
+                        <h6>600</h6>
+                      </li>
+                      <li className="pe-3 ps-3">
+                        <p className="mb-0">Member</p>
+                        <h6>320</h6>
+                      </li>
+                      <li className="pe-3 ps-3">
+                        <p className="mb-0">Visit</p>
+                        <h6>1.2k</h6>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="group-member mb-3">
+                    <div className="iq-media-group">
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user05}
+                          alt=""
+                        />
+                      </Link>
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user06}
+                          alt=""
+                        />
+                      </Link>
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user07}
+                          alt=""
+                        />
+                      </Link>
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user08}
+                          alt=""
+                        />
+                      </Link>
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user09}
+                          alt=""
+                        />
+                      </Link>
+                      <Link href="#" className="iq-media">
+                        <Image
+                          className="img-fluid avatar-40 rounded-circle"
+                          src={user10}
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/groups/${group?.groupId?._id}`}
+                    type="submit"
+                    className="btn btn-primary d-block w-100"
+                  >
+                    Visit
+                  </Link>
+                </Card.Body>
+              </Card>
+            ))}
+            {groups && groups.length === 0 ? (
+              <Card className="mb-0">
+                <div className="card-body text-center">
+                  <h5 className="card-title">
+                    You have not joined any group yet!
+                  </h5>
                 </div>
-                <button type="submit" className="btn btn-primary d-block w-100">
-                  Visit
-                </button>
-              </Card.Body>
-            </Card> */}
-            <Card className="mb-0">
-              <div className="card-body text-center">
-                <h5 className="card-title">
-                  You have not joined any group yet!
-                </h5>
-              </div>
-            </Card>
+              </Card>
+            ) : null}
           </div>
         </Container>
       </div>
@@ -141,4 +168,4 @@ const Groups = () => {
   );
 };
 
-export default Groups;
+export default JoinedGroup;

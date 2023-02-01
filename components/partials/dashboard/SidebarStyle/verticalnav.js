@@ -3405,7 +3405,7 @@ const VerticalNav = React.memo(() => {
           } nav-item `}
         >
           <Link
-            className={`${location.pathname === "/" ? "active" : ""} nav-link `}
+            className={`${location.pathname === "#" ? "active" : ""} nav-link `}
             aria-current="page"
             onClick={() => signOut()}
             href="#"

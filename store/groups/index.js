@@ -9,6 +9,7 @@ import {
   getInvitationList,
   invitationAcceptAndDelineService,
   groupJoinRequestList,
+  groupJoinedList,
 } from "../../services/groups.service";
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
   postDetails: null,
   groupInvited: null,
   joinRequestList: null,
+  joinedGroup: null,
 };
 
 const GroupSlice = createSlice({
@@ -50,6 +52,9 @@ const GroupSlice = createSlice({
       })
       .addCase(groupJoinRequestLists.fulfilled, (state, action) => {
         state.joinRequestList = action.payload;
+      })
+      .addCase(allJoinedGroupList.fulfilled, (state, action) => {
+        state.joinedGroup = action.payload;
       });
   },
 });
@@ -114,6 +119,14 @@ export const groupJoinRequestLists = createAsyncThunk(
   "groups/joinRequestList",
   async (groupId) => {
     const data = await groupJoinRequestList(groupId);
+    return data;
+  }
+);
+
+export const allJoinedGroupList = createAsyncThunk(
+  "groups/joinedGroup",
+  async () => {
+    const data = await groupJoinedList();
     return data;
   }
 );
