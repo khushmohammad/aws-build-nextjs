@@ -69,27 +69,6 @@ const UserProfileEdit = () => {
   const [patchForData, setPatchForData] = useState('')
 
 
-  useEffect(() => {
-    updateValue("state", selectedState)
-  }, [selectedState])
-
-  useEffect(() => {
-    updateValue("country", selectedCountry)
-
-
-  }, [selectedCountry])
-
-  useEffect(() => {
-    updateValue("city", selectedCity)
-  }, [selectedCity])
-
-  useEffect(() => {
-    countryListOptions('')
-    MaritalStatus();
-    getCityStateList("state", "")
-    getCityStateList("city", "")
-    setPatchForData('')
-  }, []);
 
 
   const countryListOptions = async (inputValue) => {
@@ -132,18 +111,18 @@ const UserProfileEdit = () => {
 
 
 
- 
+
   const updateValue = (type, e) => {
     if (type == "state") {
-      setPatchForData({ ...patchForData, state: selectedState == '' ? null : e?.value?.toString() })
+      // setPatchForData({ ...patchForData, state: selectedState == '' ? null : e?.value?.toString() })
       getCityStateList("city", "")
     } else if (type == "country") {
-      setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : selectedCountry?.value?.toString() } })
+      //  setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : selectedCountry?.value?.toString() } })
       getCityStateList("state", "")
     }
     else if (type == "city") {
-      setPatchForData({ ...patchForData, city: selectedCity == '' ? null : e?.value?.toString() })
-      // getCityStateList("city", "")
+      // setPatchForData({ ...patchForData, city: selectedCity == '' ? null : e?.value?.toString() })
+      getCityStateList("city", "")
     }
   }
 
@@ -168,13 +147,38 @@ const UserProfileEdit = () => {
       // setPatchForData({ ...patchForData, dateOfBirth: e })
     }
   }
-  
+
+
+  // console.log(patchForData,"patchForData");
   const onSubmit = async () => {
     const res = await updateUserData(patchForData)
     if (res.status == 200) {
       router.push('/user/user-profile')
     }
   };
+
+
+  useEffect(() => {
+    updateValue("state", selectedState)
+  }, [selectedState])
+
+  useEffect(() => {
+    updateValue("country", selectedCountry)
+
+
+  }, [selectedCountry])
+
+  useEffect(() => {
+    updateValue("city", selectedCity)
+  }, [selectedCity])
+
+  useEffect(() => {
+    countryListOptions('')
+    MaritalStatus();
+    getCityStateList("state", "")
+    getCityStateList("city", "")
+    setPatchForData('')
+  }, []);
 
   //console.log(userProfileData, "userProfileData");
   return (
@@ -544,7 +548,7 @@ const UserProfileEdit = () => {
                                         classNames="form-select"
                                         id="floatingSelect"
                                         value={selectedCountry}
-                                        onChange={(e) => handleDropDown(e, "country")}
+                                        onChange={(e) => { handleDropDown(e, "country"), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : e?.value?.toString() } }) }}
                                       // defaultInputValue={{ value: 101, label: "sdjfl" }}
 
                                       />
@@ -580,7 +584,7 @@ const UserProfileEdit = () => {
                                   classNames="form-select"
                                   id="floatingSelect"
                                   value={selectedState}
-                                  onChange={(e) => handleDropDown(e, "state")}
+                                  onChange={(e) => { handleDropDown(e, "state"), setPatchForData({ ...patchForData, state: e?.value?.toString() }) }}
 
                                 />
 
@@ -609,7 +613,7 @@ const UserProfileEdit = () => {
                                   classNames="form-select"
                                   id="floatingSelect"
                                   value={selectedCity}
-                                  onChange={(e) => handleDropDown(e, "city")}
+                                  onChange={(e) => { handleDropDown(e, "city"), setPatchForData({ ...patchForData, city: e?.value?.toString() }) }}
                                 // defaultInputValue={{ value: 101, label: "sdjfl" }}
 
                                 />
