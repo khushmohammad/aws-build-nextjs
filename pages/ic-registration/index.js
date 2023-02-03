@@ -6,26 +6,59 @@ import * as yup from "yup";
 import { useState } from "react";
 import { registerIcUser } from "../../services/groups.service";
 import Head from "next/head";
+const FILE_SIZE = 20480;
+const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/pdf", "image/png"];
 
 //validate the input field using yup
 const schema = yup.object().shape({
-  question1: yup.string().required("question 1 is required"),
-  question2: yup.string().required("question 2 is required"),
-  question3: yup.string().required("question 3 is required"),
-  document1: yup.mixed().test("required", "please select a file", (value) => {
-    return value && value.length;
-  }),
-  document2: yup.mixed().test("required", "please select a file", (value) => {
-    return value && value.length;
-  }),
-  document3: yup.mixed().test("required", "please select a file", (value) => {
-    return value && value.length;
-  }),
+  question1: yup.string().required("question  1 is required").min(5).max(500),
+  question2: yup.string().required("question  2 is required").min(5).max(500),
+  question3: yup.string().required("question  3 is required").min(5).max(500),
+  document1: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
+
+  document2: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
+  document3: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
 
   checked: yup.bool().oneOf([true], "Checkbox selection is required"),
 });
 
 const IcRegistrationForm = () => {
+  const [user, setUser] = useState(null);
   //const [document, setDocument] = useState([]);
   const [isSubmitted, setisSubmitted] = useState();
   //declaring useForm
@@ -40,7 +73,7 @@ const IcRegistrationForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, e) => {
     const res = await registerIcUser(data);
 
     if (res) {
@@ -56,8 +89,10 @@ const IcRegistrationForm = () => {
         className: "danger",
       });
     }
+
+    reset()
   };
-  // console.log(watch("question1"));
+
   return (
     <Default>
       <Head>

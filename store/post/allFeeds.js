@@ -20,7 +20,7 @@ const AllFeedsSlice = createSlice({
       })
       .addCase(getAllFeedsList.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // console.log(action.payload.newarray,"action.payload.newarray");
+        //console.log(action.payload.newarray, "action.payload.newarray");
         state.allFeeds = action.payload.newarray;
         state.postcount = action.payload.PostCount;
         state.error = "";
@@ -37,15 +37,17 @@ const AllFeedsSlice = createSlice({
 export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
-    // console.log(params);
+    //  console.log(params, "paramdds");
     const data =
       params.activePage == "home"
         ? await getAllFeeds(params.page, params.limit)
         : params.activePage == "myProfile"
           ? await getPostsByTokenUserId(params.page, params.limit)
           : params.activePage == "userProfile"
-            ? await getAllPostsByUserId(params.page, params.limit, params.uerId)
-            : await getAllFeeds(params.page, params.limit)
+            ? await getAllPostsByUserId(params.page, params.limit, params.uerId, "userId")
+            : params.activePage == "group"
+              ? await getAllPostsByUserId(params.page, params.limit, params.groupId, "groupId") :
+              await getAllFeeds(params.page, params.limit)
     return data;
   }
 );

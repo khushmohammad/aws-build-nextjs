@@ -50,6 +50,7 @@ const UserFriend = () => {
                                 </li>
                               </ul>
                             </Card.Body>
+                            
                             ))}
                             
                           </Card>

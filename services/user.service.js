@@ -22,7 +22,6 @@ export const getUserData = async () => {
 export const updateUserData = async (data) => {
   const token = await getToken();
 
-  //console.log(data, "data");
   const res = await axios.patch(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update`,
     data,
@@ -51,9 +50,8 @@ export const updateProfileAndCoverPic = async (imageType, image) => {
 
 export const getUserDetailsByUserId = async (data) => {
   const token = await getToken();
-  console.log("data:::", data);
   try {
-    const res = await axios.patch(
+    const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_PATH}/profiles/userProfile/byUserIds`,
       { userId: data },
       {
@@ -62,8 +60,7 @@ export const getUserDetailsByUserId = async (data) => {
         },
       }
     );
-    console.log("i am here", res.data);
-    return res.data;
+    return res.data.body;
   } catch (error) {
     console.log(error);
   }

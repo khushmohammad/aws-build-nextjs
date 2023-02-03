@@ -1,6 +1,6 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import {Row, Col, Form, Tab, Nav, Button,Dropdown} from 'react-bootstrap'
+import { Row, Col, Form, Tab, Nav, Button, Dropdown } from 'react-bootstrap'
 import Card from '../../components/Card'
 import CustomToggle from '../../components/dropdowns'
 import Image from 'next/image'
@@ -12,22 +12,26 @@ import user7 from '../../public/assets/images/user/07.jpg'
 import user8 from '../../public/assets/images/user/08.jpg'
 import user9 from '../../public/assets/images/user/09.jpg'
 import user10 from '../../public/assets/images/user/10.jpg'
+import { useSelector } from 'react-redux'
 // import page100 from '../../../assets/images/page-img/100.jpg'
 
-const Chat=()=>{
+const Chat = () => {
     const [show, setShow] = useState('')
     const [show1, setShow1] = useState('')
     const [show2, setShow2] = useState('')
-    const ChatSidebar =() =>{
+    const ChatSidebar = () => {
         document.getElementsByClassName('scroller')[0].classList.add('show')
-    } 
-    const ChatSidebarClose =() =>{
+    }
+    const ChatSidebarClose = () => {
         document.getElementsByClassName('scroller')[0].classList.remove('show')
     }
-    
-    return(
+
+    const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList)
+    console.log(friendsList, "friendsList")
+
+    return (
         <>
-            <Tab.Container id="left-tabs-example"  defaultActiveKey="start">                        
+            <Tab.Container id="left-tabs-example" defaultActiveKey="start">
                 <Row>
                     <Col sm="12">
                         <Card>
@@ -38,19 +42,19 @@ const Chat=()=>{
                                             <div className="chat-search pt-3 ps-3">
                                                 <div className="d-flex align-items-center">
                                                     <div className="chat-profile me-3">
-                                                        <Image loading="lazy" src={user1} alt="chat-user" className="avatar-60 " onClick={() => setShow1('true')}/>
+                                                        <Image loading="lazy" src={user1} alt="chat-user" className="avatar-60 " onClick={() => setShow1('true')} />
                                                     </div>
                                                     <div className="chat-caption">
                                                         <h5 className="mb-0">Bni Jordan</h5>
                                                         <p className="m-0">Web Designer</p>
                                                     </div>
                                                 </div>
-                                                <div id="user-detail-popup" className={`scroller ${show1 === 'true' ? 'show' : '' }`}>
+                                                <div id="user-detail-popup" className={`scroller ${show1 === 'true' ? 'show' : ''}`}>
                                                     <div className="user-profile">
                                                         <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow1('false')}>close</i></Button>
                                                         <div className="user text-center mb-4">
                                                             <Link className="avatar m-0" href="">
-                                                                <Image loading="lazy" src={user1} alt="avatar"/>
+                                                                <Image loading="lazy" src={user1} alt="avatar" />
                                                             </Link>
                                                             <div className="user-name mt-4">
                                                                 <h4 className="text-center">Bni Jordan</h4>
@@ -59,7 +63,7 @@ const Chat=()=>{
                                                                 <p className="text-center">Web Designer</p>
                                                             </div>
                                                         </div>
-                                                        <hr/>
+                                                        <hr />
                                                         <div className="user-detail text-left mt-4 ps-4 pe-4">
                                                             <h5 className="mt-4 mb-4">About</h5>
                                                             <p>It is long established fact that a reader will be distracted bt the reddable.</p>
@@ -75,171 +79,181 @@ const Chat=()=>{
                                                 </div>
                                                 <div className="chat-searchbar mt-4">
                                                     <Form.Group className="form-group chat-search-data m-0">
-                                                        <input type="text" className="form-control round" id="chat-search" placeholder="Search"/>
-                                                            <i className="material-symbols-outlined">
-                                                                search
-                                                            </i>
+                                                        <input type="text" className="form-control round" id="chat-search" placeholder="Search" />
+                                                        <i className="material-symbols-outlined">
+                                                            search
+                                                        </i>
                                                     </Form.Group>
                                                 </div>
                                             </div>
                                             <div className="chat-sidebar-channel scroller mt-4 ps-3">
-                                            <h5 >Public Channels</h5>
-                                            <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
-                                                <Nav.Item as="li">
-                                                    <Nav.Link eventKey="first" onClick={() => setShow('first')}    href="#chatbox1">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user5} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
+                                                <h5 >Public Channels</h5>
+
+                                                <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
+                                                    {friendsList && friendsList.map((data, index) => {
+                                                        return (
+                                                            <>
+                                                                <Nav.Item as="li">
+                                                                    <Nav.Link eventKey="first" onClick={() => setShow('first')} href="#chatbox1">
+                                                                        <div className="d-flex align-items-center">
+                                                                            <div className="avatar me-2">
+                                                                                <Image loading="lazy" src={data?.profileInfo?.profilePictureInfo
+                                                                                    ?.file?.location || user5} alt="chatuserimage" className="avatar-50 " height={100}
+                                                                                    width={100} />
+                                                                                <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
+                                                                            </div>
+                                                                            <div className="chat-sidebar-name">
+                                                                                <h6 className="mb-0">{data?.firstName}{" "}
+                                                                                    {data?.lastName}</h6>
+                                                                                {/* <span>Lorem Ipsum is</span> */}
+                                                                            </div>
+                                                                            <div className="chat-meta float-right text-center mt-2 me-1">
+                                                                                <div className="chat-msg-counter bg-primary text-white">20</div>
+                                                                                <span className="text-nowrap">05 min</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </Nav.Link>
+                                                                </Nav.Item>
+                                                            </>
+                                                        )
+                                                    })}
+                                                    {/* <li>
+                                                        <Nav.Link eventKey="second" onClick={() => setShow('second')} href="#chatbox2">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user6} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Announcement</h6>
+                                                                    <span>This Sunday we</span>
+                                                                </div>
+                                                                <div className="chat-meta float-right text-center mt-2 me-1">
+                                                                    <div className="chat-msg-counter bg-primary text-white">10</div>
+                                                                    <span className="text-nowrap">10 min</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Team Discussions</h6>
-                                                                <span>Lorem Ipsum is</span>
+                                                        </Nav.Link>
+                                                    </li> */}
+                                                </Nav>
+                                                {/* <h5 className="mt-3">Private Channels</h5>
+                                                <Nav variant="pills" className="iq-chat-ui nav flex-column ">
+                                                    <li>
+                                                        <Nav.Link eventKey="third" onClick={() => setShow('third')} href="#chatbox3">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user7} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-warning"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Designer</h6>
+                                                                    <span>There are many </span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-meta float-right text-center mt-2 me-1">
-                                                                <div className="chat-msg-counter bg-primary text-white">20</div>
-                                                                <span className="text-nowrap">05 min</span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="forth" onClick={() => setShow('forth')} href="#chatbox4">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user8} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Developer</h6>
+                                                                    <span>passages of Lorem</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </Nav.Item>
-                                                <li>
-                                                    <Nav.Link  eventKey="second"  onClick={() => setShow('second')}    href="#chatbox2">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user6} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="five" onClick={() => setShow('five')} href="#chatbox5">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user9} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-info"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Testing Team</h6>
+                                                                    <span>Lorem Ipsum used</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Announcement</h6>
-                                                                <span>This Sunday we</span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                </Nav>
+                                                <h5 className="mt-3">Direct Message</h5>
+                                                <Nav variant="pills" className="iq-chat-ui nav flex-column ">
+                                                    <li>
+                                                        <Nav.Link eventKey="six" onClick={() => setShow('six')} href="#chatbox6">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user10} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-dark"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Paul Molive</h6>
+                                                                    <span>translation by</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-meta float-right text-center mt-2 me-1">
-                                                                <div className="chat-msg-counter bg-primary text-white">10</div>
-                                                                <span className="text-nowrap">10 min</span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="seven" onClick={() => setShow('seven')} href="#chatbox7">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user5} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Paige Turner</h6>
+                                                                    <span>Lorem Ipsum which</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                            </Nav>
-                                            <h5 className="mt-3">Private Channels</h5>
-                                            <Nav variant="pills" className="iq-chat-ui nav flex-column ">
-                                                <li>
-                                                    <Nav.Link  eventKey="third" onClick={() => setShow('third')} href="#chatbox3">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user7} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-warning"></i></span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="eight" onClick={() => setShow('eight')} href="#chatbox8">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user6} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-primary"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Barb Ackue</h6>
+                                                                    <span>simply random text</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Designer</h6>
-                                                                <span>There are many </span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="nine" onClick={() => setShow('nine')} href="#chatbox9">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user7} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-danger"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Maya Didas</h6>
+                                                                    <span> but also the leap</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="forth" onClick={() => setShow('forth')} href="#chatbox4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user8} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                        </Nav.Link>
+                                                    </li>
+                                                    <li>
+                                                        <Nav.Link eventKey="ten" onClick={() => setShow('ten')} href="#chatbox10">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-2">
+                                                                    <Image loading="lazy" src={user8} alt="chatuserimage" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-warning"></i></span>
+                                                                </div>
+                                                                <div className="chat-sidebar-name">
+                                                                    <h6 className="mb-0">Monty Carlo</h6>
+                                                                    <span>Contrary to popular</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Developer</h6>
-                                                                <span>passages of Lorem</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="five" onClick={() => setShow('five')} href="#chatbox5">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user9} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-info"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Testing Team</h6>
-                                                                <span>Lorem Ipsum used</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                            </Nav>
-                                            <h5 className="mt-3">Direct Message</h5>
-                                            <Nav variant="pills" className="iq-chat-ui nav flex-column ">
-                                                <li>
-                                                    <Nav.Link  eventKey="six" onClick={() => setShow('six')} href="#chatbox6">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user10} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-dark"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Paul Molive</h6>
-                                                                <span>translation by</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="seven" onClick={() => setShow('seven')} href="#chatbox7">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user5} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Paige Turner</h6>
-                                                                <span>Lorem Ipsum which</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="eight" onClick={() => setShow('eight')} href="#chatbox8">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user6} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-primary"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Barb Ackue</h6>
-                                                                <span>simply random text</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="nine" onClick={() => setShow('nine')} href="#chatbox9">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user7} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-danger"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Maya Didas</h6>
-                                                                <span> but also the leap</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                                <li>
-                                                    <Nav.Link  eventKey="ten" onClick={() => setShow('ten')} href="#chatbox10">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="avatar me-2">
-                                                                <Image loading="lazy" src={user8} alt="chatuserimage" className="avatar-50 "/>
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-warning"></i></span>
-                                                            </div>
-                                                            <div className="chat-sidebar-name">
-                                                                <h6 className="mb-0">Monty Carlo</h6>
-                                                                <span>Contrary to popular</span>
-                                                            </div>
-                                                        </div>
-                                                    </Nav.Link>
-                                                </li>
-                                            </Nav>
+                                                        </Nav.Link>
+                                                    </li>
+                                                </Nav> */}
                                             </div>
                                         </Col>
                                         <Col lg={9} className=" chat-data p-0 chat-data-right">
@@ -248,10 +262,10 @@ const Chat=()=>{
                                                     <div className="chat-start">
                                                         <span className="iq-start-icon text-primary"><i className="material-symbols-outlined md-42">sms</i></span>
                                                         <Button id="chat-start" onClick={ChatSidebar} bsPrefix="btn bg-white mt-3">Start
-                                                        Conversation!</Button>
+                                                            Conversation!</Button>
                                                     </div>
                                                 </Tab.Pane>
-                                                <Tab.Pane  eventKey="first"  className={`fade ${show === 'first' ? 'show' : ''}`} id="chatbox1"  role="tabpanel">
+                                                <Tab.Pane eventKey="first" className={`fade ${show === 'first' ? 'show' : ''}`} id="chatbox1" role="tabpanel">
                                                     <div className="chat-head">
                                                         <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                             <div className="d-flex align-items-center">
@@ -259,17 +273,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-50 "  onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Team Discussions</h5>
                                                             </div>
-                                                            <div  className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user mb-4  text-center">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user5} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user5} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Bni Jordan</h4>
@@ -278,28 +292,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6  title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6  text-right">Bni</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Male</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -334,7 +348,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -347,7 +361,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -361,7 +375,7 @@ const Chat=()=>{
                                                         <div className="chat chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -375,7 +389,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -388,7 +402,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -401,7 +415,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -414,7 +428,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -431,12 +445,12 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
                                                 </Tab.Pane>
-                                                <Tab.Pane eventKey="second" className={`fade ${show === 'second' ? 'show' : ''}`} id="chatbox2"  role="tabpanel">
+                                                <Tab.Pane eventKey="second" className={`fade ${show === 'second' ? 'show' : ''}`} id="chatbox2" role="tabpanel">
                                                     <div className="chat-head">
                                                         <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                             <div className="d-flex align-items-center">
@@ -444,18 +458,18 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Announcement</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`} >
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`} >
                                                                 <div className="user-profile">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user mb-4 text-center">
-                                                                            <Link className="avatar m-0" href="">
-                                                                                <Image loading="lazy" src={user6} alt="avatar"/>
-                                                                            </Link>
+                                                                        <Link className="avatar m-0" href="">
+                                                                            <Image loading="lazy" src={user6} alt="avatar" />
+                                                                        </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Mark Jordan</h4>
                                                                         </div>
@@ -463,30 +477,30 @@ const Chat=()=>{
                                                                             <p>Atlanta, USA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Bni Name:</Col>
+                                                                            <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6  text-right">Mark</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Tel:</Col>
+                                                                            <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6  text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Date Of Birth:</Col>
+                                                                            <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6  text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Gender:</Col>
+                                                                            <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6  text-right">Female</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Language:</Col>
+                                                                            <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6  text-right">Engliah</Col>
                                                                         </Row>
                                                                     </div>
@@ -519,7 +533,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -532,7 +546,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -546,7 +560,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -560,7 +574,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -573,7 +587,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -586,7 +600,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -599,7 +613,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -616,12 +630,12 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" className=" primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
                                                 </Tab.Pane>
-                                                <Tab.Pane eventKey="third"  className={`fade ${show === 'third' ? 'show' : ''}`} id="chatbox3" role="tabpanel">
+                                                <Tab.Pane eventKey="third" className={`fade ${show === 'third' ? 'show' : ''}`} id="chatbox3" role="tabpanel">
                                                     <div className="chat-head">
                                                         <header className="d-flex justify-content-between align-items-center bg-white pt-3 ps-3 pe-3 pb-3">
                                                             <div className="d-flex align-items-center">
@@ -629,17 +643,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Designer</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`} >
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`} >
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user text-center mb-4">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user7} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user7} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Paige Turner</h4>
@@ -648,30 +662,30 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Bni Name:</Col>
+                                                                            <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">pai</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Tel:</Col>
+                                                                            <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Date Of Birth:</Col>
+                                                                            <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Gender:</Col>
+                                                                            <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Male</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Language:</Col>
+                                                                            <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
                                                                         </Row>
                                                                     </div>
@@ -704,7 +718,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -717,7 +731,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -731,7 +745,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -745,7 +759,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -758,7 +772,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -771,7 +785,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -784,7 +798,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -801,7 +815,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -814,47 +828,47 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Developer</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user mb-4 text-center">
-                                                                            <Link className="avatar m-0" href="">
-                                                                                <Image loading="lazy" src={user8} alt="avatar"/>
-                                                                            </Link>
-                                                                            <div className="user-name mt-4">
-                                                                                <h4>Barb Ackue</h4>
-                                                                            </div>
-                                                                            <div className="user-desc">
-                                                                                <p>Cape Town, RSA</p>
-                                                                            </div>
+                                                                        <Link className="avatar m-0" href="">
+                                                                            <Image loading="lazy" src={user8} alt="avatar" />
+                                                                        </Link>
+                                                                        <div className="user-name mt-4">
+                                                                            <h4>Barb Ackue</h4>
+                                                                        </div>
+                                                                        <div className="user-desc">
+                                                                            <p>Cape Town, RSA</p>
+                                                                        </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Babe</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Feale</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -889,7 +903,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -902,7 +916,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -916,7 +930,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -930,7 +944,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -943,7 +957,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -956,7 +970,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -969,7 +983,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -986,7 +1000,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -998,18 +1012,18 @@ const Chat=()=>{
                                                                 <div className="sidebar-toggle">
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
-                                                            <div className="avatar chat-user-profile m-0 me-3">
-                                                                <Image loading="lazy" src={user9} alt="avatar" className="avatar-50 "  />
-                                                                <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                                <div className="avatar chat-user-profile m-0 me-3">
+                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-50 " />
+                                                                    <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
+                                                                </div>
+                                                                <h5 className="mb-0">Testing Team</h5>
                                                             </div>
-                                                            <h5 className="mb-0">Testing Team</h5>
-                                                            </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user mb-4 text-center">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user9} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user9} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Peta Saireya</h4>
@@ -1018,28 +1032,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Pet</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Female</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -1074,7 +1088,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -1087,7 +1101,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -1101,7 +1115,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -1115,7 +1129,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -1128,7 +1142,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -1141,7 +1155,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user9} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -1154,7 +1168,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -1171,7 +1185,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" className=" primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -1184,17 +1198,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Paul Molive</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user mb-4 text-center">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user10} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user10} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Paul Molive</h4>
@@ -1203,31 +1217,31 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Bni Name:</Col>
-                                                                            <Col md="6"  className="col-6 text-right">Pau</Col>
+                                                                            <Col md="6" className="col-6 title">Bni Name:</Col>
+                                                                            <Col md="6" className="col-6 text-right">Pau</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Tel:</Col>
-                                                                            <Col md="6"  className="col-6 text-right">072 143 9920</Col>
+                                                                            <Col md="6" className="col-6 title">Tel:</Col>
+                                                                            <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Date Of Birth:</Col>
-                                                                            <Col md="6"  className="col-6 text-right">July 12, 1989</Col>
+                                                                            <Col md="6" className="col-6 title">Date Of Birth:</Col>
+                                                                            <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Gender:</Col>
-                                                                            <Col md="6"  className="col-6 text-right">Male</Col>
+                                                                            <Col md="6" className="col-6 title">Gender:</Col>
+                                                                            <Col md="6" className="col-6 text-right">Male</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
-                                                                            <Col md="6"  className="col-6 title">Language:</Col>
-                                                                            <Col md="6"  className="col-6 text-right">Engliah</Col>
+                                                                            <Col md="6" className="col-6 title">Language:</Col>
+                                                                            <Col md="6" className="col-6 text-right">Engliah</Col>
                                                                         </Row>
                                                                     </div>
                                                                 </div>
@@ -1259,7 +1273,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -1272,7 +1286,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -1286,7 +1300,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -1300,7 +1314,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -1313,7 +1327,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -1326,7 +1340,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user10} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -1339,7 +1353,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -1356,7 +1370,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -1369,17 +1383,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Paige Turner</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user text-center mb-4">
-                                                                            <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user5} alt="avatar"/>
+                                                                        <Link className="avatar m-0" href="">
+                                                                            <Image loading="lazy" src={user5} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Paige Turner</h4>
@@ -1388,28 +1402,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Pai</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Feale</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -1419,7 +1433,7 @@ const Chat=()=>{
                                                             </div>
                                                             <div className="chat-header-icons d-flex">
                                                                 <Link href="#" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
-                                                                <i className="material-symbols-outlined md-18">phone</i>
+                                                                    <i className="material-symbols-outlined md-18">phone</i>
                                                                 </Link>
                                                                 <Link href="#" className="chat-icon-video bg-soft-primary d-flex justify-content-center align-items-center">
                                                                     <i className="material-symbols-outlined md-18">videocam</i>
@@ -1444,7 +1458,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -1457,7 +1471,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -1471,7 +1485,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -1485,7 +1499,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -1498,7 +1512,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -1511,7 +1525,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -1524,7 +1538,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -1541,7 +1555,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" className=" primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -1554,17 +1568,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Barb Ackue</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user text-center mb-4">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user6} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user6} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Barb Ackue</h4>
@@ -1573,28 +1587,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Babe</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Female</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -1629,7 +1643,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -1642,7 +1656,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -1656,7 +1670,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -1670,7 +1684,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -1683,7 +1697,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -1696,7 +1710,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user6} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -1709,7 +1723,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -1726,7 +1740,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -1739,17 +1753,17 @@ const Chat=()=>{
                                                                     <i className="ri-menu-3-line"></i>
                                                                 </div>
                                                                 <div className="avatar chat-user-profile m-0 me-3">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')}/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                     <span className="avatar-status"><i className="ri-checkbox-blank-circle-fill text-success"></i></span>
                                                                 </div>
                                                                 <h5 className="mb-0">Maya Didas</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="user text-center mb-4">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user7} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user7} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Maya Didas</h4>
@@ -1758,28 +1772,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Babe</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Male</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -1814,7 +1828,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -1827,7 +1841,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -1841,7 +1855,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -1855,7 +1869,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -1868,7 +1882,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -1881,7 +1895,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user7} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -1894,7 +1908,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -1911,7 +1925,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -1929,12 +1943,12 @@ const Chat=()=>{
                                                                 </div>
                                                                 <h5 className="mb-0">Monty Carlo</h5>
                                                             </div>
-                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : '' }`}>
+                                                            <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                 <div className="user-profile ">
-                                                                <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
+                                                                    <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3"><i className="material-symbols-outlined md-18" onClick={() => setShow2('false')}>close</i></Button>
                                                                     <div className="text-center user mb-4">
                                                                         <Link className="avatar m-0" href="">
-                                                                            <Image loading="lazy" src={user8} alt="avatar"/>
+                                                                            <Image loading="lazy" src={user8} alt="avatar" />
                                                                         </Link>
                                                                         <div className="user-name mt-4">
                                                                             <h4>Monty Carlo</h4>
@@ -1943,28 +1957,28 @@ const Chat=()=>{
                                                                             <p>Cape Town, RSA</p>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>
+                                                                    <hr />
                                                                     <div className="chatuser-detail text-left mt-4">
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Bni Name:</Col>
                                                                             <Col md="6" className="col-6 text-right">Babe</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Tel:</Col>
                                                                             <Col md="6" className="col-6 text-right">072 143 9920</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Date Of Birth:</Col>
                                                                             <Col md="6" className="col-6 text-right">July 12, 1989</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Gender:</Col>
                                                                             <Col md="6" className="col-6 text-right">Female</Col>
                                                                         </Row>
-                                                                        <hr/>
+                                                                        <hr />
                                                                         <Row>
                                                                             <Col md="6" className="col-6 title">Language:</Col>
                                                                             <Col md="6" className="col-6 text-right">Engliah</Col>
@@ -1999,7 +2013,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:45</span>
                                                             </div>
@@ -2010,9 +2024,9 @@ const Chat=()=>{
                                                             </div>
                                                         </div>
                                                         <div className="chat chat-left">
-                                                                <div className="chat-user">
+                                                            <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:48</span>
                                                             </div>
@@ -2026,7 +2040,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:49</span>
                                                             </div>
@@ -2040,7 +2054,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:52</span>
                                                             </div>
@@ -2053,7 +2067,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:53</span>
                                                             </div>
@@ -2066,7 +2080,7 @@ const Chat=()=>{
                                                         <div className="chat chat-left">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user8} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:54</span>
                                                             </div>
@@ -2079,7 +2093,7 @@ const Chat=()=>{
                                                         <div className="chat d-flex other-user">
                                                             <div className="chat-user">
                                                                 <Link className="avatar m-0" href="">
-                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 "/>
+                                                                    <Image loading="lazy" src={user1} alt="avatar" className="avatar-35 " />
                                                                 </Link>
                                                                 <span className="chat-time mt-1">6:56</span>
                                                             </div>
@@ -2096,7 +2110,7 @@ const Chat=()=>{
                                                                 <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
                                                                 <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
                                                             </div>
-                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message"/>
+                                                            <Form.Control type="text" className="form-control me-3" placeholder="Type your message" />
                                                             <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
                                                         </Form>
                                                     </div>
@@ -2109,7 +2123,7 @@ const Chat=()=>{
                         </Card>
                     </Col>
                 </Row>
-                </Tab.Container>
+            </Tab.Container>
         </>
     )
 }

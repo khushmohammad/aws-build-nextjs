@@ -8,6 +8,7 @@ import groupReducer from "./groups";
 import friendReducer from "./friends";
 import friendsRequests from "./friends/friendsRequests";
 import nonFriendsLIst from "./friends/nonFriendsList";
+import LoaderReducer from "./site/Loader";
 import { persistStore } from "redux-persist";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
@@ -29,7 +30,8 @@ const reducers = combineReducers({
   groups: groupReducer,
   friends: friendReducer,
   friendsRequests: friendsRequests,
-  nonFriendsLIst: nonFriendsLIst
+  nonFriendsLIst: nonFriendsLIst,
+  loader: LoaderReducer
 });
 
 const rootReducer = (state, action) => {

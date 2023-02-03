@@ -11,14 +11,14 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
   const token = await getToken();
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getAllFeeds?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?page=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     if (response.status == 200) {
-      const postslist = await response?.data?.body?.allBody?.docs;
-      const PostCount = 0 //await response?.data?.body?.allBody?.totalDocs
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await postslist?.postCount?.postCount //await response?.data?.body?.allBody?.totalDocs
 
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
@@ -43,23 +43,26 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
 export const getAllPostsByUserId = async (
   page = 1,
   limit = 10,
-  userId = ""
+  userId = "",
+  pageName = ""
 ) => {
   const token = await getToken();
+
+  // const page = pageName 
 
   // console.log(token);
   //console.log(userId,"userId");
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getAllPostsByUserId/${userId}?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?${pageName}=${userId}&page=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
 
     if (response.status == 200) {
-      const postslist = await response?.data?.body?.allBody?.docs;
-      const PostCount = await response?.data?.body?.allBody?.totalDocs
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await postslist?.postCount?.postCount  // await response?.data?.body?.allBody?.totalDocs
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -94,15 +97,15 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/getPostsByTokenUserId?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?page=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
 
     if (response.status == 200) {
-      const postslist = await response?.data?.body?.allBody?.docs;
-      const PostCount = await response?.data?.body?.allBody?.totalDocs
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await postslist?.postCount?.postCount //await response?.data?.body?.allBody?.totalDocs
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -129,13 +132,13 @@ export const getPostsByPostId = async (PostId) => {
   // console.log(token);
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${PostId}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getPostByPostId/${PostId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     if (response.status == 200) {
-      const postdata = await response?.data?.body?.allBody;
+      const postdata = await response?.data?.body?.feeds[0]
       const res = await getUserInfoByUserId(postdata.userId);
       const userData = await res?.data?.body;
       //console.log(userData);
@@ -145,10 +148,9 @@ export const getPostsByPostId = async (PostId) => {
     return response;
   } catch (err) {
     console.log(err);
-    const status = err.response.status;
-    const message = err.response.data;
 
-    return { message, status };
+
+    return err
   }
 };
 export const getAllLikesByPostId = async (postId) => {

@@ -38,18 +38,18 @@ import * as yup from "yup";
 import AsyncSelect from "react-select/async";
 import { clearEmpties, countriesList, getMaritalStatus } from "../../services/basic.services";
 import _ from 'lodash'
+import { loaderStatus } from '../../store/site/Loader'
 
 
-const schema = yup
-  .object({
-    userInfo: yup.object().shape({
-      firstName: yup.string().required("firstname is required").min(3).max(20),
-      lastName: yup.string().required("lastname is required").min(3).max(20),
-      middleName: yup.string().max(20),
-      country: yup.string().max(20),
-    }),
-    Pincode: yup.number().typeError('Pincode must be a number').nullable(true)
-  })
+const schema = yup.object({
+  firstName: yup.string().required("firstname is required").min(3).max(20),
+  lastName: yup.string().required("lastname is required").min(3).max(20),
+  middleName: yup.string().max(20),
+  country: yup.string().max(20),
+  pinCode: yup.number().typeError('Pincode must be a number').nullable(true)
+}).required();
+
+
 
 const UserProfileEdit = () => {
   const router = useRouter();
@@ -151,9 +151,12 @@ const UserProfileEdit = () => {
 
   // console.log(patchForData,"patchForData");
   const onSubmit = async () => {
+
+    dispatch(loaderStatus(true))
     const res = await updateUserData(patchForData)
     if (res.status == 200) {
       router.push('/user/user-profile')
+      dispatch(loaderStatus(false))
     }
   };
 
@@ -306,7 +309,7 @@ const UserProfileEdit = () => {
                           <Row className=" p-4">
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                {...register("userInfo.firstName")}
+                                {...register("firstName")}
                                 type="text"
                                 defaultValue={userProfileData?.userInfo?.firstName}
                                 className="form-control"
@@ -323,13 +326,13 @@ const UserProfileEdit = () => {
                               </Form.Label>
 
                               <p style={{ color: "red" }}>
-                                {errors?.userInfo?.firstName?.message}{" "}
+                                {errors?.firstName?.message}{" "}
                               </p>
                             </Form.Floating>
 
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                {...register("userInfo.middleName")}
+                                {...register("middleName")}
                                 type="text"
                                 defaultValue={userProfileData?.userInfo.middleName}
                                 className="form-control"
@@ -345,13 +348,13 @@ const UserProfileEdit = () => {
                                 Middle Name
                               </Form.Label>
                               <p style={{ color: "red" }}>
-                                {errors?.userInfo?.middleName?.message}
+                                {errors?.middleName?.message}
                               </p>
                             </Form.Floating>
 
                             <Form.Floating className="form-group col-sm-6">
                               <Form.Control
-                                {...register("userInfo.lastName")}
+                                {...register("lastName")}
                                 type="text"
                                 defaultValue={userProfileData?.userInfo?.lastName}
                                 className="form-control"
@@ -369,7 +372,7 @@ const UserProfileEdit = () => {
                                 Last Name
                               </Form.Label>
                               <p style={{ color: "red" }}>
-                                {errors?.userInfo?.lastName?.message}
+                                {errors?.lastName?.message}
                               </p>
                             </Form.Floating>
                             <Form.Floating className="form-group col-sm-6">
@@ -681,9 +684,9 @@ const UserProfileEdit = () => {
                             >
                               Submit
                             </Button>
-                            <Button type="reset" className="btn bg-soft-danger">
+                            <Link href="/user/user-profile" type="button" className="btn bg-soft-danger">
                               Cancel
-                            </Button>
+                            </Link>
                           </div>
                         </Form>
                       </Card.Body>
@@ -977,5 +980,4 @@ const UserProfileEdit = () => {
 };
 
 export default UserProfileEdit;
-
 

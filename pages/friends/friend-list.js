@@ -53,7 +53,7 @@ const FriendList = () => {
                           <Card.Body className=" profile-page p-0">
                             <div className="profile-header-image">
                               <div className="cover-container">
-                                {userData &&
+                                
                                   <Image
                                     loading="lazy"
                                     src={userData.profileInfo?.coverPictureInfo
@@ -66,7 +66,7 @@ const FriendList = () => {
                                     width={100}
                                     style={{ maxHeight: '150px', objectFit: "cover" }}
                                   />
-                                }
+                                
                                 {/* <Image
                                   loading="lazy"
                                   src={img1}

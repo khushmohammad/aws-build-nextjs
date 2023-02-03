@@ -15,7 +15,7 @@ import PostContentSection from "./PostContentSection";
 import PostFooter from "./PostFooter";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllFeedsList } from "../../../store/post/allFeeds";
-import user2 from "../../../public/assets/images/user/02.jpg";
+import user2 from "../../../public/assets/images/user/1.jpg";
 import { getPostTime } from "../../../services/time.service";
 import CreatePost from "../CreatePost";
 import { getGroupFeeds } from "../../../store/groups";
@@ -35,7 +35,6 @@ const Post = ({ activePage, groupId }) => {
 
   const limit = 5;
 
-  console.log(activePage, groupId, "activePage");
   const GetPostNet = async () => {
     const userIdFromQueryPath = router?.query?.id;
     if (userIdFromQueryPath && userIdFromQueryPath) {
@@ -47,8 +46,18 @@ const Post = ({ activePage, groupId }) => {
           uerId: userIdFromQueryPath,
         })
       );
-    } else if (activePage == "group") {
-      dispatch(getGroupFeeds(groupId));
+    } else if (groupId && activePage == "group") {
+      //dispatch(getGroupFeeds(groupId));
+      // getAllFeedsList({ activePage: activePage, page: page, limit: limit })
+      //console.log("fsdf");
+      dispatch(
+        getAllFeedsList({
+          activePage: activePage,
+          page: page,
+          limit: limit,
+          groupId: groupId,
+        })
+      );
     } else {
       dispatch(
         getAllFeedsList({ activePage: activePage, page: page, limit: limit })
@@ -63,8 +72,8 @@ const Post = ({ activePage, groupId }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-          ? setposts((prev) => [...prev, ...StorePosts])
-          : "";
+        ? setposts((prev) => [...prev, ...StorePosts])
+        : "";
     }
   }, [StorePosts]);
 
@@ -86,7 +95,6 @@ const Post = ({ activePage, groupId }) => {
     }
   };
   // post view
-  // console.log(StorePosts, "StorePosts");
 
   const DeletePostByPostId = async (postId) => {
     const res = await deletePostByPostId(postId);
@@ -125,19 +133,21 @@ const Post = ({ activePage, groupId }) => {
     //     //  router.reload();
     // }
   };
-  // console.log(posts, StorePosts, "posts");
+
   return (
     <div>
       <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", marginBottom: "7rem" }}>
         <EditPost
           show={showModal}
           onHide={() => setShowModal(false)}
+          onShow={() => setShowModal(true)}
           postid={postID}
           refreshPostList={() => GetPostNet()}
         />
 
         {posts &&
+          Array.isArray(posts) &&
           posts.length > 0 &&
           posts.map((data, index) => {
             const {
@@ -147,7 +157,7 @@ const Post = ({ activePage, groupId }) => {
               postLikes,
               createdAt,
               updatedAt,
-              file,
+              fileInfo,
               isPin,
               is_SelfPost,
             } = data;
@@ -191,12 +201,7 @@ const Post = ({ activePage, groupId }) => {
                               ""
                             )}
                             <p className="mb-0 text-primary">
-                              {/* {createdAt} */}
-                              {/* {setDate(createdAt)} */}
-                              {/* {createdAt} */}
-                              {getPostTime(createdAt)}
-                              {/* {getPostTime(updatedAt)} */}
-                              {/* Just Now */}
+                              {createdAt && getPostTime(createdAt)}
                             </p>
                           </div>
                           <div className="card-post-toolbar">
@@ -207,28 +212,28 @@ const Post = ({ activePage, groupId }) => {
                                 </span>
                               </Dropdown.Toggle>
                               <Dropdown.Menu className="dropdown-menu m-0 p-0">
-                                {is_SelfPost ? (
-                                  <Dropdown.Item className=" p-3">
-                                    <div
-                                      className="d-flex align-items-top"
-                                      onClick={() => {
-                                        setPostID(_id);
-                                        setShowModal(true);
-                                      }}
-                                    >
-                                      <div className="h4 material-symbols-outlined">
-                                        <i className="ri-save-line"></i>
-                                      </div>
-                                      <div className="data ms-2">
-                                        <h6>Edit Post</h6>
-                                        <p className="mb-0">Edit</p>
-                                      </div>
+                                {/* {is_SelfPost && is_SelfPost ? ( */}
+                                <Dropdown.Item className=" p-3">
+                                  <div
+                                    className="d-flex align-items-top"
+                                    onClick={() => {
+                                      setPostID(_id);
+                                      setShowModal(true);
+                                    }}
+                                  >
+                                    <div className="h4 material-symbols-outlined">
+                                      <i className="ri-save-line"></i>
                                     </div>
-                                  </Dropdown.Item>
-                                ) : (
+                                    <div className="data ms-2">
+                                      <h6>Edit Post</h6>
+                                      <p className="mb-0">Edit</p>
+                                    </div>
+                                  </div>
+                                </Dropdown.Item>
+                                {/* ) : (
                                   ""
-                                )}
-                                {is_SelfPost ? (
+                                )} */}
+                                {is_SelfPost && is_SelfPost ? (
                                   <Dropdown.Item className=" p-3" href="#">
                                     <div
                                       className="d-flex align-items-top"
@@ -282,7 +287,7 @@ const Post = ({ activePage, groupId }) => {
                                     </div>
                                   </div>
                                 </Dropdown.Item>
-                                {is_SelfPost ? (
+                                {is_SelfPost && is_SelfPost ? (
                                   <Dropdown.Item className=" p-3">
                                     <div
                                       className="d-flex align-items-top"
@@ -334,45 +339,22 @@ const Post = ({ activePage, groupId }) => {
                       <PostContentSection stringContent={description} />
                     )}
                   </div>
-                  {file && (
+                  {fileInfo && (
                     <>
                       <PostMediaGrid mediaContent={data && data} />
                     </>
                   )}
-
-                  <PostFooter postIdForLike={_id} />
+                  {_id && <PostFooter postIdForLike={_id} />}
                 </Card.Body>
               </Card>
             );
           })}
 
-        {/* {console.log(StorePosts?.status, "dfsdf")} */}
-
-        {StorePosts?.status && (
-          <div className="w-100">
-            {posts && posts.length == 0 && (
-              <div>
-                <p className="p-3 bg-danger text-alert text-center">
-                  No posts found!
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="w-100">
-          {posts && !Array.isArray(posts) && (
-            <div>
-              {Array.isArray(posts)}
-              <p className="p-3 text-center rounded">No posts found!</p>
-            </div>
-          )}
-        </div>
         {loading && loading == "loading" ? (
           <div
             className="card card-block card-stretch card-height"
             style={{
-              marginBottom: "-5rem",
+              marginBottom: "-6rem",
               height: "90px",
               width: "100%",
               position: "absolute",
@@ -393,41 +375,27 @@ const Post = ({ activePage, groupId }) => {
         ) : (
           ""
         )}
-        {/* <div>
-        {loading && loading == "loading" ? (
-          <div className="col-sm-12 text-center">
-            <Image
-              src={loader}
-              alt="loader"
-              style={{ height: "100px", width: "100px" }}
-            />
-          </div>
-        ) : (
-          <div className="w-100">
-            {posts && posts.length == 0 && (
-              <div>
-                <p className="p-3 bg-danger text-alert text-center" >
-                 
-                  No posts found!
-                </p>
-              </div>
-            )}
-          
-          </div>
-        )}
-
         <div className="w-100">
-          {noMorePost && (
-            <div>
-              <p className="p-3 bg-light text-alert text-center" >
-              
-                No More posts to show!
-              </p>
+          {StorePosts && loading != "loading" && StorePosts.length == 0 && (
+            <div
+              className="card card-block card-stretch card-height"
+              style={{
+                marginBottom: "-6rem",
+                height: "90px",
+                width: "100%",
+                position: "absolute",
+                bottom: "0px",
+                justifyContent: "center",
+              }}
+            >
+              <Card.Body>
+                <div className="col-sm-12 text-center">
+                  <p className="p-3  text-alert text-center">No posts found!</p>
+                </div>
+              </Card.Body>
             </div>
           )}
-         
         </div>
-      </div> */}
       </div>
     </div>
   );

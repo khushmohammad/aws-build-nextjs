@@ -7,53 +7,63 @@ import Image from "next/image";
 import Default from "../../layouts/default";
 
 // images
-import gi1 from "../../public/assets/images/page-img/gi-1.jpg";
-import gi2 from "../../public/assets/images/page-img/gi-2.jpg";
-import gi3 from "../../public/assets/images/page-img/gi-3.jpg";
-import gi4 from "../../public/assets/images/page-img/gi-4.jpg";
 import gi5 from "../../public/assets/images/page-img/gi-5.jpg";
-import gi6 from "../../public/assets/images/page-img/gi-6.jpg";
-import gi7 from "../../public/assets/images/page-img/gi-7.jpg";
-import gi8 from "../../public/assets/images/page-img/gi-8.jpg";
-import gi9 from "../../public/assets/images/page-img/gi-9.jpg";
 import user05 from "../../public/assets/images/user/05.jpg";
 import user06 from "../../public/assets/images/user/06.jpg";
 import user07 from "../../public/assets/images/user/07.jpg";
 import user08 from "../../public/assets/images/user/08.jpg";
 import user09 from "../../public/assets/images/user/09.jpg";
 import user10 from "../../public/assets/images/user/10.jpg";
-import img1 from "../../public/assets/images/page-img/profile-bg1.jpg";
-import img2 from "../../public/assets/images/page-img/profile-bg2.jpg";
-import img3 from "../../public/assets/images/page-img/profile-bg3.jpg";
-import img4 from "../../public/assets/images/page-img/profile-bg4.jpg";
 import img5 from "../../public/assets/images/page-img/profile-bg5.jpg";
-import img6 from "../../public/assets/images/page-img/profile-bg6.jpg";
 import img7 from "../../public/assets/images/page-img/profile-bg7.jpg";
-import img9 from "../../public/assets/images/page-img/profile-bg9.jpg";
-import { getAllGroupsList } from "../../store/groups";
+import {
+  allJoinedGroupList,
+  allJoinRequestSent,
+  getAllGroupsList,
+} from "../../store/groups";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 import { joinGroupService } from "../../services/groups.service";
 
 const Groups = () => {
   const [isJoined, setIsJoined] = useState([]);
+  const [joinedGroup, setJoinedGroup] = useState([]);
+  const [groupList, setGroupList] = useState([]);
   const dispatch = useDispatch();
 
   const groups = useSelector((state) => state?.groups?.allGroups?.allGroups);
 
+  const myGroups = useSelector((state) => state?.groups?.joinedGroup);
+
   useEffect(() => {
-    dispatch(getAllGroupsList());
+    dispatch(getAllGroupsList(joinGroup));
+    dispatch(allJoinedGroupList());
+
+    let res = [];
+    res = groups.filter((el) => {
+      return !myGroups.find((element) => {
+        return element.groupId._id === el._id;
+      });
+    });
+    setGroupList(res);
   }, []);
 
   const joinGroup = async (groupId) => {
     const res = await joinGroupService(groupId);
-    setIsJoined((prev) =>
-      Boolean(!prev[groupId])
-        ? { ...prev, [groupId]: true }
-        : { ...prev, [groupId]: false }
-    );
-    // dispatch(getAllGroupsList());
+    if (res?.success === true) {
+      setIsJoined((prev) =>
+        Boolean(!prev[groupId])
+          ? { ...prev, [groupId]: true }
+          : { ...prev, [groupId]: false }
+      );
+      setJoinedGroup([...joinedGroup, groupId]);
+      dispatch(getAllGroupsList());
+    }
   };
+
+  useEffect(() => {
+    dispatch(allJoinRequestSent(joinedGroup));
+  }, [joinedGroup]);
 
   return (
     <Default>
@@ -64,7 +74,7 @@ const Groups = () => {
       <div id="content-page" className="content-page">
         <Container>
           <div className="d-grid gap-3 d-grid-template-1fr-19">
-            {groups?.map((group, index) => (
+            {groupList?.map((group, index) => (
               <Card key={index} className=" mb-0">
                 <div className="top-bg-image">
                   <Image
@@ -160,7 +170,7 @@ const Groups = () => {
                       className="btn btn-soft-primary d-block w-100"
                       // onClick={() => joinGroup(group._id)}
                     >
-                      Joined
+                      Requested
                     </button>
                   ) : (
                     <button

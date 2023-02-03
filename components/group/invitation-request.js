@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import user1 from "../../public/assets/images/user/1.jpg";
 import { invitationAcceptAndDelineService } from "../../services/groups.service";
-import {
-  acceptAndDeclineInvitation,
-  groupInvitationList,
-} from "../../store/groups";
+import { groupInvitationList } from "../../store/groups";
 
 function GroupInvitation() {
   const [apiError, setApiError] = useState();

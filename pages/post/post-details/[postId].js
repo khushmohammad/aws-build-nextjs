@@ -8,11 +8,13 @@ import PostFooter from '../../../components/post/postView/PostFooter'
 import Default from '../../../layouts/default'
 import user2 from "../../../public/assets/images/user/02.jpg";
 import { getPostsByPostId } from "../../../services/posts.service";
+import { getPostTime } from '../../../services/time.service'
 
 function PostDetailsById() {
     const router = useRouter()
 
     const PostId = router.query.postId
+    const [postID, setPostID] = useState();
 
     const [postDetail, setPostDetail] = useState("")
     const postData = async () => {
@@ -23,7 +25,7 @@ function PostDetailsById() {
     useEffect(() => {
         PostId && postData()
     }, [PostId])
-
+    //   console.log(postDetail);
     return (
 
         <Default>
@@ -69,10 +71,12 @@ function PostDetailsById() {
                                                             {postDetail?.postCreatedBy &&
                                                                 `${postDetail?.postCreatedBy?.userInfo?.firstName}   ${postDetail?.postCreatedBy?.userInfo?.lastName} `}
                                                         </h5>
-                                                        <span className="mb-0 ps-1 d-inline-block">
+                                                        {/* <span className="mb-0 ps-1 d-inline-block">
                                                             Add New Post
-                                                        </span>
-                                                        <p className="mb-0 text-primary">Just Now</p>
+                                                        </span> */}
+                                                        <p className="mb-0 text-primary">
+                                                            {getPostTime(postDetail.createdAt)}
+                                                        </p>
                                                     </div>
                                                     <div className="card-post-toolbar">
                                                         <Dropdown>
@@ -176,7 +180,7 @@ function PostDetailsById() {
                                                 <PostContentSection stringContent={postDetail?.description} />
                                             )}
                                         </div>
-                                        <MediaComponent mediaData={postDetail?.filesInfo} />
+                                        <MediaComponent mediaData={postDetail?.fileInfo} />
                                         <PostFooter postIdForLike={PostId} />
 
                                     </div>

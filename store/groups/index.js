@@ -20,13 +20,19 @@ const initialState = {
   groupFeeds: null,
   postDetails: null,
   groupInvited: null,
-  joinRequestList: null,
+  joinRequestList: [],
   joinedGroup: null,
+  sentGroupJoinRequest: [],
 };
 
 const GroupSlice = createSlice({
   name: "groups",
   initialState,
+  reducers: {
+    allJoinRequestSent: (state, action) => {
+      state.sentGroupJoinRequest = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllGroupsList.fulfilled, (state, action) => {
@@ -131,4 +137,5 @@ export const allJoinedGroupList = createAsyncThunk(
   }
 );
 
+export const { allJoinRequestSent } = GroupSlice.actions;
 export default GroupSlice.reducer;

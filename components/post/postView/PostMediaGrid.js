@@ -10,15 +10,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 function PostMediaGrid({ mediaContent }) {
 
-    //  console.log(mediaContent, "mediaContent.fsile");
-
     return (
         <div>
 
-            {mediaContent && mediaContent.file && <>
+            {mediaContent && mediaContent?.fileInfo && mediaContent?.fileInfo?.length > 0 && <>
                 <>
                     <Link href={`/post/post-details/${mediaContent._id}`} >
-                        <MediaComponent mediaCount={mediaContent.file.length} mediaData={mediaContent.file} />
+                        <MediaComponent mediaCount={mediaContent.fileInfo.length} mediaData={mediaContent.fileInfo} />
                     </Link>
                 </>
             </>}
@@ -28,18 +26,16 @@ function PostMediaGrid({ mediaContent }) {
 
 
 const MediaComponent = (props) => {
-
     const { mediaCount, mediaData } = props
     const MorePostCount = mediaCount - 3
-
     return (
         <>
             <div>
                 <div className={`d-grid grid-rows-${mediaCount && mediaCount > 2 ? 2 : 1} grid-flow-col gap-3`} >
                     {mediaData &&
                         mediaData.slice(0, 4).map((data, index) => {
-                            const fileData = data.file[0]
 
+                            const fileData = data && data.file && data?.file
                             const clasname = mediaCount && mediaCount > 2 ? mediaCount === 3 && index == 0 ? "row-span-2" : 'row-span-1' : 'row-span-2'
                             return (
                                 <React.Fragment key={index}>

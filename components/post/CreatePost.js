@@ -3,8 +3,8 @@ import Link from "next/link";
 import Form from "react-bootstrap/Form";
 import { Card, Dropdown, Modal, Button } from "react-bootstrap";
 import FileBase64 from "react-filebase64";
-import { FaUserFriends } from "react-icons/fa";
 import ModalPop from "../popupModal/ModalPop.js";
+
 // images
 import user1 from "../../public/assets/images/user/1.jpg";
 import small07 from "../../public/assets/images/small/07.png";
@@ -13,33 +13,29 @@ import small09 from "../../public/assets/images/small/09.png";
 import small1 from "../../public/assets/images/small/07.png";
 import small2 from "../../public/assets/images/small/08.png";
 import small3 from "../../public/assets/images/small/09.png";
-import small4 from "../../public/assets/images/small/10.png";
-import small5 from "../../public/assets/images/small/11.png";
 import small6 from "../../public/assets/images/small/12.png";
-import small7 from "../../public/assets/images/small/13.png";
-import small8 from "../../public/assets/images/small/14.png";
-import user9 from "../../public/assets/images/user/1.jpg";
+
 import CustomToggle from "../dropdowns";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { createPost, getAllFeeds } from "../../services/posts.service";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { createPost } from "../../services/posts.service";
 import { useRouter } from "next/router";
-import { getAllFeedsList } from "../../store/post/allFeeds";
 import { createGroupPost } from "../../services/groups.service.js";
+import { useEffect } from "react";
 
 const CreatePost = (props) => {
-  const [postData, setPostData] = useState({ description: "" });
+  const [postData, setPostData] = useState({
+    description: "",
+  });
   const [modalShowFriendList, setModalShowFriendList] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [show, setShow] = useState(false);
-  const [progress, setProgress] = useState();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState(false);
+  const [privacy, setPrivacy] = useState("public");
+  const [privacyFriendList, setPrivacyFriendList] = useState([]);
+
   const handleClose = () => {
     setShow(false);
-    setSelectedFile("");
-    setPostData("");
   };
   const handleShow = () => {
     setShow(true);
@@ -51,28 +47,46 @@ const CreatePost = (props) => {
   const closeHandle = () => {
     setShowPopup(false);
     setShow(true);
-    setPostData({ description: "", file: null });
-    setSelectedFile(null);
+    // setPostData({
+    //   description: "",
+    //   file: null,
+    // });
+    // setPrivacy("public");
+    // setSelectedFile(null);
   };
 
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const user = useSelector((state) => state?.user?.data);
 
-  const submitPost = async (e) => {
-    e.preventDefault();
-    if (router.pathname === "/groups/[groupId]") {
-      await createGroupPost(postData, props.groupId).then((res) => {
-        setPostData({ description: "", file: null });
-        setSelectedFile(null);
+  useEffect(() => {
+    if (privacy === "includeFriends" || privacy === "excludeFriends") {
+      setPostData({
+        ...postData,
+        privacy: privacy,
+        privacyFriendList: privacyFriendList,
       });
     } else {
-      await createPost(postData).then((res) => {
-        setPostData({ description: "", file: null });
-        setSelectedFile(null);
-      });
+      setPostData({ ...postData, privacy: privacy });
     }
+  }, [privacy, privacyFriendList]);
+
+  useEffect(() => {
+    if (router.pathname === "/groups/[groupId]") {
+      setPostData({ ...postData, groupId: props.groupId });
+    }
+  }, [props.groupId]);
+
+  const submitPost = async (e) => {
+    e.preventDefault();
+    await createPost(postData).then((res) => {
+      setPostData({
+        description: "",
+        file: null,
+      });
+      setPrivacy("public");
+      setSelectedFile(null);
+    });
     handleClose();
     props.refreshPostList();
   };
@@ -174,7 +188,7 @@ const CreatePost = (props) => {
                   {/* <Dropdown.Item onClick={handleShow} href="">
                     Live Video
                   </Dropdown.Item> */}
-                  <Dropdown.Item onClick={handleShow} href="">
+                  <Dropdown.Item onClick={handleShow} href="#">
                     Gif
                   </Dropdown.Item>
                   {/* <Dropdown.Item onClick={handleShow} href="">
@@ -203,7 +217,7 @@ const CreatePost = (props) => {
           </button>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={submitPost} encType="multipart/form-data">
+          <Form onSubmit={submitPost} encType="multipart/form-data">
             <div className="d-flex align-items-center">
               <div className="user-img">
                 <Image
@@ -243,7 +257,6 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
-                      {console.log(file, "file")}
                       <img
                         loading="lazy"
                         src={file.base64}
@@ -281,7 +294,7 @@ const CreatePost = (props) => {
 
             <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
               <li className="col-md-6 mb-3 position-relative">
-                <div className="bg-soft-primary rounded p-2 pointer me-3 ">
+                <div className="bg-soft-primary rounded p-2 pointer me-3">
                   <Image
                     loading="lazy"
                     src={small1}
@@ -290,7 +303,10 @@ const CreatePost = (props) => {
                   />
                   Photo/Video
                 </div>
-                <div style={{ position: "absolute", top: 0, opacity: 0 }}>
+                <div
+                  style={{ position: "absolute", top: 0, opacity: 0 }}
+                  role="button"
+                >
                   <FileBase64
                     multiple={true}
                     onDone={(files) => {
@@ -405,13 +421,13 @@ const CreatePost = (props) => {
                 </div>
                 <h6>Your Story</h6>
               </div> */}
-                <div className="card-post-toolbar">
-                  <>
+                {router.pathname !== "/groups/[groupId]" ? (
+                  <div className="card-post-toolbar">
                     <Button variant="primary" onClick={showHandle}>
-                      Public
+                      {privacy}
                     </Button>
-                  </>
-                </div>
+                  </div>
+                ) : null}
               </div>
             </div>
             <Button
@@ -421,7 +437,7 @@ const CreatePost = (props) => {
             >
               Post
             </Button>
-          </form>
+          </Form>
         </Modal.Body>
       </Modal>
       <Modal
@@ -441,64 +457,41 @@ const CreatePost = (props) => {
             <div>
               <div className="mb-3 ">
                 <Form.Check className="d-block text-start fs-4" reverse>
-                  <Form.Check.Label htmlFor="Public">{`Public`}</Form.Check.Label>
-                  <Form.Check.Input
-                    type={`radio`}
-                    id="Public"
-                    name="group-1"
-                    defaultChecked
-                  />
-
-                  <Form.Control.Feedback type="valid">
-                    You did it!
-                  </Form.Control.Feedback>
-                </Form.Check>
-              </div>
-
-              <div className="mb-3 ">
-                <Form.Check className="d-block text-start fs-4" reverse>
-                  <Form.Check.Label htmlFor="Friends">{`Friends`}</Form.Check.Label>
-                  <Form.Check.Input type="radio" id="Friends" name="group-1" />
-
-                  {/* <Form.Control.Feedback type="valid">
-                    You did it!
-                  </Form.Control.Feedback> */}
-                </Form.Check>
-              </div>
-              <div className="mb-3 ">
-                <Form.Check className="d-block text-start fs-4" reverse>
-                  <Form.Check.Label htmlFor="only-me">{`Onle me..`}</Form.Check.Label>
-                  <Form.Check.Input
-                    type={`radio`}
-                    name="group-1"
-                    id="only-me"
-                  />
-
-                  {/* <Form.Control.Feedback type="valid">
-                    You did it!
-                  </Form.Control.Feedback> */}
-                </Form.Check>
-              </div>
-
-              <div
-                className="mb-3 "
-                onClick={() => {
-                  setModalShowFriendList({
-                    show: true,
-                    title: "friends-except",
-                  }),
-                    setShowPopup(false);
-                }}
-              >
-                <Form.Check className="d-block text-start fs-4" reverse>
-                  <Form.Check.Label htmlFor="friends-except">{`Friends except..`}</Form.Check.Label>
+                  <Form.Check.Label htmlFor="Public">Public</Form.Check.Label>
                   <Form.Check.Input
                     type="radio"
+                    id="Public"
                     name="group-1"
-                    id="friends-except"
+                    value="public"
+                    onChange={(e) => setPrivacy(e.target.value)}
                   />
+                </Form.Check>
+              </div>
 
-                  <Form.Control.Feedback>You did it!</Form.Control.Feedback>
+              <div className="mb-3 ">
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="Friends">Friends</Form.Check.Label>
+                  <Form.Check.Input
+                    type="radio"
+                    id="Friends"
+                    name="privacy"
+                    value="private"
+                    onChange={(e) => setPrivacy(e.target.value)}
+                  />
+                </Form.Check>
+              </div>
+              <div className="mb-3 ">
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="only-me">
+                    Onle me..
+                  </Form.Check.Label>
+                  <Form.Check.Input
+                    type="radio"
+                    name="privacy"
+                    id="only-me"
+                    value="onlyMe"
+                    onChange={(e) => setPrivacy(e.target.value)}
+                  />
                 </Form.Check>
               </div>
 
@@ -507,22 +500,46 @@ const CreatePost = (props) => {
                 onClick={() => {
                   setModalShowFriendList({
                     show: true,
-                    title: "specific-friends",
+                    title: "Friends-except",
                   }),
                     setShowPopup(false);
                 }}
               >
                 <Form.Check className="d-block text-start fs-4" reverse>
-                  <Form.Check.Label htmlFor="specific-friends">{`Specific friend`}</Form.Check.Label>
+                  <Form.Check.Label htmlFor="friends-except">
+                    Friends except...
+                  </Form.Check.Label>
                   <Form.Check.Input
-                    type={`radio`}
-                    name="group-1"
-                    id="specific-friends"
+                    type="radio"
+                    name="privacy"
+                    id="friends-except"
+                    value="includeFriends"
+                    onChange={(e) => setPrivacy(e.target.value)}
                   />
+                </Form.Check>
+              </div>
 
-                  {/* <Form.Control.Feedback type="valid">
-                    You did it!
-                  </Form.Control.Feedback> */}
+              <div
+                className="mb-3 "
+                onClick={() => {
+                  setModalShowFriendList({
+                    show: true,
+                    title: "Specific-friends",
+                  }),
+                    setShowPopup(false);
+                }}
+              >
+                <Form.Check className="d-block text-start fs-4" reverse>
+                  <Form.Check.Label htmlFor="specific-friends">
+                    Specific friend
+                  </Form.Check.Label>
+                  <Form.Check.Input
+                    type="radio"
+                    name="privacy"
+                    id="specific-friends"
+                    value="excludeFriends"
+                    onChange={(e) => setPrivacy(e.target.value)}
+                  />
                 </Form.Check>
               </div>
             </div>
@@ -540,8 +557,9 @@ const CreatePost = (props) => {
       <ModalPop
         show={modalShowFriendList?.show}
         onHide={() => setModalShowFriendList({ show: false })}
-        closeHandle={() => setShowPopup(true)}
+        onShow={() => setShowPopup(true)}
         title={modalShowFriendList?.title}
+        getfriends={setPrivacyFriendList}
       />
     </Card>
   );

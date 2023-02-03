@@ -35,7 +35,7 @@ export const joinGroupService = async (groupId) => {
         },
       }
     );
-    return res.data.body;
+    return res.data;
   } catch (err) {
     console.log(err);
   }
@@ -54,7 +54,6 @@ export const createGroup = async (payload) => {
         },
       }
     );
-    console.log(response);
     return response;
   } catch (err) {
     console.log(err);
@@ -64,6 +63,28 @@ export const createGroup = async (payload) => {
     return { message, status };
   }
 };
+
+
+export const updateGroup = async (payload,groupId)=>{
+  const token  =await getToken()
+  try {
+    const res = await axios
+      .patch(
+        `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/update/${groupId}`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          
+          },
+        }
+      )
+    return res.data
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export const deleteGroupByGroupId = async (groupId) => {
   const token = await getToken();
@@ -305,7 +326,9 @@ export const groupJoinAcceptAndDeclineService = async (
       }
     );
     return res.data.body;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const groupJoinedList = async () => {

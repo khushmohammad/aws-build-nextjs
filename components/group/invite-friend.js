@@ -23,7 +23,6 @@ const InviteFriend = (props) => {
 
   const inviteAFriend = async (memberId, groupId) => {
     const res = await inviteFriend(memberId, groupId);
-    // const res = await dispatch(inviteFriendsOnGroup({ memberId, groupId }));
     if (res?.data?.success) {
       setIsInvited((prev) =>
         Boolean(!prev[memberId])

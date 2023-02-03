@@ -44,17 +44,19 @@ const JoinedGroup = () => {
     dispatch(allJoinedGroupList());
   }, []);
 
+  console.log(groups);
+
   return (
     <Default>
       <Head>
-        <title>Joined-Group</title>
+        <title>Joined Group</title>
       </Head>
       <ProfileHeader img={img7} title="Groups" />
       <div id="content-page" className="content-page">
         <Container>
           <div className="d-grid gap-3 d-grid-template-1fr-19">
             {groups?.map((group, index) => (
-              <Card className="mb-0">
+              <Card key={index} className="mb-0">
                 <div className="top-bg-image">
                   <Image
                     src={img1}
@@ -74,7 +76,7 @@ const JoinedGroup = () => {
                   </div>
                   <div className="group-info pt-3 pb-3">
                     <h4>
-                      <Link href="/groups/groupID">
+                      <Link href={`/groups/${group?.groupId?._id}`}>
                         {group?.groupId?.groupName}
                       </Link>
                     </h4>

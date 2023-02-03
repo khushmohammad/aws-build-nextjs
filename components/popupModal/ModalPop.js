@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import Card from "../../components/Card";
+import { Button, Card, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Row, Col, Container } from "react-bootstrap";
-import Link from "next/link";
 import Image from "next/image";
+import user5 from "../../public/assets/images/user/05.jpg";
 
-function ModalPop(props) {
-  const [toggle, setToggle] = useState(false);
-  const friendsList = useSelector(
+const ModalPop = (props) => {
+  const [query, setQuery] = useState("");
+  const [userInfo, setUserInfo] = useState([]);
+  const [userIdArr, setUserIdArr] = useState([]);
+
+  const friendList = useSelector(
     (state) => state?.friends?.friendList?.friendsList
   );
-  const [friendListState, setFriendListState] = useState([]);
-  const GetFriendList = async () => {
-    // const friendsWithDetails = await getFriendListWithUserData(friendsList);
-    // console.log(friendsWithDetails, "friendsWithDetails")
-    setFriendListState(friendsList);
-  };
 
   useEffect(() => {
-    GetFriendList();
-  }, [friendsList]);
+    props.getfriends(userIdArr);
+  }, [userIdArr]);
+
+  const handleAdd = (event, id) => {
+    setUserInfo((prev) =>
+      Boolean(!prev[id]) ? { ...prev, [id]: true } : { ...prev, [id]: false }
+    );
+    userInfo[id] == true
+      ? setUserIdArr(userIdArr.filter((item) => item !== id))
+      : setUserIdArr([...userIdArr, id]);
+  };
 
   return (
     <Modal
@@ -35,91 +38,98 @@ function ModalPop(props) {
           {props.title}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {friendListState &&
-          friendListState.map((userData, index) => {
-            return (
-              <React.Fragment key={index}>
-                {userData && (
-                  <Card className=" card-block card-stretch card-height">
-                    <Card.Body className=" profile-page p-0">
-                      <div className="profile-header-image">
-                        <div className="profile-info p-4 float-right">
-                          <div className="user-detail">
-                            <div className="d-flex flex-wrap justify-content-between align-items-start ">
-                              <div className="profile-detail d-flex ">
-                                <div className="rounded-circle p-1">
-                                  {userData && (
-                                    <Image
-                                      className="user-img img-fluid flex-shrink-0"
-                                      src={
-                                        userData?.profileInfo
-                                          ?.profilePictureInfo?.file?.location
-                                      }
-                                      alt=""
-                                      height={60}
-                                      width={60}
-                                    />
-                                  )}
-                                </div>
-                                <div className="user-data-block">
-                                  <h4>
-                                    <Link href={`${userData?._id}`}>
-                                      {userData?.firstName} {userData?.lastName}
-                                    </Link>
-                                  </h4>
-                                  <h6>@designer</h6>
-                                </div>
-                              </div>
-                              {props.title === "specific-friends" ? (
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary"
-                                  onClick={() => setToggle(!toggle)}
-                                >
-                                  {toggle ? "Added" : "Add"}
-                                </button>
-                              ) : (
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary"
-                                  onClick={() => setToggle(!toggle)}
-                                >
-                                  {toggle ? "Removed" : "Remove"}
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                )}
-              </React.Fragment>
-            );
-          })}
+      <div style={{ position: "sticky", top: "0", padding: "10px 15px" }}>
+        <input
+          type="text"
+          placeholder="Search friends..."
+          onChange={(e) => setQuery(e.target.value)}
+          className="text search-input form-control bg-soft-primary  d-none d-lg-block p-2 "
+        />
 
-        {Array.isArray(friendsList) && friendsList.length === 0 && (
-          <Col>
-            <div>
-              <p className="p-3 bg-danger text-alert text-center">
-                No user found!
-              </p>
-            </div>
-          </Col>
-        )}
+        <h4 className="m-2">Friends</h4>
+      </div>
+      <Modal.Body
+        style={{
+          maxHeight: "calc(100vh - 510px)",
+          overflowY: "auto",
+          minHeight: "490px",
+        }}
+      >
+        {friendList &&
+          friendList
+            ?.filter((data) => data?.firstName.toLowerCase().includes(query))
+            ?.map((data, index) => {
+              return (
+                <Card.Body key={index}>
+                  <ul className="request-list list-inline m-0 p-0">
+                    <li className="d-flex align-items-center  justify-content-between flex-wrap">
+                      <div className="user-img img-fluid flex-shrink-0">
+                        <Image
+                          src={
+                            data?.profileInfo?.profilePictureInfo?.file
+                              ?.location || user5
+                          }
+                          alt="story-img"
+                          className="rounded-circle avatar-40"
+                          height={100}
+                          width={100}
+                        />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <h6 className="text-capitalize">
+                          {data?.firstName} {data?.lastName}
+                        </h6>
+                        <p className="mb-0">40 friends</p>
+                      </div>
+                      <div className="d-flex align-items-center mt-2 mt-md-0">
+                        <div className="confirm-click-btn"></div>
+                        {props.title == "friends-except" ? (
+                          <Button
+                            href="#"
+                            onClick={(e) =>
+                              handleAdd(e, data?.profileInfo?._id)
+                            }
+                            className="btn btn-secondary rounded"
+                            data-extra-toggle="delete"
+                            data-closest-elem=".item"
+                          >
+                            {userInfo[data?.profileInfo?._id] == true
+                              ? "removed"
+                              : "remove"}
+                          </Button>
+                        ) : (
+                          <Button
+                            href="#"
+                            onClick={(e) =>
+                              handleAdd(e, data?.profileInfo?._id)
+                            }
+                            className="btn btn-secondary rounded"
+                            data-extra-toggle="delete"
+                            data-closest-elem=".item"
+                          >
+                            {userInfo[data?.profileInfo?._id] == true
+                              ? "Added"
+                              : "Add"}
+                          </Button>
+                        )}
+                      </div>
+                    </li>
+                  </ul>
+                </Card.Body>
+              );
+            })}
       </Modal.Body>
       <Modal.Footer>
         <Button
           onClick={() => {
-            props.onHide(), props.closeHandle();
+            props.onHide(), props.onShow();
           }}
         >
-          Close
+          Save changes
         </Button>
       </Modal.Footer>
     </Modal>
   );
-}
+};
 
 export default ModalPop;

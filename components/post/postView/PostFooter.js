@@ -8,7 +8,7 @@ import icon4 from "../../../public/assets/images/icon/04.png";
 import icon5 from "../../../public/assets/images/icon/05.png";
 import icon6 from "../../../public/assets/images/icon/06.png";
 import icon7 from "../../../public/assets/images/icon/07.png";
-import user2 from "../../../public/assets/images/user/02.jpg";
+import user2 from "../../../public/assets/images/user/1.jpg";
 import user3 from "../../../public/assets/images/user/03.jpg";
 
 import ShareOffcanvas from '../../share-offcanvas';
@@ -16,7 +16,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
-import { getAllCommentsByPostId, getAllLikesByPostId,  likePostByUser, postCommentbyPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
+import { getAllCommentsByPostId, getAllLikesByPostId, likePostByUser, postCommentbyPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
 import { useSelector } from 'react-redux';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -251,15 +251,23 @@ function PostFooter({ postIdForLike }) {
                   </Dropdown.Toggle>
                   {likesWithUserDetails &&
                     <Dropdown.Menu>
-                      {likesWithUserDetails &&
+                      {likesWithUserDetails && Array.isArray(likesWithUserDetails) &&
                         likesWithUserDetails.map((data, index) => {
+                         // console.log(data, "data");
                           return (
                             <React.Fragment key={index}>
                               {index < 10 &&
-                                <Dropdown.Item key={index} className="bg-secondary">
-
-                                  <GetReactionIcon reactionByUser={data.reactionEmoji && data.reactionEmoji} />   {data?.userDetails && `${data.userDetails?.userInfo.firstName} ${data.userDetails?.userInfo.lastName}`}
-                                </Dropdown.Item>
+                                <Dropdown.ItemText key={index} className="bg-secondary p-2" style={{ overflow: "hiddle", minWidth: "200px" }}>
+                                  {/* <Link href={`/friends/${data?.userDetails._id}`}> */}
+                                  <GetReactionIcon reactionByUser={data.reactionEmoji && data.reactionEmoji} />  <Image
+                                    className="avatar-35 rounded-circle img-fluid"
+                                    src={data?.userDetails?.profilePictureInfo?.file?.location || user2}
+                                    alt=""
+                                    height={35}
+                                    width={35}
+                                  />  {data?.userDetails && `${data.userDetails?.userInfo.firstName} ${data.userDetails?.userInfo.lastName}`}
+                                  {/* </Link> */}
+                                </Dropdown.ItemText>
                               }
                             </React.Fragment>
                           )
