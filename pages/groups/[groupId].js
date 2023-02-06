@@ -40,6 +40,8 @@ const GroupDetail = () => {
 
   const userInfo = useSelector((state) => state?.user?.data);
 
+  const memberCount = useSelector((state) => state?.groups?.groupMember);
+
   const dispatch = useDispatch();
   const router = useRouter();
   const { groupId } = router.query;
@@ -53,6 +55,7 @@ const GroupDetail = () => {
   return (
     <>
       <GroupMemeber
+        groupid={groupId}
         show={showGroupMember}
         onHide={() => setShowGroupMember(false)}
       />
@@ -95,7 +98,10 @@ const GroupDetail = () => {
                           className="btn-link"
                           onClick={() => setShowGroupMember(true)}
                         >
-                          20 members
+                          {(memberCount &&
+                            memberCount[0]?.memberCount?.members) ||
+                            0}{" "}
+                          members
                         </Link>
                       </p>
                     </div>

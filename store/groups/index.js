@@ -10,11 +10,13 @@ import {
   invitationAcceptAndDelineService,
   groupJoinRequestList,
   groupJoinedList,
+  groupMemberListService,
 } from "../../services/groups.service";
 
 const initialState = {
   allGroups: null,
   groupInfo: null,
+  groupMember: [],
   invitedFriend: null,
   groupPrivacy: null,
   groupFeeds: null,
@@ -61,6 +63,9 @@ const GroupSlice = createSlice({
       })
       .addCase(allJoinedGroupList.fulfilled, (state, action) => {
         state.joinedGroup = action.payload;
+      })
+      .addCase(groupMemberList.fulfilled, (state, action) => {
+        state.groupMember = action.payload;
       });
   },
 });
@@ -133,6 +138,14 @@ export const allJoinedGroupList = createAsyncThunk(
   "groups/joinedGroup",
   async () => {
     const data = await groupJoinedList();
+    return data;
+  }
+);
+
+export const groupMemberList = createAsyncThunk(
+  "groups/memberList",
+  async ({ limit, pageNumber, groupId }) => {
+    const data = await groupMemberListService(limit, pageNumber, groupId);
     return data;
   }
 );

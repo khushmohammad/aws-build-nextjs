@@ -16,7 +16,7 @@
     "bootstrap": "^5.2.3",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
-    "fslightbox-react": "^1.6.2-2",
+    "fslightbox-react": "^1.6.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "13.1.0",

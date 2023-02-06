@@ -2,12 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   createPost,
   editPostByPostId,
+  getAllPostPhoto,
   updatePost,
 } from "../../services/posts.service";
 
 const initialState = {
   postDetail: null,
   status: null,
+  photos: [],
 };
 
 const PostSlice = createSlice({
@@ -20,6 +22,9 @@ const PostSlice = createSlice({
       })
       .addCase(createPosts.fulfilled, (state, action) => {
         state.status = action.payload;
+      })
+      .addCase(allPostPhotos.fulfilled, (state, action) => {
+        state.photos = action.payload;
       });
   },
 });
@@ -43,5 +48,10 @@ export const updatePostDetails = createAsyncThunk(
     await updatePost(data);
   }
 );
+
+export const allPostPhotos = createAsyncThunk("post/gallery", async () => {
+  const data = await getAllPostPhoto();
+  return data;
+});
 
 export default PostSlice.reducer;

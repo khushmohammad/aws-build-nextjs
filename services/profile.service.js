@@ -96,3 +96,18 @@ export const getCountryData = async (id) => {
   );
   return res.data.body;
 };
+
+export const getAllPhotos = async () => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfile/profile/images`,
+      {
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};

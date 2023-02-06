@@ -19,48 +19,46 @@ import user2 from "../../../public/assets/images/user/1.jpg";
 import { getPostTime } from "../../../services/time.service";
 import CreatePost from "../CreatePost";
 import { getGroupFeeds } from "../../../store/groups";
+import PostThreeDotmenu from "./PostThreeDotmenu";
 
-const Post = ({ activePage, groupId }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [postID, setPostID] = useState();
-
+const Post = ({ activePage, groupId, postDetailObj }) => {
   const [page, setPage] = useState(1);
-
+  const [limit, setLimit] = useState(5);
   const [posts, setposts] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-
   const StorePosts = useSelector((state) => state?.allFeed?.allFeeds);
   const loading = useSelector((state) => state?.allFeed?.status);
 
-  const limit = 5;
-
-  const GetPostNet = async () => {
+  const GetPostNet = async (pagenum = page, limitnum = limit) => {
     const userIdFromQueryPath = router?.query?.id;
     if (userIdFromQueryPath && userIdFromQueryPath) {
       dispatch(
         getAllFeedsList({
           activePage: activePage,
-          page: page,
-          limit: limit,
+          page: pagenum,
+          limit: limitnum,
           uerId: userIdFromQueryPath,
         })
       );
     } else if (groupId && activePage == "group") {
-      //dispatch(getGroupFeeds(groupId));
-      // getAllFeedsList({ activePage: activePage, page: page, limit: limit })
-      //console.log("fsdf");
       dispatch(
         getAllFeedsList({
           activePage: activePage,
-          page: page,
-          limit: limit,
+          page: pagenum,
+          limit: limitnum,
           groupId: groupId,
         })
       );
+    } else if (activePage == "PostDetail") {
+      //console.log(postDetailObj, "postDetail")
+
+      setposts([])
+      setposts([postDetailObj])
+
     } else {
       dispatch(
-        getAllFeedsList({ activePage: activePage, page: page, limit: limit })
+        getAllFeedsList({ activePage: activePage, page: pagenum, limit: limitnum })
       );
     }
   };
@@ -72,8 +70,8 @@ const Post = ({ activePage, groupId }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-        ? setposts((prev) => [...prev, ...StorePosts])
-        : "";
+          ? setposts((prev) => [...prev, ...StorePosts])
+          : "";
     }
   }, [StorePosts]);
 
@@ -96,55 +94,20 @@ const Post = ({ activePage, groupId }) => {
   };
   // post view
 
-  const DeletePostByPostId = async (postId) => {
-    const res = await deletePostByPostId(postId);
-    const postDeleted = await res.status;
-    if (postDeleted == 200) {
-      dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: 1,
-          limit: posts.length,
-        })
-      );
-      setposts(StorePosts);
-    }
-  };
-  const pinPost = async (postId) => {
-    const res = await pinPostByUser(postId);
 
-    if (res.data.success == true) {
-      dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: 1,
-          limit: posts.length,
-        })
-      );
-      setposts(StorePosts);
-    }
+  const onClickRefreshPostList = () => {
+    setposts([])
+    GetPostNet(1, posts.length)
+  }
 
-    //  const res = await pinPostByUser(postId);
 
-    // // //  console.log("RESPONSE", res);
-    // if (res.status == 200) {
-    //   await getAllPostsByUserId(page, 2)
-    //    console.log("ALLL POST POST RESPONSE", await getAllPostsByUserId(page, 2))
-    //     //  router.reload();
-    // }
-  };
+
 
   return (
     <div>
-      <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />
+      {activePage != "PostDetail" && <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />}
       <div style={{ position: "relative", marginBottom: "7rem" }}>
-        <EditPost
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          onShow={() => setShowModal(true)}
-          postid={postID}
-          refreshPostList={() => GetPostNet()}
-        />
+
 
         {posts &&
           Array.isArray(posts) &&
@@ -153,10 +116,7 @@ const Post = ({ activePage, groupId }) => {
             const {
               _id,
               description,
-              share,
-              postLikes,
               createdAt,
-              updatedAt,
               fileInfo,
               isPin,
               is_SelfPost,
@@ -167,6 +127,7 @@ const Post = ({ activePage, groupId }) => {
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
+
                 <Card.Body>
                   <div className="user-post-data">
                     <div className="d-flex justify-content-between">
@@ -205,130 +166,8 @@ const Post = ({ activePage, groupId }) => {
                             </p>
                           </div>
                           <div className="card-post-toolbar">
-                            <Dropdown>
-                              <Dropdown.Toggle variant="bg-transparent">
-                                <span className="material-symbols-outlined">
-                                  more_horiz
-                                </span>
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu className="dropdown-menu m-0 p-0">
-                                {/* {is_SelfPost && is_SelfPost ? ( */}
-                                <Dropdown.Item className=" p-3">
-                                  <div
-                                    className="d-flex align-items-top"
-                                    onClick={() => {
-                                      setPostID(_id);
-                                      setShowModal(true);
-                                    }}
-                                  >
-                                    <div className="h4 material-symbols-outlined">
-                                      <i className="ri-save-line"></i>
-                                    </div>
-                                    <div className="data ms-2">
-                                      <h6>Edit Post</h6>
-                                      <p className="mb-0">Edit</p>
-                                    </div>
-                                  </div>
-                                </Dropdown.Item>
-                                {/* ) : (
-                                  ""
-                                )} */}
-                                {is_SelfPost && is_SelfPost ? (
-                                  <Dropdown.Item className=" p-3" href="#">
-                                    <div
-                                      className="d-flex align-items-top"
-                                      onClick={() => pinPost(_id)}
-                                    >
-                                      <div className="h4 material-symbols-outlined">
-                                        <i className="ri-save-line"></i>
-                                      </div>
-                                      {isPin != true ? (
-                                        <div className="data ms-2">
-                                          <h6>Pin Post</h6>
-                                          <p className="mb-0">
-                                            Add this to your pinned post
-                                          </p>
-                                        </div>
-                                      ) : (
-                                        <div className="data ms-2">
-                                          <h6>Unpin Post</h6>
-                                          <p className="mb-0">
-                                            Add this to your pinned post
-                                          </p>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </Dropdown.Item>
-                                ) : (
-                                  ""
-                                )}
-                                <Dropdown.Item className=" p-3" href="#">
-                                  <div className="d-flex align-items-top">
-                                    <div className="h4 material-symbols-outlined">
-                                      <i className="ri-save-line"></i>
-                                    </div>
-                                    <div className="data ms-2">
-                                      <h6>Save Post</h6>
-                                      <p className="mb-0">
-                                        Add this to your saved items
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Dropdown.Item>
+                            {_id && <PostThreeDotmenu postLength={posts.length} refreshPostList={() => onClickRefreshPostList()} PostId={_id} isPin={isPin} is_SelfPost={is_SelfPost} />}
 
-                                <Dropdown.Item className="p-3" href="#">
-                                  <div className="d-flex align-items-top">
-                                    <i className="ri-close-circle-line h4"></i>
-                                    <div className="data ms-2">
-                                      <h6>Hide Post</h6>
-                                      <p className="mb-0">
-                                        See fewer posts like this.
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Dropdown.Item>
-                                {is_SelfPost && is_SelfPost ? (
-                                  <Dropdown.Item className=" p-3">
-                                    <div
-                                      className="d-flex align-items-top"
-                                      onClick={() => DeletePostByPostId(_id)}
-                                    >
-                                      <div className="h4 material-symbols-outlined">
-                                        <i className="ri-save-line"></i>
-                                      </div>
-                                      <div className="data ms-2">
-                                        <h6>Delete Post</h6>
-                                        <p className="mb-0">Delete</p>
-                                      </div>
-                                    </div>
-                                  </Dropdown.Item>
-                                ) : (
-                                  ""
-                                )}
-                                <Dropdown.Item className=" p-3" href="#">
-                                  <div className="d-flex align-items-top">
-                                    <i className="ri-user-unfollow-line h4"></i>
-                                    <div className="data ms-2">
-                                      <h6>Unfollow User</h6>
-                                      <p className="mb-0">
-                                        Stop seeing posts but stay friends.
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Dropdown.Item>
-                                <Dropdown.Item className=" p-3" href="#">
-                                  <div className="d-flex align-items-top">
-                                    <i className="ri-notification-line h4"></i>
-                                    <div className="data ms-2">
-                                      <h6>Notifications</h6>
-                                      <p className="mb-0">
-                                        Turn on notifications for this post
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
                           </div>
                         </div>
                       </div>
@@ -341,16 +180,17 @@ const Post = ({ activePage, groupId }) => {
                   </div>
                   {fileInfo && (
                     <>
-                      <PostMediaGrid mediaContent={data && data} />
+                      {activePage != "PostDetail" ? <PostMediaGrid mediaContent={data && data} /> : <MediaComponent mediaData={fileInfo} />}
+
                     </>
                   )}
-                  {_id && <PostFooter postIdForLike={_id} />}
+                  {_id && <PostFooter currentPostId={_id} refreshPostList={onClickRefreshPostList} />}
                 </Card.Body>
               </Card>
             );
           })}
 
-        {loading && loading == "loading" ? (
+        {activePage != "PostDetail" && loading && loading == "loading" ? (
           <div
             className="card card-block card-stretch card-height"
             style={{
@@ -401,4 +241,65 @@ const Post = ({ activePage, groupId }) => {
   );
 };
 
+
+
+const MediaComponent = (props) => {
+
+  const mediaData = props.mediaData
+  //const MorePostCount = mediaCount - 3
+  // console.log(mediaData, "mediaData");
+  return (
+    <>
+      <div>
+        <div className={`d-block  `} >
+          {mediaData &&
+            mediaData.slice(0, 4).map((data, index) => {
+              // console.log(data,"filedfsdData");
+
+              const fileData = data.file
+              // console.log(fileData,"fileData");
+              // const clasname = 'row-span-3'
+              return (
+                <React.Fragment key={index}>
+                  {fileData &&
+                    <>
+
+                      <div className={` position-relative bg-light my-3`}>
+                        {fileData.type && fileData.type == "mp4" ?
+                          <video width="100%" height="100%" controls>
+                            <source src={fileData.location} type="video/mp4" />
+
+                          </video>
+                          :
+
+                          <Image
+                            src={fileData.location}
+                            alt="post2"
+                            className={`  img-fluid rounded w-100 `}
+                            height={500}
+                            width={500}
+                          />
+                        }
+
+                      </div>
+
+                    </>
+                  }
+                </React.Fragment>
+
+              )
+
+            })
+
+          }
+        </div>
+      </div>
+    </>
+
+  )
+
+}
+
+
 export default Post;
+

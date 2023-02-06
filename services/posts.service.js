@@ -18,7 +18,7 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
     );
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount //await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await postslist?.postCount?.postCount; //await response?.data?.body?.allBody?.totalDocs
 
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
@@ -48,7 +48,7 @@ export const getAllPostsByUserId = async (
 ) => {
   const token = await getToken();
 
-  // const page = pageName 
+  // const page = pageName
 
   // console.log(token);
   //console.log(userId,"userId");
@@ -62,7 +62,7 @@ export const getAllPostsByUserId = async (
 
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount  // await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await postslist?.postCount?.postCount; // await response?.data?.body?.allBody?.totalDocs
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -105,7 +105,7 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
 
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount //await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await postslist?.postCount?.postCount; //await response?.data?.body?.allBody?.totalDocs
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -125,7 +125,6 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
   }
 };
 
-
 export const getPostsByPostId = async (PostId) => {
   const token = await getToken();
 
@@ -138,7 +137,7 @@ export const getPostsByPostId = async (PostId) => {
       }
     );
     if (response.status == 200) {
-      const postdata = await response?.data?.body?.feeds[0]
+      const postdata = await response?.data?.body?.feeds[0];
       const res = await getUserInfoByUserId(postdata.userId);
       const userData = await res?.data?.body;
       //console.log(userData);
@@ -149,8 +148,7 @@ export const getPostsByPostId = async (PostId) => {
   } catch (err) {
     console.log(err);
 
-
-    return err
+    return err;
   }
 };
 export const getAllLikesByPostId = async (postId) => {
@@ -402,5 +400,39 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
     }
   } catch (err) {
     return err;
+  }
+};
+
+export const getAllPostPhoto = async () => {
+  const token = await getToken();
+
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/postMedia?pageNumber=1&limit=10`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+export const userPostshare = async (postId) => {
+  const token = await getToken();
+
+
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/share/${postId}`, "",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res;
+  } catch (err) {
+    console.log(err);
   }
 };

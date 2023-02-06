@@ -6,7 +6,11 @@ import {
   updateUserData,
 } from "../../services/user.service";
 
-import { getUserById, getUserList } from "../../services/profile.service";
+import {
+  getAllPhotos,
+  getUserById,
+  getUserList,
+} from "../../services/profile.service";
 
 const initialState = {
   data: null,
@@ -14,6 +18,7 @@ const initialState = {
   userInfo: null,
   status: "loading",
   userProfileDetail: null,
+  photos: [],
 };
 
 const ProfileSlice = createSlice({
@@ -51,6 +56,9 @@ const ProfileSlice = createSlice({
       })
       .addCase(getUserInfoById.fulfilled, (state, action) => {
         state.userProfileDetail = action.payload;
+      })
+      .addCase(allPhotos.fulfilled, (state, action) => {
+        state.photos = action.payload;
       });
   },
 });
@@ -92,5 +100,10 @@ export const getUserInfoById = createAsyncThunk(
     return res;
   }
 );
+
+export const allPhotos = createAsyncThunk("/profile/gallery", async () => {
+  const res = await getAllPhotos();
+  return res;
+});
 
 export default ProfileSlice.reducer;

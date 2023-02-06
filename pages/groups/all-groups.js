@@ -40,8 +40,8 @@ const Groups = () => {
     dispatch(allJoinedGroupList());
 
     let res = [];
-    res = groups.filter((el) => {
-      return !myGroups.find((element) => {
+    res = groups?.filter((el) => {
+      return !myGroups?.find((element) => {
         return element.groupId._id === el._id;
       });
     });
@@ -185,6 +185,13 @@ const Groups = () => {
               </Card>
             ))}
           </div>
+          {groupList?.length === 0 || groupList === undefined ? (
+            <Card className="mb-0">
+              <div className="card-body text-center">
+                <h5 className="card-title">No groups to join!</h5>
+              </div>
+            </Card>
+          ) : null}
         </Container>
       </div>
     </Default>

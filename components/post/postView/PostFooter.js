@@ -24,10 +24,10 @@ import * as yup from "yup";
 import { getPostTime } from '../../../services/time.service';
 
 const schema = yup.object({
-  commentInput: yup.string().required()
+  commentInput: yup.string().required("Please write something")
 }).required();
 
-function PostFooter({ postIdForLike }) {
+function PostFooter({ currentPostId ,refreshPostList }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([])
   const [CommentWithUserDetails, setCommentListWithUserDetails] = useState([])
   const [apiError, setApiError] = useState('')
@@ -88,7 +88,7 @@ function PostFooter({ postIdForLike }) {
   }
 
   const LikeThePost = async (reaction) => {
-    postIdForLike && PostLikeById(postIdForLike, reaction)
+    currentPostId && PostLikeById(currentPostId, reaction)
 
   }
   const PostLikeById = async (postId, reaction) => {
@@ -100,11 +100,11 @@ function PostFooter({ postIdForLike }) {
   }
 
   const getLikeslist = async () => {
-    const res = await getAllLikesByPostId(postIdForLike)
+    const res = await getAllLikesByPostId(currentPostId)
     setLikesListWithUserDetails(res)
   }
   const getCommetslist = async () => {
-    const res = await getAllCommentsByPostId(postIdForLike)
+    const res = await getAllCommentsByPostId(currentPostId)
     setCommentListWithUserDetails(res)
   }
 
@@ -122,7 +122,7 @@ function PostFooter({ postIdForLike }) {
     resolver: yupResolver(schema)
   });
   const onSubmit = async (data) => {
-    const res = await postCommentbyPostId(postIdForLike, data);
+    const res = await postCommentbyPostId(currentPostId, data);
 
     if (res == true) {
       getCommetslist();
@@ -136,7 +136,7 @@ function PostFooter({ postIdForLike }) {
 
   const DeleteComment = async (commentId) => {
 
-    const res = await postCommentDeletebyPostId(postIdForLike, commentId);
+    const res = await postCommentDeletebyPostId(currentPostId, commentId);
     console.log(res, "rdffdes");
 
     if (res == true) {
@@ -146,6 +146,8 @@ function PostFooter({ postIdForLike }) {
     }
 
   }
+
+
   return (
     <div>
       <div className="comment-area mt-3">
@@ -253,7 +255,7 @@ function PostFooter({ postIdForLike }) {
                     <Dropdown.Menu>
                       {likesWithUserDetails && Array.isArray(likesWithUserDetails) &&
                         likesWithUserDetails.map((data, index) => {
-                         // console.log(data, "data");
+                          // console.log(data, "data");
                           return (
                             <React.Fragment key={index}>
                               {index < 10 &&
@@ -303,7 +305,7 @@ function PostFooter({ postIdForLike }) {
               </Dropdown>
             </div>
           </div>
-          <ShareOffcanvas />
+          <ShareOffcanvas sharePostId={currentPostId} refreshPostListshare={refreshPostList} />
         </div>
         <hr />
         <ul className="post-comments list-inline p-0 m-0">
@@ -368,26 +370,31 @@ function PostFooter({ postIdForLike }) {
           </li> */}
         </ul>
         {apiError && <p className='text-danger'>{apiError}</p>}
-        <form className="comment-text d-flex align-items-center mt-3" onSubmit={handleSubmit(onSubmit)}  >
-
-          <div className="input-group mb-3">
-            <input type="text"  {...register("commentInput")} className="form-control rounded" placeholder="Enter Your Comment" />
-            {/* <div className="input-group-append">
+        <form onSubmit={handleSubmit(onSubmit)}  >
+          <div className="comment-text d-flex align-items-center mt-3"  >
+            <div className="input-group mb-3">
+              <input type="text"  {...register("commentInput")} className="form-control rounded" placeholder="Enter Your Comment" />
+              {/* <div className="input-group-append">
                         <button type="submit" className="input-group-text" id="basic-addon2">Submit</button>
                       </div> */}
-          </div>
 
-          <div className="comment-attagement d-flex">
-            <Link href="#">
-              <i className="ri-link me-3"></i>
-            </Link>
-            <Link href="#">
-              <i className="ri-user-smile-line me-3"></i>
-            </Link>
-            <Link href="#">
-              <i className="ri-camera-line me-3"></i>
-            </Link>
+            </div>
+
+            <div className="comment-attagement d-flex">
+              <Link href="#">
+                <i className="ri-link me-3"></i>
+              </Link>
+              <Link href="#">
+                <i className="ri-user-smile-line me-3"></i>
+              </Link>
+              <Link href="#">
+                <i className="ri-camera-line me-3"></i>
+              </Link>
+            </div>
           </div>
+          {errors.commentInput && (
+            <p className="text-danger">{errors.commentInput.message}</p>
+          )}
         </form>
       </div>
     </div >

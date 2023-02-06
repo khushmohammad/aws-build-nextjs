@@ -7,23 +7,13 @@ import ShareOffcanvas from "../../components/share-offcanvas";
 
 // images
 import img1 from "../../public/assets/images/page-img/profile-bg1.jpg";
-import img5 from "../../public/assets/images/icon/10.png";
 import user1 from "../../public/assets/images/user/1.jpg";
 import user05 from "../../public/assets/images/user/05.jpg";
-import user02 from "../../public/assets/images/user/02.jpg";
-import user03 from "../../public/assets/images/user/03.jpg";
 import user06 from "../../public/assets/images/user/06.jpg";
 import user07 from "../../public/assets/images/user/07.jpg";
 import user08 from "../../public/assets/images/user/08.jpg";
 import user09 from "../../public/assets/images/user/09.jpg";
 import user10 from "../../public/assets/images/user/10.jpg";
-import icon1 from "../../public/assets/images/icon/01.png";
-import icon2 from "../../public/assets/images/icon/02.png";
-import icon3 from "../../public/assets/images/icon/03.png";
-import icon4 from "../../public/assets/images/icon/04.png";
-import icon5 from "../../public/assets/images/icon/05.png";
-import icon6 from "../../public/assets/images/icon/06.png";
-import icon7 from "../../public/assets/images/icon/07.png";
 import icon8 from "../../public/assets/images/icon/08.png";
 import icon9 from "../../public/assets/images/icon/09.png";
 import icon10 from "../../public/assets/images/icon/10.png";
@@ -39,22 +29,6 @@ import g6 from "../../public/assets/images/page-img/g6.jpg";
 import g7 from "../../public/assets/images/page-img/g7.jpg";
 import g8 from "../../public/assets/images/page-img/g8.jpg";
 import g9 from "../../public/assets/images/page-img/g9.jpg";
-import img56 from "../../public/assets/images/page-img/p2.jpg";
-import img58 from "../../public/assets/images/page-img/p1.jpg";
-import img57 from "../../public/assets/images/page-img/p3.jpg";
-import small07 from "../../public/assets/images/small/07.png";
-import small08 from "../../public/assets/images/small/08.png";
-import small09 from "../../public/assets/images/small/09.png";
-import small1 from "../../public/assets/images/small/07.png";
-import small2 from "../../public/assets/images/small/08.png";
-import small3 from "../../public/assets/images/small/09.png";
-import small4 from "../../public/assets/images/small/10.png";
-import small5 from "../../public/assets/images/small/11.png";
-import small6 from "../../public/assets/images/small/12.png";
-import small7 from "../../public/assets/images/small/13.png";
-import small8 from "../../public/assets/images/small/14.png";
-import user9 from "../../public/assets/images/user/1.jpg";
-import img59 from "../../public/assets/images/page-img/59.jpg";
 import Link from "next/link";
 import Image from "next/image";
 import Default from "../../layouts/default";
@@ -66,20 +40,18 @@ import { getUserByUserId } from "../../store/profile";
 
 const FriendProfile = () => {
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   const [imageController, setImageController] = useState({
     toggler: false,
     slide: 1,
   });
 
-  function imageOnSlide(number) {
+  const imageOnSlide = (number) => {
     setImageController({
       toggler: !imageController.toggler,
       slide: number,
     });
-  }
+  };
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -91,8 +63,6 @@ const FriendProfile = () => {
   useEffect(() => {
     dispatch(getUserByUserId(id));
   }, [id]);
-
- // console.log(userDetail, "userDetail");
 
   return (
     <>
@@ -108,16 +78,16 @@ const FriendProfile = () => {
               <Card>
                 <Card.Body className=" profile-page p-0">
                   <div className="profile-header profile-info">
-                    <div className="cover-container position-relative justify-content-center"
-                    >
+                    <div className="cover-container position-relative justify-content-center">
                       <Image
                         loading="lazy"
-                        src={userDetail?.coverPictureInfo?.file?.location || img1}
+                        src={
+                          userDetail?.coverPictureInfo?.file?.location || img1
+                        }
                         alt="profile-bg"
                         className="rounded img-fluid w-100"
                         height={250}
                         width={1000}
-
                       />
                       {/* <ul className="header-nav d-flex flex-wrap justify-end p-0 m-0">
                         <li>
@@ -136,7 +106,10 @@ const FriendProfile = () => {
                       <div className="profile-img">
                         <Image
                           loading="lazy"
-                          src={userDetail?.profilePictureInfo?.file?.location || user1}
+                          src={
+                            userDetail?.profilePictureInfo?.file?.location ||
+                            user1
+                          }
                           alt="profile-img"
                           className="avatar-130 img-fluid"
                           height={100}
@@ -221,8 +194,7 @@ const FriendProfile = () => {
                           <li className="text-center pe-3">
                             <h6>Posts</h6>
                             <p className="mb-0">
-                              {postsLength && postsLength || 0}
-
+                              {(postsLength && postsLength) || 0}
                             </p>
                           </li>
                           <li className="text-center pe-3">
@@ -273,7 +245,7 @@ const FriendProfile = () => {
                         </p>
                       </li>
                       {userDetail?.maritalStatusInfo &&
-                        userDetail?.maritalStatusInfo?.dropdownValue ? (
+                      userDetail?.maritalStatusInfo?.dropdownValue ? (
                         <li className="d-flex align-items-center">
                           <span className="material-symbols-outlined md-18">
                             favorite_border

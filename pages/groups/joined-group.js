@@ -44,8 +44,6 @@ const JoinedGroup = () => {
     dispatch(allJoinedGroupList());
   }, []);
 
-  console.log(groups);
-
   return (
     <Default>
       <Head>
@@ -75,7 +73,7 @@ const JoinedGroup = () => {
                     />
                   </div>
                   <div className="group-info pt-3 pb-3">
-                    <h4>
+                    <h4 className="text-capitalize">
                       <Link href={`/groups/${group?.groupId?._id}`}>
                         {group?.groupId?.groupName}
                       </Link>
@@ -90,12 +88,12 @@ const JoinedGroup = () => {
                       </li>
                       <li className="pe-3 ps-3">
                         <p className="mb-0">Member</p>
-                        <h6>320</h6>
+                        <h6>{group?.groupId?.members?.length || 0}</h6>
                       </li>
-                      <li className="pe-3 ps-3">
+                      {/* <li className="pe-3 ps-3">
                         <p className="mb-0">Visit</p>
                         <h6>1.2k</h6>
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                   <div className="group-member mb-3">
@@ -154,7 +152,7 @@ const JoinedGroup = () => {
                 </Card.Body>
               </Card>
             ))}
-            {groups && groups.length === 0 ? (
+            {groups?.length === 0 || groups === undefined ? (
               <Card className="mb-0">
                 <div className="card-body text-center">
                   <h5 className="card-title">

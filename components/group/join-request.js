@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 
@@ -13,7 +12,6 @@ import { groupJoinAcceptAndDeclineService } from "../../services/groups.service"
 
 const GroupJoinRequest = (props) => {
   const [memberId, setMemberId] = useState([]);
-  const [apiError, setApiError] = useState();
 
   const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
@@ -33,7 +31,7 @@ const GroupJoinRequest = (props) => {
   }, [props.groupid]);
 
   useEffect(() => {
-    dispatch(getUserInfoById(memberId));
+    if (memberId.length !== 0) dispatch(getUserInfoById(memberId));
   }, [joinRequestList]);
 
   const AcceptOrRejectReq = async (invitationId, invitationAction) => {
