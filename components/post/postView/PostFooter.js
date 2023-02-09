@@ -16,20 +16,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
-import { getAllCommentsByPostId, getAllLikesByPostId, likePostByUser, postCommentbyPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
+import {  getAllLikesByPostId, likePostByUser } from '../../../services/posts.service';
 import { useSelector } from 'react-redux';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
-import { getPostTime } from '../../../services/time.service';
+import PostComments from './PostComments';
+import TotalCommentBlock from './TotalCommentBlock';
 
-const schema = yup.object({
-  commentInput: yup.string().required("Please write something")
-}).required();
 
-function PostFooter({ currentPostId ,refreshPostList }) {
+
+function PostFooter({ currentPostId, refreshPostList }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([])
-  const [CommentWithUserDetails, setCommentListWithUserDetails] = useState([])
   const [apiError, setApiError] = useState('')
   const loginUserId = useSelector((state) => state?.user?.data?.userInfo._id)
 
@@ -103,49 +100,17 @@ function PostFooter({ currentPostId ,refreshPostList }) {
     const res = await getAllLikesByPostId(currentPostId)
     setLikesListWithUserDetails(res)
   }
-  const getCommetslist = async () => {
-    const res = await getAllCommentsByPostId(currentPostId)
-    setCommentListWithUserDetails(res)
-  }
+
 
 
   useEffect(() => {
     getLikeslist()
-    getCommetslist()
+
   }, [])
 
   const isliked = likesWithUserDetails && likesWithUserDetails.map(e => e?.userDetails?.userInfo?._id).indexOf(loginUserId)
   const islikedData = likesWithUserDetails && likesWithUserDetails.find(e => e?.userDetails?.userInfo?._id == loginUserId)
 
-
-  const { register, watch, reset, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema)
-  });
-  const onSubmit = async (data) => {
-    const res = await postCommentbyPostId(currentPostId, data);
-
-    if (res == true) {
-      getCommetslist();
-      reset()
-    } else {
-      setApiError("Yout Comment is not submited, try after some time")
-    }
-  };
-
-  // console.log(watch("commentInput"));
-
-  const DeleteComment = async (commentId) => {
-
-    const res = await postCommentDeletebyPostId(currentPostId, commentId);
-    console.log(res, "rdffdes");
-
-    if (res == true) {
-      getCommetslist();
-    } else {
-      setApiError("Yout Comment is not Deleted, try after some time")
-    }
-
-  }
 
 
   return (
@@ -280,122 +245,16 @@ function PostFooter({ currentPostId ,refreshPostList }) {
                 </Dropdown>
               </div>
             </div>
-            <div className="total-comment-block">
-              <Dropdown>
-                <Dropdown.Toggle as={CustomToggle} id="post-option">
-                  {CommentWithUserDetails && CommentWithUserDetails.length} Comment
-                </Dropdown.Toggle>
-                {CommentWithUserDetails &&
-                  <Dropdown.Menu>
-                    {CommentWithUserDetails &&
-                      CommentWithUserDetails.map((data, index) => {
-                        return (
-                          <React.Fragment key={index}>
-                            {index < 6 &&
-                              <Dropdown.Item key={index} className="bg-secondary">
-                                {data?.userDetails && `${data.userDetails?.userInfo?.firstName} ${data.userDetails?.userInfo?.lastName}`}
-                              </Dropdown.Item>
-                            }
-                          </React.Fragment>
-                        )
-                      })
-                    }
-                  </Dropdown.Menu>
-                }
-              </Dropdown>
-            </div>
+
+            {currentPostId &&
+              <TotalCommentBlock postId={currentPostId} />}
           </div>
           <ShareOffcanvas sharePostId={currentPostId} refreshPostListshare={refreshPostList} />
         </div>
         <hr />
-        <ul className="post-comments list-inline p-0 m-0">
-          {CommentWithUserDetails && CommentWithUserDetails.map((commentData, index) => {
-            return (
-              <React.Fragment key={index}>
-                {index < 30 &&
-                  <li className="mb-2">
-                    <div className="d-flex">
-                      <div className="user-img flex-shrink-0">
-                        {commentData?.userDetails &&
-                          <Image
-                            className="avatar-35 rounded-circle img-fluid"
-                            src={commentData?.userDetails?.profilePictureInfo?.file?.location || user2}
-                            alt=""
-                            height={35}
-                            width={35}
-                          />
-                        }
-
-                      </div>
-                      <div className="comment-data-block ms-3 flex-grow-1">
-                        <h6> {commentData?.userDetails && `${commentData.userDetails?.userInfo?.firstName} ${commentData.userDetails?.userInfo?.lastName}`}</h6>
-                        <p className="mb-0">{commentData.mainComment.commentText}</p>
-                        <div className="d-flex flex-wrap align-items-center comment-activity">
-                          {/* <Link href="#">like</Link> */}
-                          {/* <Link href="#">reply</Link> */}
-                          {commentData && commentData.canDelete ?
-                            <><a role="button" className='text-primary' onClick={() => DeleteComment(commentData._id)}>delete </a></>
-                            :
-                            ""}
-                          <span className='text-primary'  >{commentData?.createdAt && getPostTime(commentData.createdAt)} </span>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                }
-              </React.Fragment>
-            )
-          })}
-
-          {/* <li>
-            <div className="d-flex">
-              <div className="user-img">
-                <Image
-                  src={user3}
-                  alt="user1"
-                  className="avatar-35 rounded-circle img-fluid"
-                />
-              </div>
-              <div className="comment-data-block ms-3">
-                <h6>Paul Molive</h6>
-                <p className="mb-0">Lorem ipsum dolor sit amet</p>
-                <div className="d-flex flex-wrap align-items-center comment-activity">
-                  <Link href="#">like</Link>
-                  <Link href="#">reply</Link>
-                  <Link href="#">translate</Link>
-                  <span> 5 min </span>
-                </div>
-              </div>
-            </div>
-          </li> */}
-        </ul>
-        {apiError && <p className='text-danger'>{apiError}</p>}
-        <form onSubmit={handleSubmit(onSubmit)}  >
-          <div className="comment-text d-flex align-items-center mt-3"  >
-            <div className="input-group mb-3">
-              <input type="text"  {...register("commentInput")} className="form-control rounded" placeholder="Enter Your Comment" />
-              {/* <div className="input-group-append">
-                        <button type="submit" className="input-group-text" id="basic-addon2">Submit</button>
-                      </div> */}
-
-            </div>
-
-            <div className="comment-attagement d-flex">
-              <Link href="#">
-                <i className="ri-link me-3"></i>
-              </Link>
-              <Link href="#">
-                <i className="ri-user-smile-line me-3"></i>
-              </Link>
-              <Link href="#">
-                <i className="ri-camera-line me-3"></i>
-              </Link>
-            </div>
-          </div>
-          {errors.commentInput && (
-            <p className="text-danger">{errors.commentInput.message}</p>
-          )}
-        </form>
+        {currentPostId &&
+          <PostComments postId={currentPostId} />
+        }
       </div>
     </div >
   )

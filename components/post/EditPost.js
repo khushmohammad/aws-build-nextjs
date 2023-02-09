@@ -21,6 +21,14 @@ import ModalPop from "../popupModal/ModalPop";
 
 const EditPost = (props) => {
   const [modalShowFriendList, setModalShowFriendList] = useState(false);
+  const [imageKey, setImageKey] = useState([]);
+  const [imageFileIds, setImageFileIds] = useState([]);
+  const [imageAndId, setImageAndId] = useState({ data: [] });
+  const [count, setCount] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [privacy, setPrivacy] = useState(null);
+  const [privacyFriendList, setPrivacyFriendList] = useState([]);
 
   const profileImage = useSelector(
     (state) => state?.user?.data?.profilePictureInfo?.file?.location
@@ -32,15 +40,6 @@ const EditPost = (props) => {
     keys: [],
     fileIds: [],
   });
-
-  const [imageKey, setImageKey] = useState([]);
-  const [imageFileIds, setImageFileIds] = useState([]);
-  const [imageAndId, setImageAndId] = useState({ data: [] });
-  const [count, setCount] = useState(true);
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [privacy, setPrivacy] = useState(null);
-  const [privacyFriendList, setPrivacyFriendList] = useState([]);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -97,7 +96,7 @@ const EditPost = (props) => {
     setPrivacy(postDetails?.privacy);
     setPrivacyFriendList();
   }, [postDetails, imageKey, imageFileIds]);
-
+  // console.log("props",props.postid)
   useEffect(() => {
     if (props.postid !== undefined) dispatch(getPostDetails(props.postid));
   }, [props.postid]);
@@ -238,7 +237,6 @@ const EditPost = (props) => {
                         position: "relative",
                       }}
                     >
-                      {console.log(file, "file")}
                       <img
                         loading="lazy"
                         src={file.base64}

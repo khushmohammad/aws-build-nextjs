@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 
@@ -30,10 +29,6 @@ const GroupMemeber = (props) => {
       });
     window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, []);
-
-  console.log("======", memberId);
-
-  console.log(userDetail);
 
   useEffect(() => {
     if (memberId.length !== 0) dispatch(getUserInfoById(memberId));
@@ -77,6 +72,7 @@ const GroupMemeber = (props) => {
           <Row>
             <Col sm="12">
               {members &&
+                userDetail !== null &&
                 members[0]?.memberList?.map((member, index) => (
                   <Card key={index}>
                     <Card.Body>
@@ -85,7 +81,7 @@ const GroupMemeber = (props) => {
                           <div className="user-img img-fluid flex-shrink-0">
                             <Image
                               src={
-                                userDetail[index]?.profilePictureInfo?.file
+                                userDetail[index + 1]?.profilePictureInfo?.file
                                   ?.location || user5
                               }
                               alt="story-img"

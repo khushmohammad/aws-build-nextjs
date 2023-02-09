@@ -41,7 +41,7 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
           uerId: userIdFromQueryPath,
         })
       );
-    } else if (groupId && activePage == "group") {
+    } else if (groupId && activePage == "groups") {
       dispatch(
         getAllFeedsList({
           activePage: activePage,
@@ -53,12 +53,15 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
     } else if (activePage == "PostDetail") {
       //console.log(postDetailObj, "postDetail")
 
-      setposts([])
-      setposts([postDetailObj])
-
+      setposts([]);
+      setposts([postDetailObj]);
     } else {
       dispatch(
-        getAllFeedsList({ activePage: activePage, page: pagenum, limit: limitnum })
+        getAllFeedsList({
+          activePage: activePage,
+          page: pagenum,
+          limit: limitnum,
+        })
       );
     }
   };
@@ -70,8 +73,8 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-          ? setposts((prev) => [...prev, ...StorePosts])
-          : "";
+        ? setposts((prev) => [...prev, ...StorePosts])
+        : "";
     }
   }, [StorePosts]);
 
@@ -80,8 +83,9 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
   }, [page]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    activePage != "PostDetail" ? window.addEventListener("scroll", handleScroll) : ""
+    return () => activePage != "PostDetail" ? window.removeEventListener("scroll", handleScroll) : "";
+
   }, []);
 
   const handleScroll = async () => {
@@ -94,21 +98,17 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
   };
   // post view
 
-
   const onClickRefreshPostList = () => {
-    setposts([])
-    GetPostNet(1, posts.length)
-  }
-
-
-
+    setposts([]);
+    GetPostNet(1, posts.length);
+  };
 
   return (
     <div>
-      {activePage != "PostDetail" && <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />}
+      {activePage != "PostDetail" && (
+        <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />
+      )}
       <div style={{ position: "relative", marginBottom: "7rem" }}>
-
-
         {posts &&
           Array.isArray(posts) &&
           posts.length > 0 &&
@@ -127,7 +127,6 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
-
                 <Card.Body>
                   <div className="user-post-data">
                     <div className="d-flex justify-content-between">
@@ -166,8 +165,15 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
                             </p>
                           </div>
                           <div className="card-post-toolbar">
-                            {_id && <PostThreeDotmenu postLength={posts.length} refreshPostList={() => onClickRefreshPostList()} PostId={_id} isPin={isPin} is_SelfPost={is_SelfPost} />}
-
+                            {_id && (
+                              <PostThreeDotmenu
+                                postLength={posts.length}
+                                refreshPostList={() => onClickRefreshPostList()}
+                                PostId={_id}
+                                isPin={isPin}
+                                is_SelfPost={is_SelfPost}
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -180,11 +186,19 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
                   </div>
                   {fileInfo && (
                     <>
-                      {activePage != "PostDetail" ? <PostMediaGrid mediaContent={data && data} /> : <MediaComponent mediaData={fileInfo} />}
-
+                      {activePage != "PostDetail" ? (
+                        <PostMediaGrid mediaContent={data && data} />
+                      ) : (
+                        <MediaComponent mediaData={fileInfo} />
+                      )}
                     </>
                   )}
-                  {_id && <PostFooter currentPostId={_id} refreshPostList={onClickRefreshPostList} />}
+                  {_id && (
+                    <PostFooter
+                      currentPostId={_id}
+                      refreshPostList={onClickRefreshPostList}
+                    />
+                  )}
                 </Card.Body>
               </Card>
             );
@@ -216,7 +230,7 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
           ""
         )}
         <div className="w-100">
-          {StorePosts && loading != "loading" && StorePosts.length == 0 && (
+          {activePage != "PostDetail" && StorePosts && loading != "loading" && StorePosts.length == 0 && (
             <div
               className="card card-block card-stretch card-height"
               style={{
@@ -241,37 +255,31 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
   );
 };
 
-
-
 const MediaComponent = (props) => {
-
-  const mediaData = props.mediaData
+  const mediaData = props.mediaData;
   //const MorePostCount = mediaCount - 3
   // console.log(mediaData, "mediaData");
   return (
     <>
       <div>
-        <div className={`d-block  `} >
+        <div className={`d-block  `}>
           {mediaData &&
             mediaData.slice(0, 4).map((data, index) => {
               // console.log(data,"filedfsdData");
 
-              const fileData = data.file
+              const fileData = data.file;
               // console.log(fileData,"fileData");
               // const clasname = 'row-span-3'
               return (
                 <React.Fragment key={index}>
-                  {fileData &&
+                  {fileData && (
                     <>
-
                       <div className={` position-relative bg-light my-3`}>
-                        {fileData.type && fileData.type == "mp4" ?
+                        {fileData.type && fileData.type == "mp4" ? (
                           <video width="100%" height="100%" controls>
                             <source src={fileData.location} type="video/mp4" />
-
                           </video>
-                          :
-
+                        ) : (
                           <Image
                             src={fileData.location}
                             alt="post2"
@@ -279,27 +287,17 @@ const MediaComponent = (props) => {
                             height={500}
                             width={500}
                           />
-                        }
-
+                        )}
                       </div>
-
                     </>
-                  }
+                  )}
                 </React.Fragment>
-
-              )
-
-            })
-
-          }
+              );
+            })}
         </div>
       </div>
     </>
-
-  )
-
-}
-
+  );
+};
 
 export default Post;
-

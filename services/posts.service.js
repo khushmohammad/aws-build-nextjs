@@ -311,44 +311,57 @@ export const pinPostByUser = async (postId) => {
   }
 };
 
-export const getAllCommentsByPostId = async (postId) => {
+// export const getAllCommentsByPostId = async (postId) => {
+//   const token = await getToken();
+//   try {
+//     const response = await axios.get(
+//       `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${postId}`,
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//       }
+//     );
+//     if (response.status == 200) {
+//       const allCommentssArr = await response?.data?.body?.allBody?.comments;
+
+//       const newarray = await Promise.all(
+//         allCommentssArr &&
+//         allCommentssArr.map(async (commentsData) => {
+//           const res =
+//             commentsData && (await getUserInfoByUserId(commentsData.userId));
+//           const userData = await res?.data?.body;
+//           const newdata = await { ...commentsData, userDetails: userData };
+//           return newdata;
+//         })
+//       );
+
+//       return newarray;
+//     }
+//   } catch (err) {
+//     return err;
+//   }
+// };
+
+export const mergeUserBasicDetails = async (userIdArr) => {
+  const dataWithUserDetails = await Promise.all(
+    userIdArr &&
+    userIdArr.map(async (singleData) => {
+      const res =
+        singleData && (await getUserInfoByUserId(singleData.userId));
+      const userData = await res?.data?.body;
+      const newdata = await { ...singleData, userDetails: { userInfo: userData?.userInfo, profilePictureInfo: userData?.profilePictureInfo } };
+      return newdata;
+    })
+  );
+  return dataWithUserDetails
+}
+
+export const postCommentByPostId = async (postId, commentData, level, parentId) => {
   const token = await getToken();
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${postId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    if (response.status == 200) {
-      const allCommentssArr = await response?.data?.body?.allBody?.comments;
-
-      const newarray = await Promise.all(
-        allCommentssArr &&
-        allCommentssArr.map(async (commentsData) => {
-          const res =
-            commentsData && (await getUserInfoByUserId(commentsData.userId));
-          const userData = await res?.data?.body;
-          const newdata = await { ...commentsData, userDetails: userData };
-          return newdata;
-        })
-      );
-
-      return newarray;
-    }
-  } catch (err) {
-    return err;
-  }
-};
-
-export const postCommentbyPostId = async (postId, commentData) => {
-  const token = await getToken();
-
   const payloadData = {
     postId: postId,
-    mainComment: {
-      commentText: commentData.commentInput,
-    },
+    level: level,
+    textInfo: commentData,
+    parentId: parentId
   };
 
   try {
@@ -361,14 +374,16 @@ export const postCommentbyPostId = async (postId, commentData) => {
         },
       }
     );
+    // if (res.status === 200) {     
+    //   const dataWithUserDetails = await mergeUserBasicDetails([res?.data?.body])      
+    //   return dataWithUserDetails
+    // } else {
+    //   return res
+    // }
 
-    if (res.status == 200) {
-      return true;
-    } else {
-      return false;
-    }
+    return res;
   } catch (err) {
-    return err;
+    return err?.response;
   }
 };
 
@@ -436,3 +451,55 @@ export const userPostshare = async (postId) => {
     console.log(err);
   }
 };
+
+
+
+
+export const getCommentbyPostId = async (postId = "", pageNumber = 1, limit = 5, level = 0, parentId = "") => {
+
+  const token = await getToken();
+  try {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/all/${postId}?pageNumber=${pageNumber}&limit=${limit}&level=${level}&parentId=${parentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+
+    if (res.status == 200) {
+      const allCommentList = await res?.data?.body;
+      // console.log(allCommentList, "allCommentList.length");
+      if (allCommentList == undefined || allCommentList.length == 0) {
+        return []
+      }
+
+      // console.log(allCommentList, "allLikessArr");
+      const newCommmentListarray = await Promise.all(
+        allCommentList?.comments &&
+        allCommentList?.comments.map(async (commentData) => {
+          const res =
+            commentData && (await getUserInfoByUserId(commentData.userId));
+          const userData = await res?.data?.body;
+
+          const newdata = await { ...commentData, userDetails: { userInfo: userData?.userInfo, profilePictureInfo: userData?.profilePictureInfo } };
+          //console.log(newdata, "userData");
+          return newdata;
+        })
+      );
+      // console.log(newCommmentListarray, "newCommmentListarray");
+
+      // console.log({ comments: newCommmentListarray, commentsOrReplyCounts: allCommentList.commentsOrReplyCounts }, "abba")
+      const data = { comments: newCommmentListarray, commentsOrReplyCounts: allCommentList.commentsOrReplyCounts }
+      return data;
+
+
+
+    }
+
+
+
+    // const comment = await res
+    // const data = await comment?.data?.body
+    // return data
+  } catch (err) {
+    console.log(err)
+  }
+
+}

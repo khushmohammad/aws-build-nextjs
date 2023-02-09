@@ -29,27 +29,27 @@ import { useDispatch } from "react-redux";
 
 import { useRouter } from "next/router";
 import { CoverPicUploader } from "../../components/ImageDropzone/CoverPicUploader";
-import {
-  getStateData,
-  getCityData,
-} from "../../services/profile.service";
+import { getStateData, getCityData } from "../../services/profile.service";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AsyncSelect from "react-select/async";
-import { clearEmpties, countriesList, getMaritalStatus } from "../../services/basic.services";
-import _ from 'lodash'
-import { loaderStatus } from '../../store/site/Loader'
+import {
+  clearEmpties,
+  countriesList,
+  getMaritalStatus,
+} from "../../services/basic.services";
+import _ from "lodash";
+import { loaderStatus } from "../../store/site/Loader";
 
-
-const schema = yup.object({
-  firstName: yup.string().required("firstname is required").min(3).max(20),
-  lastName: yup.string().required("lastname is required").min(3).max(20),
-  middleName: yup.string().max(20),
-  country: yup.string().max(20),
-  pinCode: yup.number().typeError('Pincode must be a number').nullable(true)
-}).required();
-
-
+const schema = yup
+  .object({
+    firstName: yup.string().required("firstname is required").min(3).max(20),
+    lastName: yup.string().required("lastname is required").min(3).max(20),
+    middleName: yup.string().max(20),
+    country: yup.string().max(20),
+    pinCode: yup.number().typeError("Pincode must be a number").nullable(true),
+  })
+  .required();
 
 const UserProfileEdit = () => {
   const router = useRouter();
@@ -58,41 +58,53 @@ const UserProfileEdit = () => {
   const [profilePicModalShow, setProfilePicModalShow] = useState(false);
   const [coverPicModalShow, setCoverPicModalShow] = useState(false);
   const [relationStatus, setRelationStatus] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState({ label: userProfileData?.userInfo?.countryInfo?.name, value: userProfileData?.userInfo?.countryInfo?.id });
-  const [selectedState, setSelectedState] = useState({ label: userProfileData?.stateInfo?.name, value: userProfileData?.stateInfo?.id });
-  const [selectedCity, setSelectedCity] = useState({ label: userProfileData?.cityInfo?.name, value: userProfileData?.cityInfo?.id });
-  const [selectedDob, setSelectedDob] = useState(moment(userProfileData?.userInfo?.dateOfBirth).toDate());
-  const [userGender, setUserGender] = useState(userProfileData?.userInfo?.gender);
+  const [selectedCountry, setSelectedCountry] = useState({
+    label: userProfileData?.userInfo?.countryInfo?.name,
+    value: userProfileData?.userInfo?.countryInfo?.id,
+  });
+  const [selectedState, setSelectedState] = useState({
+    label: userProfileData?.stateInfo?.name,
+    value: userProfileData?.stateInfo?.id,
+  });
+  const [selectedCity, setSelectedCity] = useState({
+    label: userProfileData?.cityInfo?.name,
+    value: userProfileData?.cityInfo?.id,
+  });
+  const [selectedDob, setSelectedDob] = useState(
+    moment(userProfileData?.userInfo?.dateOfBirth).toDate()
+  );
+  const [userGender, setUserGender] = useState(
+    userProfileData?.userInfo?.gender
+  );
   const [countriesDataArrayObj, setCountriesDataArrayObj] = useState();
   const [stateDataArrayObj, setStateDataArrayObj] = useState();
   const [cityDataArrayObj, setCityDataArrayObj] = useState();
-  const [patchForData, setPatchForData] = useState('')
-
-
-
+  const [patchForData, setPatchForData] = useState("");
 
   const countryListOptions = async (inputValue) => {
-    const countries = await countriesList(inputValue)
+    const countries = await countriesList(inputValue);
     setCountriesDataArrayObj(countries);
     return countries;
   };
 
   const getCityStateList = async (type = "", inputValue = "") => {
     if (type == "state") {
-      const res = selectedCountry?.value && await getStateData(selectedCountry?.value, inputValue)
-      setStateDataArrayObj(res)
-      return res
-    } else if (type = "city") {
-      const res = selectedState?.value && await getCityData(selectedState?.value, inputValue)
-      setCityDataArrayObj(res)
-      return res
+      const res =
+        selectedCountry?.value &&
+        (await getStateData(selectedCountry?.value, inputValue));
+      setStateDataArrayObj(res);
+      return res;
+    } else if ((type = "city")) {
+      const res =
+        selectedState?.value &&
+        (await getCityData(selectedState?.value, inputValue));
+      setCityDataArrayObj(res);
+      return res;
     }
-  }
-
-
+  };
 
   const MaritalStatus = async () => {
-    const data = await getMaritalStatus()
+    const data = await getMaritalStatus();
     setRelationStatus(data?.body);
   };
   const {
@@ -105,82 +117,69 @@ const UserProfileEdit = () => {
     resolver: yupResolver(schema),
   });
 
-
-
-
-
-
-
-
   const updateValue = (type, e) => {
     if (type == "state") {
       // setPatchForData({ ...patchForData, state: selectedState == '' ? null : e?.value?.toString() })
-      getCityStateList("city", "")
+      getCityStateList("city", "");
     } else if (type == "country") {
       //  setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : selectedCountry?.value?.toString() } })
-      getCityStateList("state", "")
-    }
-    else if (type == "city") {
+      getCityStateList("state", "");
+    } else if (type == "city") {
       // setPatchForData({ ...patchForData, city: selectedCity == '' ? null : e?.value?.toString() })
-      getCityStateList("city", "")
-    }
-  }
-
-  const handleDropDown = (e, dropdownsType) => {
-    if (dropdownsType == "country") {
-      setSelectedCountry(e)
-      setSelectedState('')
-      setSelectedCity('')
-    } else if (dropdownsType == "state") {
-      setSelectedState(e)
-      setSelectedCity('')
-
-    }
-    else if (dropdownsType == "city") {
-      setSelectedCity(e)
-      // setPatchForData({ ...patchForData, city: selectedCity == '' ? null : selectedCity.value.toString() })
-    }
-    else if (dropdownsType == "dateOfBirth") {
-      //const Dob = moment(e).format("DD-MMM-yyyy")
-      setSelectedDob(e)
-      setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, dateOfBirth: e } })
-      // setPatchForData({ ...patchForData, dateOfBirth: e })
-    }
-  }
-
-
-  // console.log(patchForData,"patchForData");
-  const onSubmit = async () => {
-
-    dispatch(loaderStatus(true))
-    const res = await updateUserData(patchForData)
-    if (res.status == 200) {
-      router.push('/user/user-profile')
-      dispatch(loaderStatus(false))
+      getCityStateList("city", "");
     }
   };
 
+  const handleDropDown = (e, dropdownsType) => {
+    if (dropdownsType == "country") {
+      setSelectedCountry(e);
+      setSelectedState("");
+      setSelectedCity("");
+    } else if (dropdownsType == "state") {
+      setSelectedState(e);
+      setSelectedCity("");
+    } else if (dropdownsType == "city") {
+      setSelectedCity(e);
+      // setPatchForData({ ...patchForData, city: selectedCity == '' ? null : selectedCity.value.toString() })
+    } else if (dropdownsType == "dateOfBirth") {
+      //const Dob = moment(e).format("DD-MMM-yyyy")
+      setSelectedDob(e);
+      setPatchForData({
+        ...patchForData,
+        userInfo: { ...patchForData.userInfo, dateOfBirth: e },
+      });
+      // setPatchForData({ ...patchForData, dateOfBirth: e })
+    }
+  };
+
+  // console.log(patchForData,"patchForData");
+  const onSubmit = async () => {
+    dispatch(loaderStatus(true));
+    const res = await updateUserData(patchForData);
+    if (res.status == 200) {
+      router.push("/user/user-profile");
+      dispatch(loaderStatus(false));
+    }
+  };
 
   useEffect(() => {
-    updateValue("state", selectedState)
-  }, [selectedState])
+    updateValue("state", selectedState);
+  }, [selectedState]);
 
   useEffect(() => {
-    updateValue("country", selectedCountry)
-
-
-  }, [selectedCountry])
+    updateValue("country", selectedCountry);
+  }, [selectedCountry]);
 
   useEffect(() => {
-    updateValue("city", selectedCity)
-  }, [selectedCity])
+    updateValue("city", selectedCity);
+  }, [selectedCity]);
 
   useEffect(() => {
-    countryListOptions('')
+    countryListOptions("");
     MaritalStatus();
-    getCityStateList("state", "")
-    getCityStateList("city", "")
-    setPatchForData('')
+    getCityStateList("state", "");
+    getCityStateList("city", "");
+    setPatchForData("");
   }, []);
 
   //console.log(userProfileData, "userProfileData");
@@ -252,12 +251,15 @@ const UserProfileEdit = () => {
                                 <div className="profile-img-edit">
                                   <Image
                                     className="profile-pic"
-                                    src={userProfileData?.profilePictureInfo?.file?.location || img1}
+                                    src={
+                                      userProfileData?.profilePictureInfo?.file
+                                        ?.location || img1
+                                    }
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
-                                  // blurDataURL={profileImage}
-                                  // placeholder="blur"
+                                    // blurDataURL={profileImage}
+                                    // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -281,15 +283,18 @@ const UserProfileEdit = () => {
                                 >
                                   <Image
                                     className=""
-                                    src={userProfileData?.coverPictureInfo?.file?.location || img2}
+                                    src={
+                                      userProfileData?.coverPictureInfo?.file
+                                        ?.location || img2
+                                    }
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
                                     style={{
                                       width: "100%",
                                     }}
-                                  // blurDataURL={profileImage}
-                                  // placeholder="blur"
+                                    // blurDataURL={profileImage}
+                                    // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -311,12 +316,24 @@ const UserProfileEdit = () => {
                               <Form.Control
                                 {...register("firstName")}
                                 type="text"
-                                defaultValue={userProfileData?.userInfo?.firstName}
+                                defaultValue={
+                                  userProfileData?.userInfo?.firstName
+                                }
                                 className="form-control"
                                 id="firstName"
                                 placeholder="firstName"
-                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, firstName: e.target.value == '' ? null : e.target.value } })}
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    userInfo: {
+                                      ...patchForData.userInfo,
+                                      firstName:
+                                        e.target.value == ""
+                                          ? null
+                                          : e.target.value,
+                                    },
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="firstName"
@@ -334,12 +351,24 @@ const UserProfileEdit = () => {
                               <Form.Control
                                 {...register("middleName")}
                                 type="text"
-                                defaultValue={userProfileData?.userInfo.middleName}
+                                defaultValue={
+                                  userProfileData?.userInfo.middleName
+                                }
                                 className="form-control"
                                 id="middleName"
                                 placeholder="middleName"
-                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, middleName: e.target.value == '' ? null : e.target.value } })}
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    userInfo: {
+                                      ...patchForData.userInfo,
+                                      middleName:
+                                        e.target.value == ""
+                                          ? null
+                                          : e.target.value,
+                                    },
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="middleName"
@@ -356,14 +385,24 @@ const UserProfileEdit = () => {
                               <Form.Control
                                 {...register("lastName")}
                                 type="text"
-                                defaultValue={userProfileData?.userInfo?.lastName}
+                                defaultValue={
+                                  userProfileData?.userInfo?.lastName
+                                }
                                 className="form-control"
                                 id="lastName"
                                 placeholder="lName"
-
-                                onChange={(e) => setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, lastName: e.target.value == '' ? null : e.target.value } })}
-
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    userInfo: {
+                                      ...patchForData.userInfo,
+                                      lastName:
+                                        e.target.value == ""
+                                          ? null
+                                          : e.target.value,
+                                    },
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="lastName"
@@ -383,9 +422,15 @@ const UserProfileEdit = () => {
                                 className="form-control"
                                 id="nickname"
                                 placeholder="nick name"
-                                onChange={(e) => setPatchForData({ ...patchForData, nickName: e.target.value == '' ? null : e.target.value })}
-
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    nickName:
+                                      e.target.value == ""
+                                        ? null
+                                        : e.target.value,
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="lname"
@@ -398,13 +443,21 @@ const UserProfileEdit = () => {
                               <Form.Control
                                 {...register("profileDescription")}
                                 type="text"
-                                defaultValue={userProfileData?.profileDescription}
+                                defaultValue={
+                                  userProfileData?.profileDescription
+                                }
                                 className="form-control"
                                 id="profileDescription"
                                 placeholder="Profile Description"
-                                onChange={(e) => setPatchForData({ ...patchForData, profileDescription: e.target.value == '' ? null : e.target.value })}
-
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    profileDescription:
+                                      e.target.value == ""
+                                        ? null
+                                        : e.target.value,
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="profileDescription"
@@ -420,9 +473,9 @@ const UserProfileEdit = () => {
                               </Form.Label>
                               <fieldset
                                 className="form-group"
-                              // value={user.userInfo.gender}
-                              // checked={user.userInfo.gender}
-                              // onChange={onChange}
+                                // value={user.userInfo.gender}
+                                // checked={user.userInfo.gender}
+                                // onChange={onChange}
                               >
                                 <div>
                                   <div className="form-check custom-radio form-check-inline">
@@ -434,8 +487,16 @@ const UserProfileEdit = () => {
                                       {...register("userInfo.gender")}
                                       className="form-check-input"
                                       checked={userGender == "Male"}
-                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
-
+                                      onChange={(e) => {
+                                        setUserGender(e.target.value),
+                                          setPatchForData({
+                                            ...patchForData,
+                                            userInfo: {
+                                              ...patchForData.userInfo,
+                                              gender: e.target.value,
+                                            },
+                                          });
+                                      }}
                                     />
                                     <label
                                       className="form-check-label"
@@ -453,10 +514,16 @@ const UserProfileEdit = () => {
                                       {...register("userInfo.gender")}
                                       className="form-check-input"
                                       checked={userGender == "Female"}
-                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
-
-
-
+                                      onChange={(e) => {
+                                        setUserGender(e.target.value),
+                                          setPatchForData({
+                                            ...patchForData,
+                                            userInfo: {
+                                              ...patchForData.userInfo,
+                                              gender: e.target.value,
+                                            },
+                                          });
+                                      }}
                                     />
                                     <label
                                       className="form-check-label"
@@ -474,7 +541,16 @@ const UserProfileEdit = () => {
                                       {...register("userInfo.gender")}
                                       className="form-check-input"
                                       checked={userGender == "Other"}
-                                      onChange={(e) => { setUserGender(e.target.value), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, gender: e.target.value } }) }}
+                                      onChange={(e) => {
+                                        setUserGender(e.target.value),
+                                          setPatchForData({
+                                            ...patchForData,
+                                            userInfo: {
+                                              ...patchForData.userInfo,
+                                              gender: e.target.value,
+                                            },
+                                          });
+                                      }}
                                     />
                                     <label
                                       className="form-check-label"
@@ -485,7 +561,6 @@ const UserProfileEdit = () => {
                                   </div>
                                 </div>
                               </fieldset>
-
                             </Form.Group>
                             <Form.Group className="form-group col-sm-6 form-floating date-input mt-3">
                               <Form.Label htmlFor="dob" className="form-label">
@@ -502,7 +577,9 @@ const UserProfileEdit = () => {
                                     dateFormat="dd-MMM-yyyy"
                                     placeholderText="DD-MMM-YYYY"
                                     // onBlur={onChange}
-                                    onChange={(e) => handleDropDown(e, "dateOfBirth")}
+                                    onChange={(e) =>
+                                      handleDropDown(e, "dateOfBirth")
+                                    }
                                     className="form-control"
                                     id="dob"
                                   />
@@ -511,53 +588,78 @@ const UserProfileEdit = () => {
                             </Form.Group>
                             <Form.Floating className="form-group col-sm-6">
                               {/* {userProfileData?.maritalStatusInfo?._id} */}
-                              {relationStatus &&
-
+                              {relationStatus && (
                                 <Form.Select
                                   {...register("maritalStatus")}
                                   // defaultValue={"63a573a698c4e4579c299d37"}
                                   className="form-select"
                                   aria-label="Default select example"
-                                  onChange={(e) => setPatchForData({ ...patchForData, maritalStatus: e.target.value == '' ? null : e.target.value })}
+                                  onChange={(e) =>
+                                    setPatchForData({
+                                      ...patchForData,
+                                      maritalStatus:
+                                        e.target.value == ""
+                                          ? null
+                                          : e.target.value,
+                                    })
+                                  }
                                 >
                                   <option value="">Select Status</option>
                                   {relationStatus &&
                                     relationStatus.map((rel) => {
                                       return (
-                                        <option selected={userProfileData?.maritalStatusInfo?._id == rel._id ? true : false} key={rel._id} value={rel._id}>
+                                        <option
+                                          selected={
+                                            userProfileData?.maritalStatusInfo
+                                              ?._id == rel._id
+                                              ? true
+                                              : false
+                                          }
+                                          key={rel._id}
+                                          value={rel._id}
+                                        >
                                           {rel.dropdownValue}
                                         </option>
                                       );
                                     })}
                                 </Form.Select>
-                              }
+                              )}
                               <Form.Label className="form-label">
                                 Marital Status
                               </Form.Label>
                             </Form.Floating>
 
                             <div className="position-relative form-group col-sm-6 ">
-
-                              {countriesDataArrayObj && selectedCountry &&
-                                (
-                                  <Controller
-                                    name="country"
-                                    control={control}
-                                    render={({ field }) => (
-                                      <AsyncSelect
-                                        {...field}
-                                        defaultOptions={countriesDataArrayObj}
-                                        loadOptions={countryListOptions}
-                                        classNames="form-select"
-                                        id="floatingSelect"
-                                        value={selectedCountry}
-                                        onChange={(e) => { handleDropDown(e, "country"), setPatchForData({ ...patchForData, userInfo: { ...patchForData.userInfo, country: selectedCountry == '' ? null : e?.value?.toString() } }) }}
+                              {countriesDataArrayObj && selectedCountry && (
+                                <Controller
+                                  name="country"
+                                  control={control}
+                                  render={({ field }) => (
+                                    <AsyncSelect
+                                      {...field}
+                                      defaultOptions={countriesDataArrayObj}
+                                      loadOptions={countryListOptions}
+                                      classNames="form-select"
+                                      id="floatingSelect"
+                                      value={selectedCountry}
+                                      onChange={(e) => {
+                                        handleDropDown(e, "country"),
+                                          setPatchForData({
+                                            ...patchForData,
+                                            userInfo: {
+                                              ...patchForData.userInfo,
+                                              country:
+                                                selectedCountry == ""
+                                                  ? null
+                                                  : e?.value?.toString(),
+                                            },
+                                          });
+                                      }}
                                       // defaultInputValue={{ value: 101, label: "sdjfl" }}
-
-                                      />
-                                    )}
-                                  />
-                                )}
+                                    />
+                                  )}
+                                />
+                              )}
 
                               <label
                                 style={{
@@ -576,62 +678,75 @@ const UserProfileEdit = () => {
                               </label>
                             </div>
 
-
                             <div className="position-relative  form-group col-sm-6 mt-3">
-
-
                               <div>
                                 <AsyncSelect
                                   defaultOptions={stateDataArrayObj}
-                                  loadOptions={(e) => getCityStateList("state", e)}
+                                  loadOptions={(e) =>
+                                    getCityStateList("state", e)
+                                  }
                                   classNames="form-select"
                                   id="floatingSelect"
                                   value={selectedState}
-                                  onChange={(e) => { handleDropDown(e, "state"), setPatchForData({ ...patchForData, state: e?.value?.toString() }) }}
-
+                                  onChange={(e) => {
+                                    handleDropDown(e, "state"),
+                                      setPatchForData({
+                                        ...patchForData,
+                                        state: e?.value?.toString(),
+                                      });
+                                  }}
                                 />
-
                               </div>
 
-                              <Form.Label style={{
-                                position: "absolute",
-                                top: "-16px",
-                                left: "11px",
-                                zIndex: "1",
-                                background: "rgb(255, 255, 255)",
-                                padding: "0px 6px",
-                                width: "auto",
-                                height: "auto",
-                              }} className="form-label">
+                              <Form.Label
+                                style={{
+                                  position: "absolute",
+                                  top: "-16px",
+                                  left: "11px",
+                                  zIndex: "1",
+                                  background: "rgb(255, 255, 255)",
+                                  padding: "0px 6px",
+                                  width: "auto",
+                                  height: "auto",
+                                }}
+                                className="form-label"
+                              >
                                 State
                               </Form.Label>
                             </div>
                             <div className="position-relative  form-group col-sm-6 mt-3 ">
-
-
                               <div>
                                 <AsyncSelect
                                   defaultOptions={cityDataArrayObj}
-                                  loadOptions={(e) => getCityStateList("city", e)}
+                                  loadOptions={(e) =>
+                                    getCityStateList("city", e)
+                                  }
                                   classNames="form-select"
                                   id="floatingSelect"
                                   value={selectedCity}
-                                  onChange={(e) => { handleDropDown(e, "city"), setPatchForData({ ...patchForData, city: e?.value?.toString() }) }}
-                                // defaultInputValue={{ value: 101, label: "sdjfl" }}
-
+                                  onChange={(e) => {
+                                    handleDropDown(e, "city"),
+                                      setPatchForData({
+                                        ...patchForData,
+                                        city: e?.value?.toString(),
+                                      });
+                                  }}
+                                  // defaultInputValue={{ value: 101, label: "sdjfl" }}
                                 />
-
                               </div>
 
-                              <Form.Label style={{
-                                position: "absolute",
-                                top: "-16px",
-                                left: "11px",
-                                background: "rgb(255, 255, 255)",
-                                padding: "0px 6px",
-                                width: "auto",
-                                height: "auto",
-                              }} className="form-label">
+                              <Form.Label
+                                style={{
+                                  position: "absolute",
+                                  top: "-16px",
+                                  left: "11px",
+                                  background: "rgb(255, 255, 255)",
+                                  padding: "0px 6px",
+                                  width: "auto",
+                                  height: "auto",
+                                }}
+                                className="form-label"
+                              >
                                 City
                               </Form.Label>
                             </div>
@@ -644,8 +759,15 @@ const UserProfileEdit = () => {
                                 placeholder="Entere Address"
                                 as="textarea"
                                 rows={5}
-                                onChange={(e) => setPatchForData({ ...patchForData, address: e.target.value == '' ? null : e.target.value })}
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    address:
+                                      e.target.value == ""
+                                        ? null
+                                        : e.target.value,
+                                  })
+                                }
                                 defaultValue={userProfileData?.address}
                               />
                               <Form.Label>Address</Form.Label>
@@ -655,19 +777,28 @@ const UserProfileEdit = () => {
                               <Form.Control
                                 // {...register("city")}
                                 {...register("pinCode")}
-
                                 type="text"
-                                defaultValue={userProfileData?.pinCode == null ? 0 : userProfileData?.pinCode}
+                                defaultValue={
+                                  userProfileData?.pinCode == null
+                                    ? 0
+                                    : userProfileData?.pinCode
+                                }
                                 className="form-control"
                                 id="cname"
                                 placeholder="Atlanta"
-                                onChange={(e) => setPatchForData({ ...patchForData, pinCode: e.target.value == '' ? null : e.target.value })}
-
+                                onChange={(e) =>
+                                  setPatchForData({
+                                    ...patchForData,
+                                    pinCode:
+                                      e.target.value == ""
+                                        ? null
+                                        : e.target.value,
+                                  })
+                                }
                               />
                               <Form.Label
                                 htmlFor="cname"
                                 className="form-label"
-
                               >
                                 Pincode
                               </Form.Label>
@@ -677,14 +808,19 @@ const UserProfileEdit = () => {
                             </Form.Floating>
                           </Row>
                           <div className="p-4 pt-0">
-
                             <Button
                               type="submit"
-                              className={`btn btn-primary me-2 ${patchForData == '' ? 'disabled' : ''} `}
+                              className={`btn btn-primary me-2 ${
+                                patchForData == "" ? "disabled" : ""
+                              } `}
                             >
                               Submit
                             </Button>
-                            <Link href="/user/user-profile" type="button" className="btn bg-soft-danger">
+                            <Link
+                              href="/user/user-profile"
+                              type="button"
+                              className="btn bg-soft-danger"
+                            >
                               Cancel
                             </Link>
                           </div>
@@ -934,7 +1070,12 @@ const UserProfileEdit = () => {
                               className="form-control"
                               id="cno"
                               defaultValue={userProfileData?.phoneNumber}
-                              onChange={(e) => setPatchForData({ ...patchForData, phoneNumber: e.target.value })}
+                              onChange={(e) =>
+                                setPatchForData({
+                                  ...patchForData,
+                                  phoneNumber: e.target.value,
+                                })
+                              }
                             />
                             <Form.Label htmlFor="cno" className="form-label">
                               Contact Number
@@ -949,7 +1090,12 @@ const UserProfileEdit = () => {
                               {...register("siteUrl")}
                               name="siteUrl"
                               defaultValue={userProfileData?.siteUrl}
-                              onChange={(e) => setPatchForData({ ...patchForData, siteUrl: e.target.value })}
+                              onChange={(e) =>
+                                setPatchForData({
+                                  ...patchForData,
+                                  siteUrl: e.target.value,
+                                })
+                              }
                             />
                             <Form.Label htmlFor="url" className="form-label">
                               Site Url
@@ -980,4 +1126,3 @@ const UserProfileEdit = () => {
 };
 
 export default UserProfileEdit;
-

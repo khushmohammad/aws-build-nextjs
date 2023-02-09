@@ -134,7 +134,7 @@ const CreatePost = (props) => {
 
         <ul className=" post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
           <li
-            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
+            className="btn bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
             role="button"
             onClick={handleShow}
           >
@@ -147,7 +147,7 @@ const CreatePost = (props) => {
             Photo/Video
           </li>
           <li
-            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
+            className="btn bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3 mb-md-0 mb-2"
             role="button"
             onClick={handleShow}
           >
@@ -160,7 +160,7 @@ const CreatePost = (props) => {
             Tag Friend
           </li>
           <li
-            className="bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3"
+            className="btn bg-soft-primary rounded p-2 pointer d-flex align-items-center me-3"
             role="button"
             onClick={handleShow}
           >
@@ -172,7 +172,7 @@ const CreatePost = (props) => {
             />
             Feeling/Activity
           </li>
-          <li className="bg-soft-primary rounded p-2 pointer text-center">
+          <li className="btn bg-soft-primary rounded p-2 pointer text-center">
             <div className="card-header-toolbar d-flex align-items-center">
               <Dropdown>
                 <Dropdown.Toggle as={CustomToggle} id="post-option">

@@ -195,3 +195,19 @@
   top: 110%;
   display: block;
 }
+
+body {
+  background-color: rgba(var(--bs-primary-rgb), 0.02);
+}
+
+.profile-drop-down {
+  border-radius: 100%;
+  background: rgba(var(--bs-primary-rgb), 0.1);
+  position: absolute;
+  right: 5px;
+  bottom: 15px;
+}
+
+.iq-profile-avatar:before {
+  top: -0.188rem;
+}

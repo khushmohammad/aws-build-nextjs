@@ -22,7 +22,7 @@ const ProfilePhotos = ({ imagetype }) => {
   };
 
   useEffect(() => {
-    photos?.map((pic, index) => {
+    photos?.map((pic) => {
       if (pic?.imageType === imagetype) {
         if (source?.includes(pic?.file?.location) === false) {
           setSource([...source, pic?.file?.location]);
@@ -30,8 +30,6 @@ const ProfilePhotos = ({ imagetype }) => {
       }
     });
   }, [photos]);
-
-  console.log(imagetype);
 
   return (
     <>

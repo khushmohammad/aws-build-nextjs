@@ -993,22 +993,25 @@ const Header = () => {
                     <Dropdown.Toggle
                       href="#"
                       as={CustomToggle}
-                      variant="d-flex align-items-center"
+                      variant="d-flex align-items-center position-relative"
                     >
                       <Image
                         src={user?.profilePictureInfo?.file?.location || user1}
-                        className="img-fluid rounded-circle me-3"
+                        className="img-fluid rounded-circle me-0"
                         alt="user"
                         height={100}
                         width={100}
                         // blurDataURL={profileImage}
                         // placeholder="blur"
                       />
-                      <div className="caption">
+                      <i className="material-symbols-outlined profile-drop-down">
+                        expand_more
+                      </i>
+                      {/* <div className="caption">
                         <h6 className="mb-0 line-height">
                           {LogedInUserName && LogedInUserName}
                         </h6>
-                      </div>
+                      </div> */}
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="sub-drop caption-menu">
                       <Card className="shadow-none m-0">

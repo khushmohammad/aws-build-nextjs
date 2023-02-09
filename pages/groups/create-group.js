@@ -11,18 +11,24 @@ import FileBase64 from "react-filebase64";
 import small1 from "../../public/assets/images/small/07.png";
 import Default from "../../layouts/default";
 import { useDispatch, useSelector } from "react-redux";
+
 import { getGroupPrivacyKeys } from "../../store/groups";
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 
 const CreateGroup = () => {
   const [selectedFile, setSelectedFile] = useState([]);
   const dispatch = useDispatch();
   const [isSubmitted, setisSubmitted] = useState();
-  const router = useRouter()
+  const router = useRouter();
 
   const groupPrivacy = useSelector((state) => state?.groups?.groupPrivacy);
+
+  const {
+    userInfo,
+    profilePictureInfo,
+    userInfo: { roleInfo },
+  } = useSelector((state) => state?.user?.data);
 
   const schema = yup
     .object({
@@ -56,14 +62,14 @@ const CreateGroup = () => {
 
     createGroup(payload)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.status === 200) {
           setisSubmitted({
             status: true,
             message: res.data.message,
             className: "success",
           });
-           router.push(`/groups/${res?.data?.body?._id}`)
+          router.push(`/groups/${res?.data?.body?._id}`);
         }
       })
       .catch((err) => console.log(err));
@@ -78,7 +84,7 @@ const CreateGroup = () => {
       <center>
         <Default>
           <Container>
-            <Card style={{ width: "900px", height: "300px", padding: "20px" }}>
+            <Card style={{ padding: "20px" }}>
               {isSubmitted?.status && (
                 <div
                   className={`alert alert-${isSubmitted.className}`}
@@ -87,9 +93,41 @@ const CreateGroup = () => {
                   {isSubmitted.message}
                 </div>
               )}
+
+              <div className="user-post-data">
+                <div className="d-flex justify-content-between">
+                  <div className="me-3">
+                    {profilePictureInfo && (
+                      <Image
+                        className="rounded-circle img-fluid"
+                        src={profilePictureInfo?.file?.location || user2}
+                        alt=""
+                        height={53}
+                        width={53}
+                      />
+                    )}
+                  </div>
+                  <div className="w-100">
+                    <div className="d-flex justify-content-between">
+                      <div>
+                        <h5 className="mb-0 d-inline-block">
+                          {" "}
+                          {userInfo &&
+                            `${userInfo.firstName}   ${userInfo.lastName} `}
+                        </h5>
+
+                        <p className="mb-0 text-primary">
+                          {roleInfo && roleInfo.dropdownValue}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
               <Form
                 className="mt-4"
-                style={{ height: "200px", width: "800px" }}
+                // style={{ height: "200px", width: "800px" }}
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >

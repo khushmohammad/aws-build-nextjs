@@ -21,8 +21,6 @@ const PostMedia = ({ mediatype }) => {
     });
   };
 
-  console.log("object", mediatype);
-
   useEffect(() => {
     postMedia?.map((media) => {
       if (media?.file?.type === mediatype) {

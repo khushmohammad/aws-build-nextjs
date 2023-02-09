@@ -67,15 +67,21 @@ const UserProfile = () => {
 
   const dispatch = useDispatch();
 
+  const [imageController, setImageController] = useState({
+    toggler: false,
+    slide: 0,
+  });
+
   useEffect(() => {
     dispatch(allPhotos());
     dispatch(allPostPhotos());
   }, []);
 
-  const [imageController, setImageController] = useState({
-    toggler: false,
-    slide: 1,
-  });
+  const [postPic, setPostPic] = useState([]);
+  const [profilePic, setProfilePic] = useState([]);
+
+  const photos = useSelector((state) => state?.user?.photos);
+  const postMedia = useSelector((state) => state?.post?.photos);
 
   const imageOnSlide = (number) => {
     setImageController({
@@ -83,6 +89,26 @@ const UserProfile = () => {
       slide: number,
     });
   };
+
+  useEffect(() => {
+    postMedia?.map((media) => {
+      if (media?.file?.type !== "mp4") {
+        if (postPic?.includes(media?.file?.location) === false) {
+          setPostPic([...postPic, media?.file?.location]);
+        }
+      }
+    });
+  }, [postMedia]);
+
+  useEffect(() => {
+    photos?.map((pic) => {
+      if (profilePic?.includes(pic?.file?.location) === false) {
+        setProfilePic([...profilePic, pic?.file?.location]);
+      }
+    });
+  }, [photos]);
+
+  let source = [...postPic, ...profilePic];
 
   return (
     <>
@@ -99,7 +125,8 @@ const UserProfile = () => {
       <Default>
         <FsLightbox
           toggler={imageController.toggler}
-          sources={[g1.src, g2.src]}
+          sources={source}
+          type="image"
           slide={imageController.slide}
         />
 
@@ -331,32 +358,24 @@ const UserProfile = () => {
                             </div>
                             <Card.Body>
                               <ul className="profile-img-gallary p-0 m-0 list-unstyled">
-                                <li>
-                                  <Link
-                                    onClick={() => imageOnSlide(1)}
-                                    href="#"
-                                  >
-                                    <Image
-                                      loading="lazy"
-                                      src={g1}
-                                      alt="gallary"
-                                      class="img-fluid"
-                                    />
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    onClick={() => imageOnSlide(2)}
-                                    href="#"
-                                  >
-                                    <Image
-                                      loading="lazy"
-                                      src={g2}
-                                      alt="gallary"
-                                      class="img-fluid"
-                                    />
-                                  </Link>
-                                </li>
+                                {source &&
+                                  source?.map((pic, index) => (
+                                    <li>
+                                      <Link
+                                        onClick={() => imageOnSlide(index)}
+                                        href="#"
+                                      >
+                                        <Image
+                                          loading="lazy"
+                                          src={pic}
+                                          alt="gallary"
+                                          class="img-fluid"
+                                          width={100}
+                                          height={100}
+                                        />
+                                      </Link>
+                                    </li>
+                                  ))}
                               </ul>
                             </Card.Body>
                           </Card>
