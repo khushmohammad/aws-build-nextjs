@@ -17,11 +17,13 @@ import small6 from "../../public/assets/images/small/12.png";
 
 import CustomToggle from "../dropdowns";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../../services/posts.service";
 import { useRouter } from "next/router";
 import { createGroupPost } from "../../services/groups.service.js";
 import { useEffect } from "react";
+import { allPhotos } from "../../store/profile/index.js";
+import { allPostPhotos } from "../../store/post/index.js";
 
 const CreatePost = (props) => {
   const [postData, setPostData] = useState({
@@ -56,6 +58,7 @@ const CreatePost = (props) => {
   };
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const user = useSelector((state) => state?.user?.data);
 
@@ -86,6 +89,8 @@ const CreatePost = (props) => {
       });
       setPrivacy("public");
       setSelectedFile(null);
+      dispatch(allPhotos());
+      dispatch(allPostPhotos());
     });
     handleClose();
     props.refreshPostList();

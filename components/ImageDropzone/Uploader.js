@@ -5,12 +5,14 @@ import getCroppedImg from "./ImageCrop";
 import { Card, Modal } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import {
+  allPhotos,
   getUserDetails,
   updateProfileAndCoverPicture,
   updateProfilePic,
 } from "../../store/profile";
 import axios from "axios";
 import { updateProfileAndCoverPic } from "../../services/user.service";
+import { allPostPhotos } from "../../store/post";
 
 export const Uploader = (props) => {
   const [imgSrc, setImgSrc] = useState("");
@@ -45,6 +47,8 @@ export const Uploader = (props) => {
       await updateProfileAndCoverPic("profileImage", croppedImage)
         .then((res) => {
           dispatch(getUserDetails());
+          dispatch(allPhotos());
+          dispatch(allPostPhotos());
           setImgSrc("");
         })
         .catch((err) => console.log(err));

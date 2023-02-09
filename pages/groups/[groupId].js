@@ -99,7 +99,6 @@ const GroupDetail = () => {
                           onClick={() => setShowGroupMember(true)}
                         >
                           {(memberCount &&
-                            memberCount.length !== 0 &&
                             memberCount[0]?.memberCount?.members) ||
                             0}{" "}
                           members

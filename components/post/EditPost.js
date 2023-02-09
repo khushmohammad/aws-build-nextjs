@@ -15,9 +15,10 @@ import small4 from "../../public/assets/images/small/10.png";
 import small6 from "../../public/assets/images/small/12.png";
 
 import { updatePost } from "../../services/posts.service";
-import { getPostDetails } from "../../store/post";
+import { allPostPhotos, getPostDetails } from "../../store/post";
 import { useRouter } from "next/router";
 import ModalPop from "../popupModal/ModalPop";
+import { allPhotos } from "../../store/profile";
 
 const EditPost = (props) => {
   const [modalShowFriendList, setModalShowFriendList] = useState(false);
@@ -128,6 +129,8 @@ const EditPost = (props) => {
     setPostData({ description: "", file: null });
     setSelectedFile(null);
     setPrivacyFriendList([]);
+    dispatch(allPhotos());
+    dispatch(allPostPhotos());
     props.refreshPostList();
     props.onHide();
   };

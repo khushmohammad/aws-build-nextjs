@@ -41,6 +41,8 @@ export const CoverPicUploader = (props) => {
       await updateProfileAndCoverPic("coverImage", croppedImage)
         .then((res) => {
           dispatch(getUserDetails());
+          dispatch(allPhotos());
+          dispatch(allPostPhotos());
           setImgSrc("");
         })
         .catch((err) => console.log(err));

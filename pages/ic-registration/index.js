@@ -3,9 +3,12 @@ import Default from "../../layouts/default";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import Image from "next/image";
 import { useState } from "react";
 import { registerIcUser } from "../../services/groups.service";
 import Head from "next/head";
+import user2 from "../../public/assets/images/user/1.jpg";
+import { useDispatch, useSelector } from "react-redux";
 const FILE_SIZE = 20480;
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/pdf", "image/png"];
 
@@ -73,6 +76,12 @@ const IcRegistrationForm = () => {
     resolver: yupResolver(schema),
   });
 
+  const {
+    userInfo,
+    profilePictureInfo,
+    userInfo: { roleInfo },
+  } = useSelector((state) => state?.user?.data);
+
   const onSubmit = async (data, e) => {
     const res = await registerIcUser(data);
 
@@ -90,7 +99,7 @@ const IcRegistrationForm = () => {
       });
     }
 
-    reset()
+    reset();
   };
 
   return (
@@ -117,6 +126,38 @@ const IcRegistrationForm = () => {
                 {isSubmitted.message}
               </div>
             )}
+
+<div className="user-post-data">
+                <div className="d-flex justify-content-between">
+                  <div className="me-3">
+                    {profilePictureInfo && (
+                      <Image
+                        className="rounded-circle img-fluid"
+                        src={profilePictureInfo?.file?.location || user2}
+                        alt=""
+                        height={53}
+                        width={53}
+                      />
+                    )}
+                  </div>
+                  <div className="w-100">
+                    <div className="d-flex justify-content-between">
+                      <div>
+                        <h5 className="mb-0 d-inline-block">
+                          {" "}
+                          {userInfo &&
+                            `${userInfo.firstName}   ${userInfo.lastName} `}
+                        </h5>
+
+                        <p className="mb-0 text-primary">
+                          {roleInfo && roleInfo.dropdownValue}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
             <Form className="mx-auto" onSubmit={handleSubmit(onSubmit)}>
               <Form.Group>
                 <Form.Label htmlFor="question-first">

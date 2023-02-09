@@ -24,6 +24,7 @@ const GroupMemeber = (props) => {
     memberList();
 
     members &&
+      members.length !== 0 &&
       members[0]?.memberList?.map((data) => {
         setMemberId([...memberId, data.memberId]);
       });

@@ -5,6 +5,7 @@ import FsLightbox from "fslightbox-react";
 import { Uploader } from "../../components/ImageDropzone/Uploader";
 import { CoverPicUploader } from "../../components/ImageDropzone/CoverPicUploader";
 import moment from "moment";
+
 // images
 import img1 from "../../public/assets/images/page-img/profile-bg1.jpg";
 import img2 from "../../public/assets/images/user/11.png";
@@ -14,22 +15,9 @@ import img5 from "../../public/assets/images/icon/10.png";
 import img6 from "../../public/assets/images/icon/11.png";
 import img7 from "../../public/assets/images/icon/12.png";
 import img8 from "../../public/assets/images/icon/13.png";
-import user05 from "../../public/assets/images/user/05.jpg";
 import user01 from "../../public/assets/images/user/01.jpg";
 import user02 from "../../public/assets/images/user/02.jpg";
 import user03 from "../../public/assets/images/user/03.jpg";
-import user06 from "../../public/assets/images/user/06.jpg";
-import user07 from "../../public/assets/images/user/07.jpg";
-import user08 from "../../public/assets/images/user/08.jpg";
-import user09 from "../../public/assets/images/user/09.jpg";
-import user10 from "../../public/assets/images/user/10.jpg";
-import user15 from "../../public/assets/images/user/15.jpg";
-import user16 from "../../public/assets/images/user/16.jpg";
-import user17 from "../../public/assets/images/user/17.jpg";
-import user18 from "../../public/assets/images/user/18.jpg";
-import user19 from "../../public/assets/images/user/19.jpg";
-import g1 from "../../public/assets/images/page-img/g1.jpg";
-import g2 from "../../public/assets/images/page-img/g2.jpg";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -69,7 +57,7 @@ const UserProfile = () => {
 
   const [imageController, setImageController] = useState({
     toggler: false,
-    slide: 0,
+    slide: 1,
   });
 
   useEffect(() => {
@@ -362,7 +350,7 @@ const UserProfile = () => {
                                   source?.map((pic, index) => (
                                     <li>
                                       <Link
-                                        onClick={() => imageOnSlide(index)}
+                                        onClick={() => imageOnSlide(index + 1)}
                                         href="#"
                                       >
                                         <Image
