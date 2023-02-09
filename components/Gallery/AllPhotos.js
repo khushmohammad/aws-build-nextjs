@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 const AllPhotos = () => {
   const [imageController, setImageController] = useState({
     toggler: false,
-    slide: 0,
+    slide: 1,
   });
   const [postPic, setPostPic] = useState([]);
   const [profilePic, setProfilePic] = useState([]);
@@ -57,7 +57,7 @@ const AllPhotos = () => {
             source?.map((pic, index) => (
               <div key={index}>
                 <div className="user-images position-relative overflow-hidden">
-                  <Link onClick={() => imageOnSlide(index)} href="#">
+                  <Link onClick={() => imageOnSlide(index + 1)} href="#">
                     <img
                       loading="lazy"
                       src={pic}
