@@ -35,6 +35,7 @@ const Chat = () => {
     // <<<<>>>> socket start
     //const socket = useRef(); 
     const [messages, setMessages] = useState([])
+    const [newMessages, setNewMessages] = useState({})
 
     const receiverUserId = chatId
     const senderUserId = user?.userInfo._id
@@ -47,7 +48,7 @@ const Chat = () => {
         receiverUserId && getCurrentMessages(receiverUserId)
 
 
-    }, [receiverUserId]);
+    }, [chatId && chatId]);
 
 
 
@@ -55,34 +56,31 @@ const Chat = () => {
         const SendMesageToUserOBj = { senderId: senderUserId, receiverId: receiverUserId, message: NewMessage }
 
         socket.emit("sendMessage", SendMesageToUserOBj);
-        setMessages([...messages, { message: NewMessage, senderId: senderUserId }])
-
-
-
         socket.on("getMessage", (data) => {
-            // pushmesage(data)
-            console.log(data, "data");
+            //  console.log(data, "data");
+            const newMsg = { message: data.message, senderId: data.senderId }
+            setNewMessages(newMsg)
+
         })
     };
 
-    const pushmesage = (data) => {
-        console.log(data, "data");
 
-        setMessages([...messages, { message: data?.message, senderId: data?.senderId }])
+    useEffect(() => {
+        setMessages([...messages, newMessages])
+        // setMessages(prev => [...prev, newMessages])
 
+        //   console.log(messages, "messages");
+    }, [newMessages])
 
-        console.log(messages, "messages")
-    }
 
     const getCurrentMessages = async () => {
 
         const result = await getMesasgesByreceiverId(receiverUserId)
+        //  console.log(result, "result");
         if (result && result?.status === 200) {
-
             // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
-            result?.data?.body != "" && setMessages(result?.data?.body?.data)
-
-
+            result?.data?.body?.length != 0 ? setMessages(result?.data?.body?.data) : setMessages('')
+            // console.log(result?.data?.body.length, "result?.data?.body.length");
         }
     }
 
@@ -305,44 +303,24 @@ const Chat = () => {
                                                             </div>
                                                             <div className="chat-content scroller">
 
-                                                                {messages && (messages || []).map((data, index) => {
-
+                                                                {messages && messages.length !== 0 && (messages || []).map((data, index) => {
+                                                                    console.log(messages.length, messages);
 
                                                                     return (
                                                                         <React.Fragment key={index}>
-
-
-                                                                            {data.senderId === senderUserId ?
-                                                                                <div className="chat d-flex other-user">
-                                                                                    <div className="chat-user">
-                                                                                        <Link className="avatar m-0" href="">
-                                                                                            <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
-                                                                                        </Link>
-                                                                                        <span className="chat-time mt-1">6:45</span>
-                                                                                    </div>
-                                                                                    <div className="chat-detail">
-                                                                                        <div className="chat-message">
-                                                                                            <p>{data.message}</p>
-                                                                                        </div>
+                                                                            {data && <div className={`chat ${data.senderId === senderUserId ? 'd-flex other-user' : 'chat-left'}`}>
+                                                                                <div className="chat-user">
+                                                                                    <Link className="avatar m-0" href="">
+                                                                                        <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
+                                                                                    </Link>
+                                                                                    <span className="chat-time mt-1">6:45</span>
+                                                                                </div>
+                                                                                <div className="chat-detail">
+                                                                                    <div className="chat-message">
+                                                                                        <p>{data.message}</p>
                                                                                     </div>
                                                                                 </div>
-                                                                                :
-                                                                                <div className="chat chat-left">
-                                                                                    <div className="chat-user">
-                                                                                        <Link className="avatar m-0" href="">
-                                                                                            <Image loading="lazy" src={user5} alt="avatar" className="avatar-35 " />
-                                                                                        </Link>
-                                                                                        <span className="chat-time mt-1">6:48</span>
-                                                                                    </div>
-                                                                                    <div className="chat-detail">
-                                                                                        <div className="chat-message">
-                                                                                            <p>{data.message}</p>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-
+                                                                            </div>}
                                                                         </React.Fragment>
                                                                     )
                                                                 })}
