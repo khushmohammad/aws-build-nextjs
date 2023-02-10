@@ -26,12 +26,10 @@ function PostComments({ postId }) {
         const result = await res
         if (result.status == 200) {
             const dataWithUserDetails = await mergeUserBasicDetails([result?.data?.body])
-            console.log(dataWithUserDetails, "dataWithUserDetails");
             commentlist && commentlist.length > 0 ? setCommentlist([...commentlist, dataWithUserDetails[0]]) : setCommentlist([dataWithUserDetails[0]])
             reset()
         }
         else {
-
             console.log(result, "apiError");
         }
     };
@@ -90,27 +88,50 @@ function PostComments({ postId }) {
 
 function CommentLiComponent({ comment, postId, level, parentId }) {
 
-    const NestedComments = React.memo(({ parentId, level }) => {
-        const [commentReply, setCommentReply] = useState()
+    const [showCommentInput, setShowCommentInput] = useState(false)
+    const [commentInputText, setCommentInputText] = useState('')
+    const [commentReply, setCommentReply] = useState([])
+    const [viewReply, setviewReply] = useState()
+
+    const onFormSubmit = async (e) => {
+        e.preventDefault();
+        const updatedLevel = level == undefined ? 0 : level + 1
+        const res = await postCommentByPostId(postId, commentInputText, updatedLevel, comment._id)
+        const result = await res
+        //const comArr = await result?.data?.body
+        if (result.status == 200) {
+            console.log("object", 1);
+            const dataWithUserDetails = await mergeUserBasicDetails([result?.data?.body])
+            setCommentReply([...commentReply, dataWithUserDetails[0]])
+            setCommentInputText('')
+            // setShowCommentInput(false)
+        }
+        else {
+            console.log(result, "apiError");
+        }
+    }
+
+    // console.log("object", commentReply);
+    const NestedComments = ({ parentId, level, commentReply }) => {
+        const [commentReplyNested, setCommentReplyNested] = useState([])
 
         const getCommentReply = async () => {
-            if (comment) {
-                const res = await getCommentbyPostId(postId, 1, 5, level, parentId)
-                const commentrepArr = await res?.comments
-                commentrepArr && setCommentReply(commentrepArr)
-            }
+            const res = await getCommentbyPostId(postId, 1, 5, level, parentId)
+            const commentrepArr = await res?.comments
+            commentrepArr && setCommentReplyNested(commentrepArr)
+
         }
 
         useEffect(() => {
             getCommentReply()
-            //console.log("object");
-        }, [postId])
+
+        }, [parentId])
+
+        console.log(commentReply, "commentReply");
 
         return (
             <React.Fragment >
-
-
-                {commentReply && (commentReply || []).map((replydata, i) => {
+                {commentReplyNested && (commentReplyNested || []).map((replydata, i) => {
                     return (
                         <React.Fragment key={i}>
                             {replydata && <CommentLiComponent comment={replydata} postId={postId} level={level} parentId={replydata._id || ""} />}
@@ -119,36 +140,10 @@ function CommentLiComponent({ comment, postId, level, parentId }) {
                 })}
             </React.Fragment>
         );
-    })
-    const [showCommentInput, setShowCommentInput] = useState(false)
-    const [commentInputText, setCommentInputText] = useState('')
-    const [commentReply, setCommentReply] = useState([])
-
-    const onFormSubmit = async (e) => {
-        e.preventDefault();
-
-
-        const updatedLevel = level == undefined ? 0 : level + 1
-        const res = await postCommentByPostId(postId, commentInputText, updatedLevel, comment._id)
-        const result = await res
-
-        if (result.status == 200) {
-            const dataWithUserDetails = await mergeUserBasicDetails([result?.data?.body])
-            dataWithUserDetails && commentReply && commentReply.length > 0 ? setCommentReply([...commentReply, dataWithUserDetails[0]]) : setCommentReply([dataWithUserDetails[0]])
-
-            setCommentInputText('')
-            setShowCommentInput(false)
-        }
-        else {
-
-            console.log(result, "apiError");
-        }
-
-        // send state to server with e.g. `window.fetch`
     }
 
 
-    const [viewReply, setviewReply] = useState()
+
 
     return (
         <>
@@ -165,7 +160,7 @@ function CommentLiComponent({ comment, postId, level, parentId }) {
                         />
                     </div>
                     <div className="comment-data-block ms-3 flex-grow-1">
-                        <h6>{comment?.userDetails?.userInfo?.firstName || "fistName"}  {comment?.userDetails?.userInfo?.lastName || ""}</h6>
+                        <h6>{comment?.userDetails?.userInfo?.firstName || ""}  {comment?.userDetails?.userInfo?.lastName || ""}</h6>
                         <p className="mb-0">{comment?.textInfo}</p>
                         <div className="d-flex flex-wrap align-items-center comment-activity">
 
@@ -179,7 +174,7 @@ function CommentLiComponent({ comment, postId, level, parentId }) {
                                 <div className='w-100'>
 
                                     <form onSubmit={onFormSubmit} >
-                                        <input type="text" onChange={(e) => setCommentInputText(e.target.value)} className="form-control rounded" placeholder="Enter Your Comment Reply" />
+                                        <input type="text" value={commentInputText} onChange={(e) => setCommentInputText(e.target.value)} className="form-control rounded" placeholder="Enter Your Comment Reply" />
                                     </form>
                                 </div>
                             }
@@ -189,16 +184,28 @@ function CommentLiComponent({ comment, postId, level, parentId }) {
                 </div>
 
             </li>
-            {comment && comment?.repliesCounts >= 0 && <>
-                <p role="button" className='text-primary '>view reply </p>
 
-                <ul className={`post-comments list-inline  ${comment?.level < 2 ? 'ms-4' : ''}`}>
+            {
+                commentReply && commentReply.map((comment, i) => {
+                    return (
+                        <NestedComments parentId={comment?._id} level={comment?.level + 1} commentReply={commentReply} />
+                    )
+                })
+            }
+            {comment && comment?.repliesCounts >= 0 && <>
+
+                {comment?.repliesCounts > 0 && <p role="button" onClick={() => setviewReply(!viewReply)} className='text-primary '>{viewReply ? "hide" : "view"} reply </p>}
+
+                {viewReply && <ul className={`post-comments list-inline  ${comment?.level < 2 ? 'ms-4' : ''}`}>
                     <NestedComments parentId={comment?._id} level={comment?.level + 1} />
-                </ul>
+                    <form  >
+                        <input type="text" className="form-control rounded" placeholder="Enter Your Comment Reply" />
+                    </form>
+                </ul>}
             </>}
         </>
     );
 }
 
 
-export default React.memo(PostComments)
+export default PostComments

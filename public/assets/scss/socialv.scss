@@ -211,3 +211,20 @@ body {
 .iq-profile-avatar:before {
   top: -0.188rem;
 }
+
+
+.event-tabs {
+  border-left: 1px solid var(--bs-gray-tint-80);
+}
+.event-dropdwon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0, 0.5);
+  border-radius: 5px; 
+}
+@media (max-width: 767px) {
+  .event-tabs {
+    border-left: none;
+  }
+}

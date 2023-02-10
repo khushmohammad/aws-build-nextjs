@@ -125,7 +125,7 @@ const ModalPop = (props) => {
             props.onHide(), props.onShow();
           }}
         >
-          Save changes
+          Save
         </Button>
       </Modal.Footer>
     </Modal>

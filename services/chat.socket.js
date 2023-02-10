@@ -8,3 +8,22 @@ export const getToken = async () => {
 };
 
 
+
+
+export const getMesasgesByreceiverId = async (receiverUserId) => {
+    const token = await getToken();
+
+    try {
+        const res = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_PATH}/chats/messages/${receiverUserId}`,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        return res
+        //return res.data.body;
+    } catch (err) {
+        console.log(err);
+    }
+};
+

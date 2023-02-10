@@ -7,7 +7,8 @@ import "../node_modules/vanillajs-datepicker/dist/css/datepicker.min.css";
 
 const Datepickers = (props) => {
   useEffect(() => {
-    if (typeof document !== "object") {
+    console.log("::", typeof document);
+    if (typeof document !== undefined) {
       const datepickers = document.querySelectorAll(".vanila-datepicker");
       Array.from(datepickers, (elem) => {
         return new Datepicker(elem);

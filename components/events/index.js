@@ -18,14 +18,22 @@ import DatePicker from "react-datepicker";
 // images
 import img2 from "../../public/assets/images/page-img/profile-bg1.jpg";
 import { createEventService } from "../../services/event.service";
+import { getAllEvents } from "../../store/events";
+import { useDispatch } from "react-redux";
 
 const CreateEvent = (props) => {
   const [coverPicture, setCoverPicture] = useState("");
   const [apiResponse, setApiResponse] = useState(null);
+
+  const dispatch = useDispatch();
+
   const schema = yup
     .object({
-      // title: yup.string().required("title is required"),
-      // privacyType: yup.string().required(),
+      title: yup.string().required("title is required"),
+      location: yup.string().required("Location is required"),
+      description: yup.string().required("Description is required"),
+      // start: yup.string().required("Start Date is required"),
+      // end: yup.string().required("End Date is required"),
     })
     .required();
 
@@ -33,6 +41,7 @@ const CreateEvent = (props) => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isDirty, isValid },
   } = useForm({
     mode: "onChange",
@@ -47,17 +56,20 @@ const CreateEvent = (props) => {
   const onSubmit = (data) => {
     register("coverPicture", { value: coverPicture });
 
+    dispatch(getAllEvents(data));
+
     createEvent(data).then((res) => {
-      // console.log("LLLLL", res);
       if (res?.success === true) {
         setApiResponse(res?.message);
+        setCoverPicture("");
+        props.onHide();
+        reset();
       }
     });
   };
 
   return (
     <Modal {...props} size="lg" style={{ top: "8%" }}>
-      {/* {apiResponse && apiResponse} */}
       <Modal.Header className="d-flex justify-content-between">
         <h5 className="modal-title" id="post-modalLabel">
           Create An Event
@@ -130,6 +142,11 @@ const CreateEvent = (props) => {
                         name="title"
                       />
                       <label htmlFor="floatingInputCustom">Event Title</label>
+                      {errors.title && (
+                        <div className="text-danger">
+                          {errors.title.message}
+                        </div>
+                      )}
                     </Form.Floating>
                     <Form.Floating className="mb-3">
                       <Form.Control
@@ -140,6 +157,11 @@ const CreateEvent = (props) => {
                         name="location"
                       />
                       <label htmlFor="floatingInputCustom">Location</label>
+                      {errors.location && (
+                        <div className="text-danger">
+                          {errors.location.message}
+                        </div>
+                      )}
                     </Form.Floating>
                     <Form.Floating className="mb-3">
                       <Form.Control
@@ -152,13 +174,59 @@ const CreateEvent = (props) => {
                         name="description"
                       />
                       <label htmlFor="floatingInputCustom">Description</label>
+                      {errors.description && (
+                        <div className="text-danger">
+                          {errors.description.message}
+                        </div>
+                      )}
                     </Form.Floating>
+
+                    <Form.Floating className="mb-3">
+                      <Form.Select
+                        {...register("backgroundColor")}
+                        id="backgroundColor"
+                      >
+                        <option
+                          defaultChecked
+                          className="text-capitalize dot-option"
+                          value="blue"
+                        >
+                          Business
+                        </option>
+                        <option
+                          className="text-capitalize dot-option"
+                          value="red"
+                        >
+                          Personal
+                        </option>
+                        <option
+                          className="text-capitalize dot-option"
+                          value="orange"
+                        >
+                          family
+                        </option>
+                        <option
+                          className="text-capitalize dot-option"
+                          value="green"
+                        >
+                          Holiday
+                        </option>
+                        <option
+                          className="text-capitalize dot-option"
+                          value="cyan"
+                        >
+                          ETC
+                        </option>
+                      </Form.Select>
+                      <label htmlFor="privacyType">Label</label>
+                    </Form.Floating>
+
                     <Row>
                       <Col>
                         <Form.Label>Start Date</Form.Label>
                         <Form.Floating className="mb-3 ">
                           <Controller
-                            name="startTime"
+                            name="start"
                             control={control}
                             render={({
                               field: { name, value, onChange, onBlur },
@@ -179,13 +247,18 @@ const CreateEvent = (props) => {
                               />
                             )}
                           />
+                          {/* {errors.start && (
+                            <div className="text-danger">
+                              {errors.start.message}
+                            </div>
+                          )} */}
                         </Form.Floating>
                       </Col>
                       <Col>
                         <Form.Label>End Date</Form.Label>
                         <Form.Floating className="mb-3 ">
                           <Controller
-                            name="endTime"
+                            name="end"
                             control={control}
                             render={({
                               field: { name, value, onChange, onBlur },
@@ -206,16 +279,22 @@ const CreateEvent = (props) => {
                               />
                             )}
                           />
+                          {/* {errors.end && (
+                            <div className="text-danger">
+                              {errors.end.message}
+                            </div>
+                          )} */}
                         </Form.Floating>
                       </Col>
                     </Row>
 
                     <Form.Floating className="mb-3">
                       <Form.Select {...register("privacy")} id="privacy">
-                        <option hidden className="text-capitalize">
-                          Select Privacy
-                        </option>
-                        <option className="text-capitalize" value="public">
+                        <option
+                          defaultChecked
+                          className="text-capitalize"
+                          value="public"
+                        >
                           Public
                         </option>
                         <option className="text-capitalize" value="private">

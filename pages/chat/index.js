@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Row, Col, Form, Tab, Nav, Button, Dropdown } from 'react-bootstrap'
 import Card from '../../components/Card'
@@ -13,47 +13,86 @@ import { useRouter } from 'next/router'
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { chat } from '../../public/data/chat'
 
 import { io } from "socket.io-client";
+import { getMesasgesByreceiverId } from '../../services/chat.socket'
+const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION);
 
-// const schema = yup.object({
-//     messageInput: yup.string().required("Please write something")
-// }).required();
+const schema = yup.object({
+    messageInput: yup.string().required("Please write something")
+}).required();
 
 const Chat = () => {
     const router = useRouter()
     const [show1, setShow1] = useState('')
     const [show2, setShow2] = useState('')
     const chatId = router?.query?.chatId
-    const [key, setKey] = useState('start')
-    const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList)
     const user = useSelector((state) => state.user.data);
+    const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList)
+    const [key, setKey] = useState('start')
 
 
-    const [socket, setSocket] = useState(null)
+    // <<<<>>>> socket start
+    //const socket = useRef(); 
+    const [messages, setMessages] = useState([])
+
+    const receiverUserId = chatId
+    const senderUserId = user?.userInfo._id
+    const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId }
+
 
     useEffect(() => {
-        setSocket(io("http://localhost:3008"));
-    }, [])
-
-    console.log(socket);
-
-    // const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    //     resolver: yupResolver(schema)
-    // });
-
-    const [message, setMessage] = useState()
-
-    console.log(message, "message");
-    const onSubmit = (e) => {
-        e.preventDefault();
-
-        console.log(message, "sdfsdf")
-        setMessage()
+        socket.emit("joinSocket", JoinRoom);
+        // console.log(con, "joinSocket")
+        receiverUserId && getCurrentMessages(receiverUserId)
 
 
+    }, [receiverUserId]);
+
+
+
+    const sendMessage = async (NewMessage) => {
+        const SendMesageToUserOBj = { senderId: senderUserId, receiverId: receiverUserId, message: NewMessage }
+
+        socket.emit("sendMessage", SendMesageToUserOBj);
+        setMessages([...messages, { message: NewMessage, senderId: senderUserId }])
+
+
+
+        socket.on("getMessage", (data) => {
+            // pushmesage(data)
+            console.log(data, "data");
+        })
     };
+
+    const pushmesage = (data) => {
+        console.log(data, "data");
+
+        setMessages([...messages, { message: data?.message, senderId: data?.senderId }])
+
+
+        console.log(messages, "messages")
+    }
+
+    const getCurrentMessages = async () => {
+
+        const result = await getMesasgesByreceiverId(receiverUserId)
+        if (result && result?.status === 200) {
+
+            // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
+            result?.data?.body != "" && setMessages(result?.data?.body?.data)
+
+
+        }
+    }
+
+
+
+    // <<<<<>>>>>>>>> close Socket
+
+
+
+
     const ChatSidebar = () => {
         document.getElementsByClassName('scroller')[0].classList.add('show')
     }
@@ -74,11 +113,12 @@ const Chat = () => {
         console.log("user changed")
     }
 
-
-
-
     return (
         <>
+            {/* <button onClick={() => pushmesage("me")}> send me</button>
+            <button onClick={() => pushmesage("other")}> send test mesage</button>
+            <button onClick={() => sendMessage("sdfsdfdslfj")}> send test mesage</button> */}
+
             <Tab.Container id="left-tabs-example" activeKey={key}
                 onSelect={(k) => changeRoom(k)}>
                 <Row>
@@ -182,6 +222,7 @@ const Chat = () => {
                                                     return (
 
                                                         <Tab.Pane eventKey={data._id} className={`fade show`} key={index}>
+
                                                             <div className="chat-head">
                                                                 <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                                     <div className="d-flex align-items-center">
@@ -264,12 +305,14 @@ const Chat = () => {
                                                             </div>
                                                             <div className="chat-content scroller">
 
-                                                                {chat && chat.map((data, index) => {
+                                                                {messages && (messages || []).map((data, index) => {
+
+
                                                                     return (
-                                                                        <>
+                                                                        <React.Fragment key={index}>
 
 
-                                                                            {data.senderId === "63d109b2c0566c97db312008" ?
+                                                                            {data.senderId === senderUserId ?
                                                                                 <div className="chat d-flex other-user">
                                                                                     <div className="chat-user">
                                                                                         <Link className="avatar m-0" href="">
@@ -300,28 +343,14 @@ const Chat = () => {
                                                                                 </div>
                                                                             }
 
-                                                                        </>
+                                                                        </React.Fragment>
                                                                     )
                                                                 })}
 
 
-
                                                             </div>
-                                                            <div className="chat-footer p-3 bg-white">
 
-                                                                <form className="d-flex align-items-center" onSubmit={onSubmit}>
-                                                                    {/* <div className="chat-attagement d-flex">
-                                                                        <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
-                                                                        <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
-                                                                    </div> */}
-
-                                                                    <Form.Control onChange={(e) => setMessage(e.target.value)} type="text" className="me-3" placeholder="Type your message" />
-                                                                    <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-lg-block ms-1">Send</span></Button>
-                                                                </form>
-                                                                {/* {errors.messageInput && (
-                                                                    <div className=" pc-3 text-danger">{errors.messageInput.message}</div>
-                                                                )} */}
-                                                            </div>
+                                                            <SendMessageInput sendMsg={(e) => sendMessage(e)} />
 
                                                         </Tab.Pane>
 
@@ -338,6 +367,39 @@ const Chat = () => {
                     </Col>
                 </Row>
             </Tab.Container>
+        </>
+    )
+}
+
+
+const SendMessageInput = ({ sendMsg }) => {
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        resolver: yupResolver(schema)
+    });
+    const onSubmit = (data) => {
+        sendMsg(data.messageInput)
+        reset()
+    };
+
+    return (
+        <>
+
+            <div className="chat-footer p-3 bg-white">
+
+                <form className="d-flex align-items-center" onSubmit={handleSubmit(onSubmit)}>
+                    {/* <div className="chat-attagement d-flex">
+        <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
+        <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
+    </div> */}
+
+                    <Form.Control {...register("messageInput")} type="text" className="me-3" placeholder="Type your message" />
+                    <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-sm-block ms-1">Send</span></Button>
+                </form>
+                {errors.messageInput && (
+                    <div className=" pc-3 text-danger">{errors.messageInput.message}</div>
+                )}
+            </div>
         </>
     )
 }

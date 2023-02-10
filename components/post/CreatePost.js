@@ -20,7 +20,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../../services/posts.service";
 import { useRouter } from "next/router";
-import { createGroupPost } from "../../services/groups.service.js";
 import { useEffect } from "react";
 import { allPhotos } from "../../store/profile/index.js";
 import { allPostPhotos } from "../../store/post/index.js";
@@ -64,11 +63,13 @@ const CreatePost = (props) => {
 
   useEffect(() => {
     if (privacy === "includeFriends" || privacy === "excludeFriends") {
-      setPostData({
-        ...postData,
-        privacy: privacy,
-        privacyFriendList: privacyFriendList,
-      });
+      if (privacyFriendList.length !== 0) {
+        setPostData({
+          ...postData,
+          privacy: privacy,
+          privacyFriendList: privacyFriendList,
+        });
+      }
     } else {
       setPostData({ ...postData, privacy: privacy });
     }
@@ -82,6 +83,7 @@ const CreatePost = (props) => {
 
   const submitPost = async (e) => {
     e.preventDefault();
+    // console.log(":::", postData);
     await createPost(postData).then((res) => {
       setPostData({
         description: "",
@@ -262,6 +264,8 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
+
+                      
                       <img
                         loading="lazy"
                         src={file.base64}
@@ -272,6 +276,18 @@ const CreatePost = (props) => {
                           objectFit: "contain",
                         }}
                       />
+
+                      {/* <video
+                        loading="lazy"
+                        type="video/mp4"
+                        src={file.base64}
+                        alt="icon"
+                        width={100}
+                        height={100}
+                        style={{
+                          objectFit: "contain",
+                        }}
+                      /> */}
                       <div
                         onClick={() => deleteImageKey(file, index)}
                         style={{
@@ -315,7 +331,6 @@ const CreatePost = (props) => {
                   <FileBase64
                     multiple={true}
                     onDone={(files) => {
-                      // console.log("files onDone: ", files);
                       setSelectedFile(files);
                       const reqFiles = [];
                       for (var i = 0; i < files.length; i++) {

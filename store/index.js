@@ -6,6 +6,7 @@ import postReducer from "./post";
 import allFeedsReducer from "./post/allFeeds";
 import groupReducer from "./groups";
 import friendReducer from "./friends";
+import eventReducer from "./events";
 import friendsRequests from "./friends/friendsRequests";
 import nonFriendsLIst from "./friends/nonFriendsList";
 import loaderReducer from "./site/Loader";
@@ -28,10 +29,11 @@ const reducers = combineReducers({
   post: postReducer,
   allFeed: allFeedsReducer,
   groups: groupReducer,
+  events: eventReducer,
   friends: friendReducer,
   friendsRequests: friendsRequests,
   nonFriendsLIst: nonFriendsLIst,
-  loader: loaderReducer
+  loader: loaderReducer,
 });
 
 const rootReducer = (state, action) => {

@@ -9,7 +9,6 @@ import {
   pinPostByUser,
 } from "../../../services/posts.service";
 import { useRouter } from "next/router";
-import EditPost from "../EditPost";
 import PostMediaGrid from "./PostMediaGrid";
 import PostContentSection from "./PostContentSection";
 import PostFooter from "./PostFooter";
@@ -51,8 +50,6 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
         })
       );
     } else if (activePage == "PostDetail") {
-      //console.log(postDetailObj, "postDetail")
-
       setposts([]);
       setposts([postDetailObj]);
     } else {
@@ -83,9 +80,13 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
   }, [page]);
 
   useEffect(() => {
-    activePage != "PostDetail" ? window.addEventListener("scroll", handleScroll) : ""
-    return () => activePage != "PostDetail" ? window.removeEventListener("scroll", handleScroll) : "";
-
+    activePage != "PostDetail"
+      ? window.addEventListener("scroll", handleScroll)
+      : "";
+    return () =>
+      activePage != "PostDetail"
+        ? window.removeEventListener("scroll", handleScroll)
+        : "";
   }, []);
 
   const handleScroll = async () => {
@@ -230,25 +231,30 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
           ""
         )}
         <div className="w-100">
-          {activePage != "PostDetail" && StorePosts && loading != "loading" && StorePosts.length == 0 && (
-            <div
-              className="card card-block card-stretch card-height"
-              style={{
-                marginBottom: "-6rem",
-                height: "90px",
-                width: "100%",
-                position: "absolute",
-                bottom: "0px",
-                justifyContent: "center",
-              }}
-            >
-              <Card.Body>
-                <div className="col-sm-12 text-center">
-                  <p className="p-3  text-alert text-center">No posts found!</p>
-                </div>
-              </Card.Body>
-            </div>
-          )}
+          {activePage != "PostDetail" &&
+            StorePosts &&
+            loading != "loading" &&
+            StorePosts.length == 0 && (
+              <div
+                className="card card-block card-stretch card-height"
+                style={{
+                  marginBottom: "-6rem",
+                  height: "90px",
+                  width: "100%",
+                  position: "absolute",
+                  bottom: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <Card.Body>
+                  <div className="col-sm-12 text-center">
+                    <p className="p-3  text-alert text-center">
+                      No posts found!
+                    </p>
+                  </div>
+                </Card.Body>
+              </div>
+            )}
         </div>
       </div>
     </div>

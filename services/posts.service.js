@@ -11,14 +11,16 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
   const token = await getToken();
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?pageNumber=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount; //await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+
+      //await response?.data?.body?.allBody?.totalDocs
 
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
@@ -54,7 +56,7 @@ export const getAllPostsByUserId = async (
   //console.log(userId,"userId");
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?${pageName}=${userId}&page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?${pageName}=${userId}&pageNumber=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -62,7 +64,8 @@ export const getAllPostsByUserId = async (
 
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount; // await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      // await response?.data?.body?.allBody?.totalDocs
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -97,7 +100,7 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?pageNumber=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -105,7 +108,7 @@ export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
 
     if (response.status == 200) {
       const postslist = await response?.data?.body?.feeds;
-      const PostCount = await postslist?.postCount?.postCount; //await response?.data?.body?.allBody?.totalDocs
+      const PostCount = await response?.data?.body?.postCount?.postCount;
       const newarray = await Promise.all(
         postslist.map(async (postData) => {
           const res = await getUserInfoByUserId(postData.userId);
@@ -348,20 +351,31 @@ export const mergeUserBasicDetails = async (userIdArr) => {
       const res =
         singleData && (await getUserInfoByUserId(singleData.userId));
       const userData = await res?.data?.body;
-      const newdata = await { ...singleData, userDetails: { userInfo: userData?.userInfo, profilePictureInfo: userData?.profilePictureInfo } };
+      const newdata = await {
+        ...singleData,
+        userDetails: {
+          userInfo: userData?.userInfo,
+          profilePictureInfo: userData?.profilePictureInfo,
+        },
+      };
       return newdata;
     })
   );
-  return dataWithUserDetails
-}
+  return dataWithUserDetails;
+};
 
-export const postCommentByPostId = async (postId, commentData, level, parentId) => {
+export const postCommentByPostId = async (
+  postId,
+  commentData,
+  level,
+  parentId
+) => {
   const token = await getToken();
   const payloadData = {
     postId: postId,
     level: level,
     textInfo: commentData,
-    parentId: parentId
+    parentId: parentId,
   };
 
   try {
@@ -374,8 +388,8 @@ export const postCommentByPostId = async (postId, commentData, level, parentId) 
         },
       }
     );
-    // if (res.status === 200) {     
-    //   const dataWithUserDetails = await mergeUserBasicDetails([res?.data?.body])      
+    // if (res.status === 200) {
+    //   const dataWithUserDetails = await mergeUserBasicDetails([res?.data?.body])
     //   return dataWithUserDetails
     // } else {
     //   return res
@@ -434,14 +448,13 @@ export const getAllPostPhoto = async () => {
   }
 };
 
-
 export const userPostshare = async (postId) => {
   const token = await getToken();
 
-
   try {
     const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/share/${postId}`, "",
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/share/${postId}`,
+      "",
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -452,22 +465,27 @@ export const userPostshare = async (postId) => {
   }
 };
 
-
-
-
-export const getCommentbyPostId = async (postId = "", pageNumber = 1, limit = 5, level = 0, parentId = "") => {
-
+export const getCommentbyPostId = async (
+  postId = "",
+  pageNumber = 1,
+  limit = 5,
+  level = 0,
+  parentId = ""
+) => {
   const token = await getToken();
   try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/all/${postId}?pageNumber=${pageNumber}&limit=${limit}&level=${level}&parentId=${parentId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/all/${postId}?pageNumber=${pageNumber}&limit=${limit}&level=${level}&parentId=${parentId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     if (res.status == 200) {
       const allCommentList = await res?.data?.body;
       // console.log(allCommentList, "allCommentList.length");
       if (allCommentList == undefined || allCommentList.length == 0) {
-        return []
+        return [];
       }
 
       // console.log(allCommentList, "allLikessArr");
@@ -478,7 +496,13 @@ export const getCommentbyPostId = async (postId = "", pageNumber = 1, limit = 5,
             commentData && (await getUserInfoByUserId(commentData.userId));
           const userData = await res?.data?.body;
 
-          const newdata = await { ...commentData, userDetails: { userInfo: userData?.userInfo, profilePictureInfo: userData?.profilePictureInfo } };
+          const newdata = await {
+            ...commentData,
+            userDetails: {
+              userInfo: userData?.userInfo,
+              profilePictureInfo: userData?.profilePictureInfo,
+            },
+          };
           //console.log(newdata, "userData");
           return newdata;
         })
@@ -486,20 +510,40 @@ export const getCommentbyPostId = async (postId = "", pageNumber = 1, limit = 5,
       // console.log(newCommmentListarray, "newCommmentListarray");
 
       // console.log({ comments: newCommmentListarray, commentsOrReplyCounts: allCommentList.commentsOrReplyCounts }, "abba")
-      const data = { comments: newCommmentListarray, commentsOrReplyCounts: allCommentList.commentsOrReplyCounts }
+      const data = {
+        comments: newCommmentListarray,
+        commentsOrReplyCounts: allCommentList.commentsOrReplyCounts,
+      };
       return data;
-
-
-
     }
-
-
 
     // const comment = await res
     // const data = await comment?.data?.body
     // return data
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
+};
 
-}
+
+
+export const savePostApi = async (postId) => {
+  const token = await getToken();
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/savedPost/${postId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    console.log(response, "response")
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+

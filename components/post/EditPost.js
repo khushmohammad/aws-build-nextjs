@@ -97,9 +97,11 @@ const EditPost = (props) => {
     setPrivacy(postDetails?.privacy);
     setPrivacyFriendList();
   }, [postDetails, imageKey, imageFileIds]);
-  // console.log("props",props.postid)
+
+  // console.log("props", props.postid);
+
   useEffect(() => {
-    if (props.postid !== undefined) dispatch(getPostDetails(props.postid));
+    props.postid && dispatch(getPostDetails(props.postid));
   }, [props.postid]);
 
   const deleteImageKey = (key, id) => {

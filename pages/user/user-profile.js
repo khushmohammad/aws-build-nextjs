@@ -444,9 +444,9 @@ const UserProfile = () => {
                                     <div className="col-9">
                                       {user && user.userInfo ? (
                                         <p className="mb-0">
-                                          {user.userInfo.firstName}{" "}
-                                          {user.userInfo.middleName}{" "}
-                                          {user.userInfo.lastName}
+                                          {user?.userInfo?.firstName}{" "}
+                                          {user?.userInfo?.middleName}{" "}
+                                          {user?.userInfo?.lastName}
                                         </p>
                                       ) : (
                                         "---"
@@ -458,9 +458,9 @@ const UserProfile = () => {
                                       <h6>About Me:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user && user.profileDescription ? (
+                                      {user && user?.profileDescription ? (
                                         <p className="mb-0">
-                                          {user.profileDescription}
+                                          {user?.profileDescription}
                                         </p>
                                       ) : (
                                         "---"
@@ -472,9 +472,9 @@ const UserProfile = () => {
                                       <h6>Email:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.userInfo.userName ? (
+                                      {user?.userInfo?.userName ? (
                                         <p className="mb-0">
-                                          {user.userInfo.userName}
+                                          {user?.userInfo?.userName}
                                         </p>
                                       ) : (
                                         "---"

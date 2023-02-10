@@ -19,8 +19,7 @@ const AllFeedsSlice = createSlice({
         state.allFeeds = [];
       })
       .addCase(getAllFeedsList.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        //console.log(action.payload.newarray, "action.payload.newarray");
+        state.status = "succeeded";        
         state.allFeeds = action.payload.newarray;
         state.postcount = action.payload.PostCount;
         state.error = "";

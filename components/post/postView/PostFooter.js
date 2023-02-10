@@ -16,12 +16,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
-import {  getAllLikesByPostId, likePostByUser } from '../../../services/posts.service';
+import { getAllLikesByPostId, likePostByUser } from '../../../services/posts.service';
 import { useSelector } from 'react-redux';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import PostComments from './PostComments';
 import TotalCommentBlock from './TotalCommentBlock';
+import Commentapi from './Commentapi';
 
 
 
@@ -253,7 +254,11 @@ function PostFooter({ currentPostId, refreshPostList }) {
         </div>
         <hr />
         {currentPostId &&
-          <PostComments postId={currentPostId} />
+          <>
+            {/* <PostComments postId={currentPostId} /> */}
+            <Commentapi postId={currentPostId} />
+
+          </>
         }
       </div>
     </div >
