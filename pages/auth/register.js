@@ -19,12 +19,12 @@ const schema = yup
   .object({
     firstName: yup
       .string()
-      .required("Must have minimun 3 characters")
+      .required("First Name must be at least 3 characters long")
       .min(3)
       .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
     lastName: yup
       .string()
-      .required("Must have minimun 3 characters")
+      .required("Last Name must be at least 3 characters long")
       .min(3)
       .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
     userName: yup.string().email().required("Email is required"),

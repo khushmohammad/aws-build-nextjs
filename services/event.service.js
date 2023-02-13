@@ -17,9 +17,63 @@ export const createEventService = async (data) => {
         },
       }
     );
-    console.log(res);
     return res.data;
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const getAllEvents = async (eventType) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/user/${eventType}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.body;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getEventByEventId = async (eventid) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/info/${eventid}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.body;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const eventActionService = async (action, id) => {
+  console.log(action, id);
+  const token = await getToken();
+  console.log(token);
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/${action}/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Heyyy:: ", res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
   }
 };

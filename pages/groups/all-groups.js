@@ -29,14 +29,17 @@ const Groups = () => {
   const [isJoined, setIsJoined] = useState([]);
   const [joinedGroup, setJoinedGroup] = useState([]);
   const [groupList, setGroupList] = useState([]);
+  const [page, setPage] = useState(1);
   const dispatch = useDispatch();
 
   const groups = useSelector((state) => state?.groups?.allGroups?.allGroups);
 
   const myGroups = useSelector((state) => state?.groups?.joinedGroup);
 
+  console.log(page);
+
   useEffect(() => {
-    dispatch(getAllGroupsList(joinGroup));
+    dispatch(getAllGroupsList(page));
     dispatch(allJoinedGroupList());
 
     let res = [];
@@ -57,7 +60,21 @@ const Groups = () => {
           : { ...prev, [groupId]: false }
       );
       setJoinedGroup([...joinedGroup, groupId]);
-      dispatch(getAllGroupsList());
+      dispatch(getAllGroupsList(1));
+    }
+  };
+
+  useEffect(() => {
+    joinGroup();
+    window.addEventListener("scroll", handleScroll); // attaching scroll event listener
+  }, []);
+
+  const handleScroll = async () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.scrollHeight
+    ) {
+      setPage((prev) => prev + 1);
     }
   };
 

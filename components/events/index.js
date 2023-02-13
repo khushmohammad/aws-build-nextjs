@@ -17,12 +17,13 @@ import DatePicker from "react-datepicker";
 
 // images
 import img2 from "../../public/assets/images/page-img/profile-bg1.jpg";
+
 import { createEventService } from "../../services/event.service";
-import { getAllEvents } from "../../store/events";
+import { getEvents } from "../../store/events";
 import { useDispatch } from "react-redux";
 
 const CreateEvent = (props) => {
-  const [coverPicture, setCoverPicture] = useState("");
+  const [eventPicture, setEventPicture] = useState("");
   const [apiResponse, setApiResponse] = useState(null);
 
   const dispatch = useDispatch();
@@ -54,14 +55,13 @@ const CreateEvent = (props) => {
   };
 
   const onSubmit = (data) => {
-    register("coverPicture", { value: coverPicture });
+    register("eventPicture", { value: eventPicture });
 
-    dispatch(getAllEvents(data));
-
-    createEvent(data).then((res) => {
+    createEvent({ eventInfo: data }).then((res) => {
       if (res?.success === true) {
         setApiResponse(res?.message);
-        setCoverPicture("");
+        setEventPicture("");
+        dispatch(getEvents());
         props.onHide();
         reset();
       }
@@ -97,7 +97,7 @@ const CreateEvent = (props) => {
                   >
                     <Image
                       className=""
-                      src={coverPicture || img2}
+                      src={eventPicture || img2}
                       alt="profile-pic"
                       layout="fill"
                       objectFit="cover"
@@ -116,7 +116,7 @@ const CreateEvent = (props) => {
                           multiple={false}
                           onDone={(files) => {
                             // console.log("files onDone: ", files.base64);
-                            setCoverPicture(files.base64);
+                            setEventPicture(files.base64);
                           }}
                         />
                       </div>

@@ -99,7 +99,14 @@ function PostFooter({ currentPostId, refreshPostList }) {
 
   const getLikeslist = async () => {
     const res = await getAllLikesByPostId(currentPostId)
-    setLikesListWithUserDetails(res)
+    if (res?.code == 'ERR_NETWORK') {
+      setLikesListWithUserDetails([])
+    }
+    else {
+      setLikesListWithUserDetails(res)
+
+    }
+    
   }
 
 
@@ -109,8 +116,8 @@ function PostFooter({ currentPostId, refreshPostList }) {
 
   }, [])
 
-  const isliked = likesWithUserDetails && likesWithUserDetails.map(e => e?.userDetails?.userInfo?._id).indexOf(loginUserId)
-  const islikedData = likesWithUserDetails && likesWithUserDetails.find(e => e?.userDetails?.userInfo?._id == loginUserId)
+  const isliked = likesWithUserDetails && Array.isArray(likesWithUserDetails) && likesWithUserDetails.map(e => e?.userDetails?.userInfo?._id).indexOf(loginUserId)
+  const islikedData = likesWithUserDetails && Array.isArray(likesWithUserDetails) && likesWithUserDetails.find(e => e?.userDetails?.userInfo?._id == loginUserId)
 
 
 

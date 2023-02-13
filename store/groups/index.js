@@ -72,8 +72,8 @@ const GroupSlice = createSlice({
 
 export const getAllGroupsList = createAsyncThunk(
   "groups/allGroups",
-  async () => {
-    const data = await getAllGroups();
+  async (page) => {
+    const data = await getAllGroups(page);
     return data;
   }
 );

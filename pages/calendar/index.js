@@ -21,17 +21,22 @@ import profilebg6 from "../../public/assets/images/page-img/profile-bg6.jpg";
 import Default from "../../layouts/default";
 import Link from "next/link";
 import CreateEvent from "../../components/events";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { getEvents } from "../../store/events";
 
 const CalendarPage = () => {
   const [show, setShow] = useState(false);
   const [todaysEvents, setTodaysEvents] = useState([]);
   const [value, onChange] = useState(new Date());
 
+  const dispatch = useDispatch();
+
   const events = useSelector((state) => state?.events?.allEvents);
 
   useEffect(() => {
+    dispatch(getEvents("hosting"));
+
     const today = new Date();
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.start);
@@ -41,7 +46,7 @@ const CalendarPage = () => {
         eventDate.getDate() === today.getDate()
       );
     });
-    console.log("::", filteredEvents);
+    console.log("Today's event::", filteredEvents);
     setTodaysEvents(filteredEvents);
   }, [events]);
 
@@ -165,31 +170,9 @@ const CalendarPage = () => {
                       weekends={true}
                       nowIndicator
                       dateClick={(e) => console.log(e.dateStr)}
-                      eventClick={(e) => console.log(e.event.id)}
+                      eventClick={(e) => console.log(e.event)}
                       eventsSet={handleEvents} // called after events are initialized/added/changed/removed
                     />
-                    {/* <FullCalendar
-                      plugins={[dayGridPlugin, listPlugin]}
-                      //    themeSystem={bootstrap}
-                      headerToolbar={{
-                        left: "prev,next today",
-                        center: "title",
-                        right: "dayGridMonth,dayGridWeek,dayGridDay,listWeek",
-                      }}
-                      events={events}
-                      initialView="dayGridMonth"
-                      editable={true}
-                      selectable={true}
-                      selectMirror={true}
-                      dayMaxEvents={true}
-                      weekends={true}
-                      eventColor="red"
-                      nowIndicator
-                      // select={handleDateSelect}
-                      eventContent={renderEventContent} // custom render function
-                      eventClick={handleEventClick}
-                      eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-                    /> */}
                   </Card.Body>
                 </Card>
               </Col>

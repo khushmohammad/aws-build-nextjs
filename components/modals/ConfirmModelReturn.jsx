@@ -1,7 +1,10 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function ConfirmBox(props) {
+function ConfirmModelReturn(props) {
+
+
+
     return (
         <Modal
             {...props}
@@ -15,14 +18,15 @@ function ConfirmBox(props) {
                 </Modal.Title>
             </Modal.Header> */}
             <Modal.Body>
-                <h4> {props?.Message || "Message"}</h4>
+                <h4> {props?.message || "Message"}</h4>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={props.onHide}>Close</Button>
+                <Button variant='success' onClick={() => props.deletecomment(true)}>Confirm</Button>
             </Modal.Footer>
         </Modal>
     );
 }
 
 
-export default ConfirmBox
+export default ConfirmModelReturn

@@ -1,24 +1,397 @@
-import React from "react";
-import { Container } from "react-bootstrap";
+import React, { useState } from "react";
+import {
+  Container,
+  Nav,
+  Form,
+  Dropdown,
+  Tab,
+  Row,
+  Col,
+  Button,
+} from "react-bootstrap";
 
 import Default from "../../layouts/default";
-import ProfileHeader from '../../components/profile-header';
-import profilebg7 from '../../public/assets/images/page-img/profile-bg7.jpg';
+import ProfileHeader from "../../components/profile-header";
+import profilebg7 from "../../public/assets/images/page-img/profile-bg7.jpg";
 import Card from "../../components/Card";
+import CustomToggle from "../../components/dropdowns";
+
+import store1 from "../../public/assets/images/store/01.jpg";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInfoById } from "../../store/profile";
+import Link from "next/link";
+import moment from "moment";
+import GuestList from "../../components/events/GuestList";
+import Image from "next/image";
+import { getEventDetail } from "../../store/events";
+
 const EventDetail = () => {
+  const handleShow = () => setShow(true);
+  const [event, setEvent] = useState(null);
+  const [show, setShow] = useState(false);
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { eventid } = router.query;
+
+  const eventDetail = useSelector((state) => state?.events?.eventDetail);
+  const host = useSelector((state) => state?.user?.userProfileDetail);
+
+  useEffect(() => {
+    dispatch(getEventDetail(eventid));
+    dispatch(getUserInfoById([`${eventDetail?.eventCreator}`]));
+  }, [eventid]);
+
+  console.log("host:", host);
+
   return (
     <>
+      <GuestList show={show} onHide={() => setShow(false)} />
       <Default className="p-0">
-        <ProfileHeader img={profilebg7}/>
-            <Card className="card-block card-stretch card-height product">
-                <Container>
-                    <div>
-                        <p>TOMORROW FROM 08:00 - 10:00</p>
-                        <h1>Happy Health Mela Morning 8:00 to 10:00 AM</h1>
-                        <p>Reliable Diagnostic Center, Tonk Road</p>
+        <ProfileHeader
+          img={eventDetail?.fileInfo?.file?.location || profilebg7}
+        />
+        <Card className="card-block card-stretch card-height product">
+          <Container>
+            <div>
+              <p className="mt-4 mb-0">
+                {moment(eventDetail?.start).calendar()}
+              </p>
+              <h1 className="m-0 text-capitalize">{eventDetail?.title}</h1>
+              <p className="mb-4 text-capitalize">{eventDetail?.location}</p>
+            </div>
+            <div className="d-flex justify-content-between align-items-cente flex-column flex-lg-row">
+              <Tab.Container defaultActiveKey="f1">
+                <nav className="tab-bottom-bordered mb-3 mb-lg-0">
+                  <Nav variant="tabs" className="mb-0 rounded-top border-0">
+                    <Nav.Link eventKey="f1" href="#">
+                      About
+                    </Nav.Link>
+                    <Nav.Link eventKey="f2" href="#">
+                      Discussion
+                    </Nav.Link>
+                  </Nav>
+                </nav>
+              </Tab.Container>
+              <div className="d-flex align-items-center">
+                <div className="blog-meta d-flex align-items-center position-right-side flex-wrap">
+                  <Button className="date date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                    <i className="material-symbols-outlined pe-1 md-18 text-li">
+                      star
+                    </i>
+                    Interested
+                  </Button>
+                  <Button className="like date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                    <i className="material-symbols-outlined pe-1 md-18 text-li">
+                      select_check_box
+                    </i>
+                    Going
+                  </Button>
+                  <Button className="comments date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                    <i className="material-symbols-outlined pe-1 md-18 text-li">
+                      mode_comment
+                    </i>
+                    Invite
+                  </Button>
+                  <Button className="share date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                    <i className="material-symbols-outlined pe-1 md-18 text-li">
+                      share
+                    </i>
+                    share
+                  </Button>
+                </div>
+                {/* <Form.Group className="form-group mb-0">
+                  <select
+                    className="form-select"
+                    id="exampleFormControlSelect1"
+                  >
+                    <option>Select your age</option>
+                    <option>0-18</option>
+                    <option>18-26</option>
+                    <option>26-46</option>
+                    <option>46-60</option>
+                    <option>Above 60</option>
+                  </select>
+                </Form.Group> */}
+
+                <Dropdown className="dropdown-toggle-main ms-2">
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    id="post-option"
+                    className="d-flex"
+                  >
+                    <span className="material-symbols-outlined">more_vert</span>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu
+                    className=" dropdown-menu-right"
+                    aria-labelledby="post-option"
+                  >
+                    <Dropdown.Item onClick={handleShow} href="#">
+                      Report event!
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </div>
+          </Container>
+        </Card>
+        <Container>
+          <Row>
+            <Col lg="7">
+              <Tab.Container defaultActiveKey="f1">
+                <Tab.Content className="card-body">
+                  <Tab.Pane eventKey="f1" className="fade show">
+                    <Card>
+                      <div className="card-header d-flex justify-content-between">
+                        <div className="header-title">
+                          <h4 className="card-title">Details</h4>
+                        </div>
+                      </div>
+                      <Card.Body>
+                        <div className="d-flex flex-column justify-content-between">
+                          <div className="d-flex align-items-center mb-3">
+                            <i className="material-symbols-outlined pe-2">
+                              group
+                            </i>
+                            <span>11 people responded</span>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <i className="material-symbols-outlined pe-2">
+                              person
+                            </i>
+                            <span>
+                              Event by{" "}
+                              <Link href={`/friends/123`}>Ankit Jangid</Link>
+                            </span>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <i className="material-symbols-outlined pe-2">
+                              location_on
+                            </i>
+                            <span className="text-capitalize">
+                              {eventDetail?.location || "Jaipur"}
+                            </span>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <i className="material-symbols-outlined pe-2">
+                              alarm
+                            </i>
+                            <span>Duration: 2 hr</span>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <i className="material-symbols-outlined pe-2">
+                              {eventDetail?.privacy === "public"
+                                ? "public"
+                                : "lock"}
+                            </i>
+                            <span className="text-capitalize">
+                              {eventDetail?.privacy}
+                            </span>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <span className="text-capitalize">
+                              {eventDetail?.description}
+                            </span>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                    <Card>
+                      <div className="card-header d-flex justify-content-between">
+                        <div className="header-title">
+                          <h4 className="card-title">Meet your host</h4>
+                        </div>
+                      </div>
+                      <Card.Body>
+                        <div className="text-center">
+                          <Image
+                            src={store1}
+                            className="img-fluid event-host mb-3 rounded-circle w-50"
+                            alt="product-img"
+                            width={100}
+                            height={100}
+                          />
+                          <h4>Ankit Jangid</h4>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <span>3 past events</span>
+                            <span className="event-detail-dot"></span>
+                            {/* <span>Page</span>
+                            <span className="event-detail-dot"></span>
+                            <span>Diagnostic center</span> */}
+                          </div>
+                        </div>
+                      </Card.Body>
+                      <Card.Footer>
+                        <div className="border-top">
+                          {/* <p className="mt-3">
+                            Being a diagnostic center our job is to deliver
+                            satisfactory services to our customers.
+                          </p> */}
+                          <Link
+                            href={`/friends/123`}
+                            className="btn btn-primary w-100"
+                          >
+                            Visit Profile
+                          </Link>
+                        </div>
+                      </Card.Footer>
+                    </Card>
+                  </Tab.Pane>
+                </Tab.Content>
+              </Tab.Container>
+            </Col>
+            <Col lg="5">
+              <Card>
+                <div className="card-header">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="header-title">
+                      <h4 className="card-title">Details</h4>
                     </div>
-                </Container>
-            </Card>
+                    <Link href="#" onClick={() => setShow(true)}>
+                      see all
+                    </Link>
+                  </div>
+                  <Row className="mt-3">
+                    <Col lg="6" className="text-center">
+                      <Link href="#" onClick={() => setShow(true)}>
+                        <h5>1</h5>
+                        <p className="m-0">Going</p>
+                      </Link>
+                    </Col>
+                    <Col lg="6" className="text-center">
+                      <Link href="#" onClick={() => setShow(true)}>
+                        <h5>1</h5>
+                        <p className="m-0">Interested</p>
+                      </Link>
+                    </Col>
+                  </Row>
+                </div>
+                <Card.Body>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded">Invite</button>
+                    </div>
+                  </li>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded">Invite</button>
+                    </div>
+                  </li>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded">Invite</button>
+                    </div>
+                  </li>
+                </Card.Body>
+              </Card>
+              <Card>
+                <div className="card-header d-flex justify-content-between">
+                  <div className="header-title">
+                    <h4 className="card-title">Share to groups</h4>
+                  </div>
+                  <a href="#">see all</a>
+                </div>
+                <Card.Body>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                      <p>Private Group</p>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded d-flex align-item-center">
+                        <i className="material-symbols-outlined me-2">send</i>
+                        Share
+                      </button>
+                    </div>
+                  </li>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                      <p>Private Group</p>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded d-flex align-item-center">
+                        <i className="material-symbols-outlined me-2">send</i>
+                        Share
+                      </button>
+                    </div>
+                  </li>
+                  <li className="d-flex align-items-center flex-wrap py-2">
+                    <div className="user-img img-fluid flex-shrink-0">
+                      <img
+                        loading="lazy"
+                        src={store1.src}
+                        alt="story-img"
+                        className="rounded-circle avatar-40 object-fit-cover"
+                      />
+                    </div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6>Reanne Carnation</h6>
+                      <p>Private Group</p>
+                    </div>
+                    <div className="d-flex align-items-center mt-2 mt-md-0">
+                      <button className="btn btn-light rounded d-flex align-item-center">
+                        <i className="material-symbols-outlined me-2">send</i>
+                        Share
+                      </button>
+                    </div>
+                  </li>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </Default>
     </>
   );

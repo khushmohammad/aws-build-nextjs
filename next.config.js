@@ -6,6 +6,7 @@ const nextConfig = {
       "user-post.s3.ap-south-1.amazonaws.com",
       "communityuserprofile.s3.ap-south-1.amazonaws.com",
       "group-management-service.s3.ap-south-1.amazonaws.com",
+      "event-profiles.s3.ap-south-1.amazonaws.com",
     ],
   },
   // distDir: "build",

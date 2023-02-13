@@ -16,6 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { io } from "socket.io-client";
 import { getMesasgesByreceiverId } from '../../services/chat.socket'
+import { getPostTime } from '../../services/time.service'
 const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION);
 
 const schema = yup.object({
@@ -42,13 +43,30 @@ const Chat = () => {
     const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId }
 
 
+    const [connection, setConnection] = useState()
+
+    const joinSocket = async () => {
+        const res = await socket.emit("joinSocket", JoinRoom);
+        setConnection(res.connected)
+
+        if (res.connected == true) {
+            receiverUserId && getCurrentMessages(receiverUserId)
+            socket.on("getMessage", (data) => {
+                //  console.log(data, "data");
+                const newMsg = { message: data.message, senderId: data.senderId }
+                setNewMessages(newMsg)
+
+            })
+        }
+        console.log(res, "res");
+    }
+
     useEffect(() => {
-        socket.emit("joinSocket", JoinRoom);
+        joinSocket()
         // console.log(con, "joinSocket")
-        receiverUserId && getCurrentMessages(receiverUserId)
 
 
-    }, [chatId && chatId]);
+    }, [chatId || connection]);
 
 
 
@@ -66,10 +84,11 @@ const Chat = () => {
 
 
     useEffect(() => {
-        setMessages([...messages, newMessages])
+        messages && setMessages([...messages, newMessages])
         // setMessages(prev => [...prev, newMessages])
 
         //   console.log(messages, "messages");
+
     }, [newMessages])
 
 
@@ -79,12 +98,12 @@ const Chat = () => {
         //  console.log(result, "result");
         if (result && result?.status === 200) {
             // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
-            result?.data?.body?.length != 0 ? setMessages(result?.data?.body?.data) : setMessages('')
-            // console.log(result?.data?.body.length, "result?.data?.body.length");
+            result?.data?.body?.data?.length != 0 ? setMessages(result?.data?.body?.data) : setMessages('')
+
         }
     }
 
-
+    // console.log(messages, "messages");
 
     // <<<<<>>>>>>>>> close Socket
 
@@ -111,6 +130,14 @@ const Chat = () => {
         console.log("user changed")
     }
 
+    let scrollToView = document.getElementById("box");
+
+    useEffect(() => {
+        scrollToView != null ? scrollToView?.scrollIntoView() : ""
+    }, [messages])
+
+
+
     return (
         <>
             {/* <button onClick={() => pushmesage("me")}> send me</button>
@@ -128,12 +155,17 @@ const Chat = () => {
                                         <Col lg="3" className="chat-data-left scroller">
                                             <div className="chat-search pt-3 ps-3">
                                                 <div className="d-flex align-items-center">
-                                                    <div className="chat-profile me-3">
+                                                    <div className="chat-profile me-3"  >
                                                         <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="chat-user" className="avatar-60 " onClick={() => setShow1('true')} />
                                                     </div>
                                                     <div className="chat-caption">
                                                         <h5 className="mb-0">  {user.userInfo.firstName} {user.userInfo.lastName}</h5>
                                                         {/* <p className="m-0">Web Designer</p> */}
+                                                    </div>
+                                                    <div onClick={ChatSidebarClose} className="ms-auto d-lg-none" role={"button"}>
+                                                        <span class="material-symbols-outlined">
+                                                            close
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div id="user-detail-popup" className={`scroller ${show1 === 'true' ? 'show' : ''}`}>
@@ -212,7 +244,7 @@ const Chat = () => {
                                                 <Tab.Pane eventKey="start" className="tab-pane fade show" id="default-block" role="tabpanel">
                                                     <div className="chat-start">
                                                         <span className="iq-start-icon text-primary"><i className="material-symbols-outlined md-42">sms</i></span>
-                                                        <Button id="chat-start" onClick={ChatSidebar} bsPrefix="btn bg-white mt-3" className='d-md-none'>Start Conversation!</Button>
+                                                        <Button id="chat-start" onClick={ChatSidebar} bsPrefix="btn bg-white mt-3" className=''>Start Conversation!</Button>
                                                     </div>
                                                 </Tab.Pane>
                                                 {friendsList && friendsList.map((data, index) => {
@@ -224,9 +256,12 @@ const Chat = () => {
                                                             <div className="chat-head">
                                                                 <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                                     <div className="d-flex align-items-center">
-                                                                        <div className="sidebar-toggle">
-                                                                            <i className="ri-menu-3-line"></i>
+                                                                        <div onClick={ChatSidebar} className="d-lg-none  sidebar-toggle chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
+                                                                            <span class="material-symbols-outlined">
+                                                                                menu
+                                                                            </span>
                                                                         </div>
+
                                                                         <div className="avatar chat-user-profile m-0 me-3">
                                                                             <Image loading="lazy" src={data?.profileInfo?.profilePictureInfo
                                                                                 ?.file?.location || user5} height={100} width={100} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
@@ -301,10 +336,10 @@ const Chat = () => {
                                                                     </div>
                                                                 </header>
                                                             </div>
-                                                            <div className="chat-content scroller">
+                                                            <div className="chat-content scroller" >
 
-                                                                {messages && messages.length !== 0 && (messages || []).map((data, index) => {
-                                                                    console.log(messages.length, messages);
+                                                                {messages && messages.length !== 0 && (messages).map((data, index) => {
+                                                                    // console.log(messages.length, messages);
 
                                                                     return (
                                                                         <React.Fragment key={index}>
@@ -313,7 +348,12 @@ const Chat = () => {
                                                                                     <Link className="avatar m-0" href="">
                                                                                         <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
                                                                                     </Link>
-                                                                                    <span className="chat-time mt-1">6:45</span>
+                                                                                    <span className="chat-time mt-1">
+                                                                                        <p className="mb-0 text-primary">
+                                                                                            {/* {data && getPostTime(data.createdAt) || ""} */}
+                                                                                            6:45
+                                                                                        </p>
+                                                                                    </span>
                                                                                 </div>
                                                                                 <div className="chat-detail">
                                                                                     <div className="chat-message">
@@ -324,7 +364,7 @@ const Chat = () => {
                                                                         </React.Fragment>
                                                                     )
                                                                 })}
-
+                                                                <div id="box" />
 
                                                             </div>
 
@@ -372,7 +412,7 @@ const SendMessageInput = ({ sendMsg }) => {
     </div> */}
 
                     <Form.Control {...register("messageInput")} type="text" className="me-3" placeholder="Type your message" />
-                    <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-none d-sm-block ms-1">Send</span></Button>
+                    <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-sm-block ms-1">Send</span></Button>
                 </form>
                 {errors.messageInput && (
                     <div className=" pc-3 text-danger">{errors.messageInput.message}</div>

@@ -167,6 +167,7 @@ export const getAllLikesByPostId = async (postId) => {
       const allLikessArr = await response?.data?.body?.allBody?.postLikes;
 
       // console.log(allLikessArr, "allLikessArr");
+
       const newarray = await Promise.all(
         allLikessArr &&
         allLikessArr.map(async (likeData) => {
@@ -201,11 +202,7 @@ export const getUserInfoByUserId = async (userId = "") => {
     // console.log(response);
     return response;
   } catch (err) {
-    console.log(err);
-    const status = err.response.status;
-    const message = err.response.data;
-
-    return { message, status };
+    return err
   }
 };
 
@@ -421,12 +418,7 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
         data: data,
       }
     );
-    console.log(res, "res");
-    if (res.status == 200) {
-      return true;
-    } else {
-      return false;
-    }
+    return res
   } catch (err) {
     return err;
   }
@@ -487,34 +479,15 @@ export const getCommentbyPostId = async (
       if (allCommentList == undefined || allCommentList.length == 0) {
         return [];
       }
-
       // console.log(allCommentList, "allLikessArr");
-      const newCommmentListarray = await Promise.all(
-        allCommentList?.comments &&
-        allCommentList?.comments.map(async (commentData) => {
-          const res =
-            commentData && (await getUserInfoByUserId(commentData.userId));
-          const userData = await res?.data?.body;
-
-          const newdata = await {
-            ...commentData,
-            userDetails: {
-              userInfo: userData?.userInfo,
-              profilePictureInfo: userData?.profilePictureInfo,
-            },
-          };
-          //console.log(newdata, "userData");
-          return newdata;
-        })
-      );
-      // console.log(newCommmentListarray, "newCommmentListarray");
-
-      // console.log({ comments: newCommmentListarray, commentsOrReplyCounts: allCommentList.commentsOrReplyCounts }, "abba")
+      const dataWithUserDetails = await mergeUserBasicDetails(allCommentList.comments)
       const data = {
-        comments: newCommmentListarray,
+        comments: dataWithUserDetails,
         commentsOrReplyCounts: allCommentList.commentsOrReplyCounts,
       };
       return data;
+    } else {
+      return res
     }
 
     // const comment = await res

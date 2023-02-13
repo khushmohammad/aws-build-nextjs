@@ -811,23 +811,7 @@ const VerticalNav = React.memo(() => {
             <span className="item-name">Birthday</span>
           </Link>
         </Nav.Item>
-        <Nav.Item as="li">
-          <Link
-            className={`${
-              location.pathname === "/events" ? "active" : ""
-            } nav-link `}
-            aria-current="page"
-            href="/events"
-          >
-            <OverlayTrigger
-              placement="right"
-              overlay={<Tooltip>Events</Tooltip>}
-            >
-              <i class="icon material-symbols-outlined">event_available</i>
-            </OverlayTrigger>
-            <span className="item-name">Events</span>
-          </Link>
-        </Nav.Item>
+
         <Nav.Item as="li">
           <Link
             className={`${
@@ -843,6 +827,23 @@ const VerticalNav = React.memo(() => {
               <i className="icon material-symbols-outlined">calendar_month</i>
             </OverlayTrigger>
             <span className="item-name">Calendar</span>
+          </Link>
+        </Nav.Item>
+        <Nav.Item as="li">
+          <Link
+            className={`${
+              location.pathname === "/events" ? "active" : ""
+            } nav-link `}
+            aria-current="page"
+            href="/events"
+          >
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip>Events</Tooltip>}
+            >
+              <i className="icon material-symbols-outlined">event_available</i>
+            </OverlayTrigger>
+            <span className="item-name">Events</span>
           </Link>
         </Nav.Item>
         <Nav.Item as="li">

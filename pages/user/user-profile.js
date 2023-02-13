@@ -288,7 +288,7 @@ const UserProfile = () => {
                           href="#pills-timeline-tab"
                           eventKey="first"
                           role="button"
-                          className=" text-center p-3"
+                          className="text-center p-3"
                         >
                           Timeline
                         </Nav.Link>
@@ -357,7 +357,7 @@ const UserProfile = () => {
                                           loading="lazy"
                                           src={pic}
                                           alt="gallary"
-                                          class="img-fluid"
+                                          className="img-fluid"
                                           width={100}
                                           height={100}
                                         />

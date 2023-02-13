@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
-import user2 from "../../../public/assets/images/user/1.jpg";
-import { getCommentbyPostId, postCommentByPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
-import ConfirmModelReturn from '../../modals/ConfirmModelReturn';
-
+import user2 from "../../public/assets/images/user/1.jpg";
+import { getCommentbyPostId, postCommentByPostId } from '../../services/posts.service';
 
 function Commentapi({ postId }) {
+
+
 
     const [commentInputText, setCommentInputText] = useState('')
     const [commentlist, setCommentlist] = useState([])
@@ -20,12 +20,14 @@ function Commentapi({ postId }) {
     }
 
     const getCommentList = async () => {
-        const res = await getCommentbyPostId(postId, 1, 5, 0, "")
+        const res = await getCommentbyPostId(postId, 1, 2, 0, "")
         const commentrepArr = await res?.comments
         setCommentlist(commentrepArr)
     }
     useEffect(() => {
         postId && getCommentList()
+
+
     }, [])
 
 
@@ -35,20 +37,12 @@ function Commentapi({ postId }) {
             <div>
                 <ul className="post-comments list-inline p-0 m-0">
                     {commentlist && (commentlist || []).map((comment, i) => {
-
                         return (
                             <React.Fragment key={i}>
                                 {commentlist &&
                                     <>
-                                        <CommentList postId={postId} comment={comment} refreshcommetlist={getCommentList} />
-
-                                        {/* {comment.repliesCounts > 0 ?
-                                            <>
-                                                <a role="button" onClick={() => setshowMoreCommentReply(!showMoreCommentReply)} className='text-primary'>{showMoreCommentReply ? 'hide' : 'show'} more reply </a>
-                                                {showMoreCommentReply && <CommentReplyViewOne postId={postId && postId} parentId={comment._id} commmetLevel={comment.level} />}
-
-                                            </>
-                                            : ""} */}
+                                        <CommentList postId={postId} comment={comment} />
+                                        {comment.repliesCounts > 0 && <CommentReplyViewOne postId={postId && postId} parentId={comment._id} commmetLevel={comment.level} />}
                                     </>
                                 }
 
@@ -79,7 +73,7 @@ const CommentReplyViewOne = ({ postId, parentId, commmetLevel }) => {
     const [commentReplylist, setCommentReplylist] = useState([])
     const updatedLevel = commmetLevel ? commmetLevel + 1 : 1
     const getCommentReplyList = async () => {
-        const res = await getCommentbyPostId(postId, 1, 5, updatedLevel, parentId)
+        const res = await getCommentbyPostId(postId, 1, 2, updatedLevel, parentId)
         const commentrepArr = await res?.comments
         setCommentReplylist(commentrepArr)
     }
@@ -90,26 +84,13 @@ const CommentReplyViewOne = ({ postId, parentId, commmetLevel }) => {
         postId && getCommentReplyList()
     }, [commmetLevel])
 
-    // const [showMoreCommentReply, setshowMoreCommentReply] = useState(false)
-
-
     return (
-        <ul className={`post-comments list-inline p-0 m-0  ${updatedLevel < 2 ? 'ms-4' : ''}`}>
+        <ul className={`post-comments list-inline p-0 m-0  ${updatedLevel < 3 ? 'ms-4' : ''}`}>
             {commentReplylist && (commentReplylist || []).map((comment, i) => {
                 return (
                     <React.Fragment key={i}>
-                        <CommentList postId={postId} comment={comment} refreshcommetlist={getCommentReplyList} />
-
-                        {/* {comment.repliesCounts > 0 ?
-                            <>
-                                <a role="button" onClick={() => setshowMoreCommentReply(!showMoreCommentReply)} className='text-primary'>{showMoreCommentReply ? 'hide' : 'show'} more reply </a>
-                                {showMoreCommentReply && <CommentReplyViewOne postId={postId} parentId={comment._id} commmetLevel={comment.level} />}
-
-                            </>
-                            : ""} */}
-
-
-                        {/* {comment && comment.repliesCounts > 0 && <CommentReplyViewOne postId={postId} parentId={comment._id} commmetLevel={comment.level} />} */}
+                        <CommentList postId={postId} comment={comment} />
+                        {comment.repliesCounts > 0 && <CommentReplyViewOne postId={postId} parentId={comment._id} commmetLevel={comment.level} />}
                     </React.Fragment>
                 )
             })
@@ -119,7 +100,7 @@ const CommentReplyViewOne = ({ postId, parentId, commmetLevel }) => {
 }
 
 
-const CommentList = ({ postId, comment, refreshcommetlist }) => {
+const CommentList = ({ postId, comment }) => {
 
     const [viewReplyInput, setViewReplyInput] = useState()
     const [newReply, setNewReply] = useState([])
@@ -135,59 +116,36 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
         setNewReplyText('')
         setViewReplyInput(false)
     }
-    const [showMoreCommentReply, setshowMoreCommentReply] = useState(false)
-
-    const [modalShowConfirmBox, setModalShowConfirmBox] = React.useState(false);
-
-    const [isRequested, setIsRequested] = useState([]);
-
-    const DeleteComment = async (confirm) => {
-
-
-        if (confirm) {
-            setModalShowConfirmBox(false)
-            const res = await postCommentDeletebyPostId(postId, comment._id)
-            console.log(res);
-            setIsRequested((prev) =>
-                Boolean(!prev[comment._id])
-                    ? { ...prev, [comment._id]: true }
-                    : { ...prev, [comment._id]: false }
-            );
-            refreshcommetlist()
-        }
-    }
-
 
 
     return (
         <>
-
-            {!isRequested[comment._id] ? <li className={`mb-2 `} >
+            <li className={`mb-2 `} >
                 <div className="d-flex">
                     <div className="user-img flex-shrink-0">
                         <Image
                             className="avatar-35 rounded-circle img-fluid"
-                            src={comment.userDetails?.profilePictureInfo?.file?.location || user2}
+                            src={user2}
                             alt=""
                             height={35}
                             width={35}
                         />
                     </div>
                     <div className="comment-data-block ms-3 flex-grow-1">
-                        <h6>{comment.userDetails?.userInfo?.firstName || 'Name'} {comment.userDetails?.userInfo?.lastName || ''}</h6>
+                        <h6>name</h6>
                         <p className="mb-0">{comment?.textInfo}</p>
                         <div className="d-flex flex-wrap align-items-center comment-activity">
 
                             {/* <a role="button" className='text-primary'>like </a> */}
                             <a role="button" className='text-primary' onClick={() => setViewReplyInput(!viewReplyInput)}>reply </a>
-                            <a role="button" className='text-primary' onClick={() => setModalShowConfirmBox(true)} >delete </a>
+                            <a role="button" className='text-primary'>delete </a>
 
                         </div>
 
 
                     </div>
                 </div>
-                <ul className={`post-comments list-inline ${comment.level < 1 ? 'ms-4' : ''}`}>
+                <ul className={`post-comments list-inline ${comment.level < 3 ? 'ms-4' : ''}`}>
                     <>
                         {newReply && newReply.map((data, index) => {
                             return (
@@ -195,6 +153,7 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
                                     {data &&
                                         <CommentReplyViewOne postId={postId} parentId={comment._id} commmetLevel={comment.level} />
                                     }
+
                                 </React.Fragment>
                             )
                         })}
@@ -204,23 +163,13 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
                     <>
 
                         <form onSubmit={FormSubmit}>
-                            <input type="text" value={newReplyText} onChange={(e) => setNewReplyText(e.target.value)} className="form-control rounded ms-3" placeholder="Enter Your Comment Reply" />
+                            <input type="text" value={newReplyText} onChange={(e) => setNewReplyText(e.target.value)} className="form-control rounded" placeholder="Enter Your Comment Reply" />
                         </form>
                     </>
                 }
 
-                {comment.repliesCounts > 0 ?
-                    <>
-                        <a role="button" onClick={() => setshowMoreCommentReply(!showMoreCommentReply)} className='text-primary ms-4'>{showMoreCommentReply ? 'Hide' : 'Show'} reply {comment.repliesCounts}</a>
-                        {showMoreCommentReply && <CommentReplyViewOne postId={postId && postId} parentId={comment._id} commmetLevel={comment.level} />}
 
-                    </>
-                    : ""}
-            </li> : ""}
-
-
-            <ConfirmModelReturn show={modalShowConfirmBox} message={"Are you sure ?"} onHide={() => setModalShowConfirmBox(false)} deletecomment={(e) => DeleteComment(e)} />
-
+            </li>
         </>
     )
 }

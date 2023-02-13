@@ -27,6 +27,7 @@ import { getUserDetails } from "../store/profile";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { getAllFriendList } from "../store/friends";
+import ChatPopup from "../components/ChatPopup";
 
 const Default = ({ children, tokenExpired }) => {
   const [ShowPage, setShowPage] = useState(null);
@@ -65,6 +66,7 @@ const Default = ({ children, tokenExpired }) => {
           </div>
           <RightSidebar />
           <Footer />
+          <ChatPopup />
           {/* <SettingOffCanvas /> */}
         </>
       ) : null}
