@@ -4,24 +4,25 @@ const initialState = {
     list: [
         {
             user: "123",
-            message: "message",
+            message: "Ankit added a new photo.",
             isRead: "true",
         },
         {
-            user: "123",
-            message: "message",
+            user: "456",
+            message: "Ankit  shared your post.",
             isRead: "",
         },
         {
-            user: "123",
-            message: "message",
+            user: "798",
+            message: "sagar accepted your friend request.",
             isRead: "",
         },
         {
-            user: "123",
-            message: "message",
+            user: "798",
+            message: "Ankit  shared your post",
             isRead: "",
-        },
+        }
+
     ],
 };
 

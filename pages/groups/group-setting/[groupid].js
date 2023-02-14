@@ -77,13 +77,12 @@ const GroupSetting = () => {
                     style={{ width: "100%", height: "250px" }}
                   >
                     <Image
-                
                       loading="lazy"
                       src={user?.coverPictureInfo?.file?.location || img1}
                       alt="profile-bg"
                       className="rounded img-fluid"
                       layout="fill"
-                      objectFit="contain"
+                      objectfit="contain"
                     />
                     <ul
                       className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0"

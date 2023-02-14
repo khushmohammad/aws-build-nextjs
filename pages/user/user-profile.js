@@ -134,7 +134,7 @@ const UserProfile = () => {
                         alt="profile-bg"
                         className="rounded img-fluid"
                         layout="fill"
-                        objectFit="contain"
+                        objectfit="contain"
                       />
                       <ul
                         className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0"
@@ -348,7 +348,7 @@ const UserProfile = () => {
                               <ul className="profile-img-gallary p-0 m-0 list-unstyled">
                                 {source &&
                                   source?.map((pic, index) => (
-                                    <li>
+                                    <li key={index}>
                                       <Link
                                         onClick={() => imageOnSlide(index + 1)}
                                         href="#"

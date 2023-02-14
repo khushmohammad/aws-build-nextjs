@@ -26,11 +26,13 @@ import moment from "moment";
 import GuestList from "../../components/events/GuestList";
 import Image from "next/image";
 import { getEventDetail } from "../../store/events";
+import { eventActionService } from "../../services/event.service";
 
 const EventDetail = () => {
   const handleShow = () => setShow(true);
-  const [event, setEvent] = useState(null);
   const [show, setShow] = useState(false);
+  const [eventType, setEventType] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -40,29 +42,52 @@ const EventDetail = () => {
   const host = useSelector((state) => state?.user?.userProfileDetail);
 
   useEffect(() => {
-    dispatch(getEventDetail(eventid));
-    dispatch(getUserInfoById([`${eventDetail?.eventCreator}`]));
+    if (host && host.length !== 0) {
+      setUserDetail(host[0]);
+    }
+  }, [host]);
+
+  useEffect(() => {
+    if (eventid !== undefined) {
+      dispatch(getEventDetail(eventid));
+      dispatch(getUserInfoById([`${eventDetail?.eventInfo?.eventCreator}`]));
+    }
   }, [eventid]);
 
-  console.log("host:", host);
+  const ChangeEventStatus = async (eventStaus, id) => {
+    const res = await eventActionService(eventStaus, id);
+    if (res.success === true) {
+      dispatch(getEventDetail(eventid));
+    }
+  };
 
   return (
     <>
       <GuestList show={show} onHide={() => setShow(false)} />
       <Default className="p-0">
-        <ProfileHeader
-          img={eventDetail?.fileInfo?.file?.location || profilebg7}
-        />
+        <div className="position-relative">
+          <div className="container event-date-container">
+            <h3 className="event-date position-relative">8</h3>
+          </div>
+          <ProfileHeader
+            className="banner-bg"
+            img={eventDetail?.fileInfo?.file?.location || profilebg7}
+          />
+        </div>
         <Card className="card-block card-stretch card-height product">
           <Container>
             <div>
               <p className="mt-4 mb-0">
-                {moment(eventDetail?.start).calendar()}
+                {moment(eventDetail?.eventInfo?.start).calendar()}
               </p>
-              <h1 className="m-0 text-capitalize">{eventDetail?.title}</h1>
-              <p className="mb-4 text-capitalize">{eventDetail?.location}</p>
+              <h1 className="m-0 text-capitalize">
+                {eventDetail?.eventInfo?.title}
+              </h1>
+              <p className="mb-4 text-capitalize">
+                {eventDetail?.eventInfo?.location}
+              </p>
             </div>
-            <div className="d-flex justify-content-between align-items-cente flex-column flex-lg-row">
+            <div className="d-flex justify-content-between align-items-end flex-column flex-lg-row">
               <Tab.Container defaultActiveKey="f1">
                 <nav className="tab-bottom-bordered mb-3 mb-lg-0">
                   <Nav variant="tabs" className="mb-0 rounded-top border-0">
@@ -77,25 +102,38 @@ const EventDetail = () => {
               </Tab.Container>
               <div className="d-flex align-items-center">
                 <div className="blog-meta d-flex align-items-center position-right-side flex-wrap">
-                  <Button className="date date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                  <Button
+                    onClick={() =>
+                      ChangeEventStatus(
+                        "interested",
+                        eventDetail?.eventInfo?._id
+                      )
+                    }
+                    className="date date me-2  d-flex align-items-center btn btn-secondary"
+                  >
                     <i className="material-symbols-outlined pe-1 md-18 text-li">
                       star
                     </i>
                     Interested
                   </Button>
-                  <Button className="like date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                  <Button
+                    onClick={() =>
+                      ChangeEventStatus("going", eventDetail?.eventInfo?._id)
+                    }
+                    className="like date me-2  d-flex align-items-center btn btn-secondary"
+                  >
                     <i className="material-symbols-outlined pe-1 md-18 text-li">
                       select_check_box
                     </i>
                     Going
                   </Button>
-                  <Button className="comments date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                  <Button className="comments date me-2  d-flex align-items-center btn btn-secondary">
                     <i className="material-symbols-outlined pe-1 md-18 text-li">
                       mode_comment
                     </i>
                     Invite
                   </Button>
-                  <Button className="share date me-2 my-2 d-flex align-items-center btn btn-secondary">
+                  <Button className="share date me-2 d-flex align-items-center btn btn-secondary">
                     <i className="material-symbols-outlined pe-1 md-18 text-li">
                       share
                     </i>
@@ -155,7 +193,11 @@ const EventDetail = () => {
                             <i className="material-symbols-outlined pe-2">
                               group
                             </i>
-                            <span>11 people responded</span>
+                            <span>
+                              {eventDetail?.goingCount +
+                                eventDetail?.interestedCount || 0}{" "}
+                              people responded
+                            </span>
                           </div>
                           <div className="d-flex align-items-center mb-3">
                             <i className="material-symbols-outlined pe-2">
@@ -163,38 +205,49 @@ const EventDetail = () => {
                             </i>
                             <span>
                               Event by{" "}
-                              <Link href={`/friends/123`}>Ankit Jangid</Link>
+                              <Link
+                                href={`/friends/${eventDetail?.eventInfo?.eventCreator}`}
+                              >
+                                {userDetail?.userInfo?.firstName}{" "}
+                                {userDetail?.userInfo?.lastName}
+                              </Link>
                             </span>
                           </div>
-                          <div className="d-flex align-items-center mb-3">
-                            <i className="material-symbols-outlined pe-2">
-                              location_on
-                            </i>
-                            <span className="text-capitalize">
-                              {eventDetail?.location || "Jaipur"}
-                            </span>
-                          </div>
-                          <div className="d-flex align-items-center mb-3">
+                          {eventDetail?.eventInfo?.location && (
+                            <div className="d-flex align-items-center mb-3">
+                              <i className="material-symbols-outlined pe-2">
+                                location_on
+                              </i>
+                              <span className="text-capitalize">
+                                {eventDetail?.eventInfo?.location || "Jaipur"}
+                              </span>
+                            </div>
+                          )}
+                          {/* <div className="d-flex align-items-center mb-3">
                             <i className="material-symbols-outlined pe-2">
                               alarm
                             </i>
                             <span>Duration: 2 hr</span>
-                          </div>
-                          <div className="d-flex align-items-center mb-3">
-                            <i className="material-symbols-outlined pe-2">
-                              {eventDetail?.privacy === "public"
-                                ? "public"
-                                : "lock"}
-                            </i>
-                            <span className="text-capitalize">
-                              {eventDetail?.privacy}
-                            </span>
-                          </div>
-                          <div className="d-flex align-items-center mb-3">
-                            <span className="text-capitalize">
-                              {eventDetail?.description}
-                            </span>
-                          </div>
+                          </div> */}
+                          {eventDetail?.eventInfo?.privacy && (
+                            <div className="d-flex align-items-center mb-3">
+                              <i className="material-symbols-outlined pe-2">
+                                {eventDetail?.eventInfo?.privacy === "public"
+                                  ? "public"
+                                  : "lock"}
+                              </i>
+                              <span className="text-capitalize">
+                                {eventDetail?.eventInfo?.privacy}
+                              </span>
+                            </div>
+                          )}
+                          {eventDetail?.eventInfo?.description && (
+                            <div className="d-flex align-items-center mb-3">
+                              <span className="text-capitalize">
+                                {eventDetail?.eventInfo?.description}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </Card.Body>
                     </Card>
@@ -207,7 +260,10 @@ const EventDetail = () => {
                       <Card.Body>
                         <div className="text-center">
                           <Image
-                            src={store1}
+                            src={
+                              userDetail?.profilePictureInfo?.file?.location ||
+                              store1
+                            }
                             className="img-fluid event-host mb-3 rounded-circle w-50"
                             alt="product-img"
                             width={100}
@@ -216,21 +272,21 @@ const EventDetail = () => {
                           <h4>Ankit Jangid</h4>
                           <div className="d-flex align-items-center justify-content-center">
                             <span>3 past events</span>
-                            <span className="event-detail-dot"></span>
+                            {/* <span className="event-detail-dot"></span> */}
                             {/* <span>Page</span>
                             <span className="event-detail-dot"></span>
                             <span>Diagnostic center</span> */}
                           </div>
                         </div>
                       </Card.Body>
-                      <Card.Footer>
-                        <div className="border-top">
+                      <Card.Footer className="border-top text-center">
+                        <div>
                           {/* <p className="mt-3">
                             Being a diagnostic center our job is to deliver
                             satisfactory services to our customers.
                           </p> */}
                           <Link
-                            href={`/friends/123`}
+                            href={`/friends/${eventDetail?.eventInfo?.eventCreator}`}
                             className="btn btn-primary w-100"
                           >
                             Visit Profile
@@ -249,20 +305,29 @@ const EventDetail = () => {
                     <div className="header-title">
                       <h4 className="card-title">Details</h4>
                     </div>
-                    <Link href="#" onClick={() => setShow(true)}>
+                    <Link
+                      href="#"
+                      // onClick={() => setShow(true)}
+                    >
                       see all
                     </Link>
                   </div>
                   <Row className="mt-3">
                     <Col lg="6" className="text-center">
-                      <Link href="#" onClick={() => setShow(true)}>
-                        <h5>1</h5>
+                      <Link
+                        href="#"
+                        // onClick={() => setShow(true)}
+                      >
+                        <h5>{eventDetail?.goingCount || 0}</h5>
                         <p className="m-0">Going</p>
                       </Link>
                     </Col>
                     <Col lg="6" className="text-center">
-                      <Link href="#" onClick={() => setShow(true)}>
-                        <h5>1</h5>
+                      <Link
+                        href="#"
+                        // onClick={() => setShow(true)}
+                      >
+                        <h5>{eventDetail?.interestedCount || 0}</h5>
                         <p className="m-0">Interested</p>
                       </Link>
                     </Col>

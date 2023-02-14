@@ -38,6 +38,21 @@ export const getMaritalStatus = async () => {
 };
 
 
+export const getNotifications = async () => {
+    const token = await getToken();
+
+    const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_PATH}/profiles/dropdowns/values/MaritalStatus`,
+        {
+            headers: { authorization: `Bearer ${token}` },
+        }
+    );
+    const data = await res.data
+
+    return data;
+};
+
+
 // export const clearEmpties = (obj) => {
 //     for (var propName in obj) {
 //         if (typeof obj[propName] == "object")

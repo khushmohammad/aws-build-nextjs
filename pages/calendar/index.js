@@ -46,19 +46,8 @@ const CalendarPage = () => {
         eventDate.getDate() === today.getDate()
       );
     });
-    console.log("Today's event::", filteredEvents);
     setTodaysEvents(filteredEvents);
   }, [events]);
-
-  // let events = [
-  //   {
-  //     title: "5:30a Repeating Event",
-  //     date: "2023-02-10",
-  //     textColor: "white",
-  //     backgroundColor: "#d592ff",
-  //     borderColor: "#d592ff",
-  //   },
-  // ];
 
   const handleEventClick = (clickInfo) => {
     alert(clickInfo.event.title);

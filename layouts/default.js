@@ -66,7 +66,7 @@ const Default = ({ children, tokenExpired }) => {
           </div>
           <RightSidebar />
           <Footer />
-          <ChatPopup />
+          {/* <ChatPopup /> */}
           {/* <SettingOffCanvas /> */}
         </>
       ) : null}

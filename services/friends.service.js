@@ -165,14 +165,30 @@ export const getFriendList = async (limit = 10, pageNumber = 1) => {
       },
     }
   );
-  return res.data.body;
+  if (res.status == 200) {
+    return res.data.body;
+  } else {
+    return [];
+  }
 };
 
-
-export const getNonFriendList = async (pageNumber = 1, limit = 10,) => {
+export const getNonFriendList = async (pageNumber = 1, limit = 10) => {
   const token = await getToken();
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/nonFriend`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res?.data?.body;
+};
+
+export const friendsBirthdayList = async () => {
+  const token = await getToken();
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friends/birthdays`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

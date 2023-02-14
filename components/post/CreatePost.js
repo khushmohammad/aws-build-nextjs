@@ -118,14 +118,16 @@ const CreatePost = (props) => {
       <Card.Body>
         <div className="d-flex align-items-center">
           <div className="user-img">
-            <Image
-              loading="lazy"
-              src={user?.profilePictureInfo?.file?.location || user1}
-              alt="userimg"
-              className="avatar-60 rounded-circle"
-              height={100}
-              width={100}
-            />
+            <Link href="/user/user-profile">
+              <Image
+                loading="lazy"
+                src={user?.profilePictureInfo?.file?.location || user1}
+                alt="userimg"
+                className="avatar-60 rounded-circle"
+                height={100}
+                width={100}
+              />
+            </Link>
           </div>
           <form className="post-text ms-3 w-100 " onClick={handleShow}>
             <input
@@ -264,8 +266,6 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
-
-                      
                       <img
                         loading="lazy"
                         src={file.base64}
@@ -273,7 +273,7 @@ const CreatePost = (props) => {
                         width={100}
                         height={100}
                         style={{
-                          objectFit: "contain",
+                          objectfit: "contain",
                         }}
                       />
 
@@ -285,7 +285,7 @@ const CreatePost = (props) => {
                         width={100}
                         height={100}
                         style={{
-                          objectFit: "contain",
+                          objectfit: "contain",
                         }}
                       /> */}
                       <div

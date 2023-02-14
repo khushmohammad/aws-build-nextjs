@@ -789,98 +789,8 @@ const Header = () => {
                           <small className="badge bg-light text-dark">4</small>
                         </Card.Header>
                         <Card.Body className="p-0 ">
-                          <Link href="#" className="iq-sub-card">
-                            <div className="d-flex  align-items-center">
-                              <div className="">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user1}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className=" w-100 ms-3">
-                                <h6 className="mb-0 ">Bni Emma Watson</h6>
-                                <small className="float-left font-size-12">
-                                  13 Jun
-                                </small>
-                              </div>
-                            </div>
-                          </Link>
-                          <Link href="#" className="iq-sub-card">
-                            <div className="d-flex align-items-center">
-                              <div className="">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user2}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className="ms-3">
-                                <h6 className="mb-0 ">Lorem Ipsum Watson</h6>
-                                <small className="float-left font-size-12">
-                                  20 Apr
-                                </small>
-                              </div>
-                            </div>
-                          </Link>
-                          <Link href="#" className="iq-sub-card">
-                            <div className="d-flex align-items-center">
-                              <div className="">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user3}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className="ms-3">
-                                <h6 className="mb-0 ">Why do we use it?</h6>
-                                <small className="float-left font-size-12">
-                                  30 Jun
-                                </small>
-                              </div>
-                            </div>
-                          </Link>
-                          <Link href="#" className="iq-sub-card">
-                            <div className="d-flex align-items-center">
-                              <div className="">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user4}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className="ms-3">
-                                <h6 className="mb-0 ">Variations Passages</h6>
-                                <small className="float-left font-size-12">
-                                  12 Sep
-                                </small>
-                              </div>
-                            </div>
-                          </Link>
-                          <Link href="#" className="iq-sub-card">
-                            <div className="d-flex align-items-center">
-                              <div className="">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user5}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className="ms-3">
-                                <h6 className="mb-0 ">
-                                  Lorem Ipsum generators
-                                </h6>
-                                <small className="float-left font-size-12">
-                                  5 Dec
-                                </small>
-                              </div>
-                            </div>
-                          </Link>
+                          <MessageListWithUser />
+
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>
@@ -1033,5 +943,66 @@ const Header = () => {
     </>
   );
 };
+
+const MessageListWithUser = () => {
+
+
+  const friendsList = useSelector(
+    (state) => state?.friends?.friendList?.friendsList
+  );
+
+  return (
+    <>
+      {friendsList && friendsList.map((userData, index) => {
+        return (
+
+          <Link href={`chat?chatId=${userData?._id}`} className="iq-sub-card" key={index}>
+            <div className="d-flex  align-items-center">
+              <div className="">
+                <Image
+                  className="avatar-40 rounded"
+                  src={
+                    userData?.profileInfo
+                      ?.profilePictureInfo?.file
+                      ?.location || user1
+                  }
+                  alt="profile-bg"
+                  height={100}
+                  width={100}
+                  style={{
+                    maxHeight: "150px",
+                    objectfit: "cover",
+                  }}
+
+                  loading="lazy"
+                />
+              </div>
+              <div className=" w-100 ms-3">
+                <h6 className="mb-0 ">
+                  {userData?.firstName || ''}{" "}
+                  {userData?.lastName || ''}
+                </h6>
+                <small className="float-left font-size-12">
+                  13 Jun
+                </small>
+              </div>
+            </div>
+          </Link>
+        )
+      })}
+
+      <div className="text-center iq-sub-card">
+        <Link
+          href="/chat"
+          className=" btn text-primary"
+        >
+          View All
+        </Link>
+      </div>
+    </>
+
+  )
+
+}
 
 export default Header;

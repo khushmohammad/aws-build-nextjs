@@ -93,7 +93,7 @@ const CommentReplyViewOne = ({ parentId, commmetLevel }) => {
             {commentReplylist && (commentReplylist || []).map((comment, i) => {
                 return (
                     <React.Fragment key={i}>
-                       
+                        {comment.level}
                         <>
                             <CommentList comment={comment} />
 

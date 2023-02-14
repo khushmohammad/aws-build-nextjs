@@ -12,14 +12,13 @@ const ProfileHeader = (props) => {
   return (
     <>
       <div className="header-for-bg">
-        <div className="background-header position-relative w-100">
+        <div className="background-header position-relative">
           <Image
             src={props.img}
-            className="img-fluid"
+            className="img-fluid w-100"
             alt="header-bg"
             height={100}
             width={100}
-            objectFit="contain"
           />
           <div className="title-on-header">
             {props.title && (

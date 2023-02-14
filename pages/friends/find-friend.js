@@ -22,7 +22,7 @@ const FriendList = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.nonFriendsLIst?.NonFriendList);
   const loading = useSelector((state) => state?.nonFriendsLIst?.status);
-const limit =50
+  const limit = 50;
   // console.log(findFriendsList, "findFriendsList");
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const limit =50
                               className="rounded img-fluid w-100"
                               height={100}
                               width={100}
-                              style={{ maxHeight: "150px", objectFit: "cover" }}
+                              style={{ maxHeight: "150px", objectfit: "cover" }}
                             />
                           )}
                         </div>

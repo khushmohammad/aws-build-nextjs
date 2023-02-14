@@ -251,7 +251,7 @@ const Chat = () => {
                                                         <Tab.Pane eventKey={data._id} className={`fade show`} key={index}>
 
                                                             <div className="chat-head">
-                                                                <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
+                                                                <div className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                                     <div className="d-flex align-items-center">
                                                                         <div onClick={ChatSidebar} className="d-lg-none  sidebar-toggle chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
                                                                             <span className="material-symbols-outlined">
@@ -317,6 +317,12 @@ const Chat = () => {
                                                                         <Link href="#" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
                                                                             <i className="material-symbols-outlined md-18">videocam</i>
                                                                         </Link> */}
+                                                                        <Link href="/" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
+                                                                            <span className="material-symbols-outlined">
+                                                                                arrow_back
+                                                                            </span>
+                                                                        </Link>
+
                                                                         <Link href="#" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
                                                                             <i className="material-symbols-outlined md-18">delete</i>
                                                                         </Link>
@@ -331,7 +337,7 @@ const Chat = () => {
                                                                             </Dropdown.Menu>
                                                                         </Dropdown>
                                                                     </div>
-                                                                </header>
+                                                                </div>
                                                             </div>
                                                             <div className="chat-content scroller" >
 

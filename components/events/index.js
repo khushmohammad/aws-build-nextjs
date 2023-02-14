@@ -100,7 +100,7 @@ const CreateEvent = (props) => {
                       src={eventPicture || img2}
                       alt="profile-pic"
                       layout="fill"
-                      objectFit="cover"
+                      objectfit="cover"
                       style={{
                         border: "2px solid #f60000",
                         borderRadius: "15px",

@@ -19,7 +19,9 @@ import { getFriendListWithUserData } from "../../services/friends.service";
 import Head from "next/head";
 
 const FriendList = () => {
-  const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList);
+  const friendsList = useSelector(
+    (state) => state?.friends?.friendList?.friendsList
+  );
 
   //console.log(friendsList, "friendsList");
   const [friendListState, setFriendListState] = useState([]);
@@ -44,7 +46,6 @@ const FriendList = () => {
           <Row>
             {friendListState &&
               friendListState.map((userData, index) => {
-
                 return (
                   <React.Fragment key={index}>
                     {userData && (
@@ -53,20 +54,22 @@ const FriendList = () => {
                           <Card.Body className=" profile-page p-0">
                             <div className="profile-header-image">
                               <div className="cover-container">
-                                
-                                  <Image
-                                    loading="lazy"
-                                    src={userData.profileInfo?.coverPictureInfo
-                                      ?.file?.location
-                                      || img1
-                                    }
-                                    alt="profile-bg"
-                                    className="rounded img-fluid w-100"
-                                    height={100}
-                                    width={100}
-                                    style={{ maxHeight: '150px', objectFit: "cover" }}
-                                  />
-                                
+                                <Image
+                                  loading="lazy"
+                                  src={
+                                    userData.profileInfo?.coverPictureInfo?.file
+                                      ?.location || img1
+                                  }
+                                  alt="profile-bg"
+                                  className="rounded img-fluid w-100"
+                                  height={100}
+                                  width={100}
+                                  style={{
+                                    maxHeight: "150px",
+                                    objectfit: "cover",
+                                  }}
+                                />
+
                                 {/* <Image
                                   loading="lazy"
                                   src={img1}
@@ -79,15 +82,19 @@ const FriendList = () => {
                                   <div className="d-flex flex-wrap justify-content-between align-items-start">
                                     <div className="profile-detail d-flex">
                                       <div className="profile-img pe-4">
-                                        {userData &&
+                                        {userData && (
                                           <Image
                                             className="rounded-circle img-fluid"
-                                            src={userData?.profileInfo?.profilePictureInfo?.file?.location || user05}
+                                            src={
+                                              userData?.profileInfo
+                                                ?.profilePictureInfo?.file
+                                                ?.location || user05
+                                            }
                                             alt=""
                                             height={100}
                                             width={100}
                                           />
-                                        }
+                                        )}
                                       </div>
                                       <div className="user-data-block">
                                         <h4>
@@ -121,15 +128,15 @@ const FriendList = () => {
                 );
               })}
 
-            {
-              Array.isArray(friendsList) && friendsList.length === 0 && <Col>
+            {Array.isArray(friendsList) && friendsList.length === 0 && (
+              <Col>
                 <div>
                   <p className="p-3 bg-danger text-alert text-center">
                     No user found!
                   </p>
-                </div></Col>
-            }
-
+                </div>
+              </Col>
+            )}
           </Row>
         </Container>
       </div>

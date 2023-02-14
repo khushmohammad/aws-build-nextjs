@@ -25,19 +25,15 @@ const Events = () => {
   const events = useSelector((state) => state?.events?.allEvents);
 
   useEffect(() => {
-    fatchEvents(eventType);
+    dispatch(getEvents(eventType));
     window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, [eventType]);
 
   const ChangeEventStatus = async (eventStaus, id) => {
     const res = await eventActionService(eventStaus, id);
     if (res.success === true) {
-      fatchEvents(eventType);
+      dispatch(getEvents(eventType));
     }
-  };
-
-  const fatchEvents = (eventType) => {
-    dispatch(getEvents(eventType));
   };
 
   const handleScroll = async () => {
@@ -184,11 +180,12 @@ const Events = () => {
                       <Card className="card-block card-stretch card-height product">
                         <Card.Body className="p-0 d-flex flex-column justify-content-between">
                           <div>
-                            <Link href={`/events/${event._id}`}>
+                            <Link href={`/events/${event.id}`}>
                               <div className="image-block position-relative">
                                 <Image
                                   src={event?.fileInfo?.file?.location || img2}
                                   className="img-fluid w-100 rounded-top"
+                                  style={{ height: "220px", objectfit: "fill" }}
                                   alt="event-img"
                                   width={100}
                                   height={100}
@@ -201,7 +198,7 @@ const Events = () => {
                                 <span className="text-secondary mb-2 position-relative">
                                   online
                                 </span>
-                                <p className="mb-0">1.1K interested</p>
+                                {/* <p className="mb-0">1.1K interested</p> */}
                               </div>
                             </Link>
                           </div>
