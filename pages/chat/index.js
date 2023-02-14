@@ -222,10 +222,10 @@ const Chat = () => {
                                                                             <h6 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h6>
                                                                             {/* <span>Lorem Ipsum is</span> */}
                                                                         </div>
-                                                                        <div className="chat-meta float-right text-center mt-2 me-1">
+                                                                        {/* <div className="chat-meta float-right text-center mt-2 me-1">
                                                                             <div className="chat-msg-counter bg-primary text-white">20</div>
                                                                             <span className="text-nowrap">05 min</span>
-                                                                        </div>
+                                                                        </div> */}
                                                                     </div>
                                                                 </Nav.Link>
                                                             </Nav.Item>

@@ -26,7 +26,10 @@ import moment from "moment";
 import GuestList from "../../components/events/GuestList";
 import Image from "next/image";
 import { getEventDetail } from "../../store/events";
-import { eventActionService } from "../../services/event.service";
+import {
+  deleteEventService,
+  eventActionService,
+} from "../../services/event.service";
 import InviteFriendOnEvent from "../../components/events/InviteFriendOnEvent";
 
 const EventDetail = () => {
@@ -57,8 +60,15 @@ const EventDetail = () => {
 
   const ChangeEventStatus = async (eventStaus, id) => {
     const res = await eventActionService(eventStaus, id);
-    if (res.success === true) {
+    if (res?.success === true) {
       dispatch(getEventDetail(eventid));
+    }
+  };
+
+  const deleteEvent = async (eventId) => {
+    const res = await deleteEventService(eventId);
+    if (res?.success === true) {
+      router.push("/events");
     }
   };
 
@@ -176,9 +186,10 @@ const EventDetail = () => {
                     className=" dropdown-menu-right"
                     aria-labelledby="post-option"
                   >
-                    <Dropdown.Item onClick={handleShow} href="#">
-                      Report event!
+                    <Dropdown.Item onClick={() => deleteEvent(eventid)}>
+                      Delete Event
                     </Dropdown.Item>
+                    <Dropdown.Item>Report event!</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
@@ -279,7 +290,10 @@ const EventDetail = () => {
                             width={100}
                             height={100}
                           />
-                          <h4>Ankit Jangid</h4>
+                          <h4>
+                            {userDetail?.userInfo?.firstName}{" "}
+                            {userDetail?.userInfo?.lastName}
+                          </h4>
                           <div className="d-flex align-items-center justify-content-center">
                             <span>3 past events</span>
                             {/* <span className="event-detail-dot"></span> */}

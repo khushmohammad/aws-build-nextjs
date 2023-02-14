@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -25,6 +25,7 @@ import { useDispatch } from "react-redux";
 const CreateEvent = (props) => {
   const [eventPicture, setEventPicture] = useState("");
   const [apiResponse, setApiResponse] = useState(null);
+  const [apiError, setApiError] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -55,17 +56,28 @@ const CreateEvent = (props) => {
   };
 
   const onSubmit = (data) => {
-    register("eventPicture", { value: eventPicture });
+    register("eventPicture", { value: eventPicture || null });
 
     createEvent({ eventInfo: data }).then((res) => {
       if (res?.success === true) {
         setApiResponse(res?.message);
         setEventPicture("");
-        dispatch(getEvents());
+        dispatch(getEvents("hosting"));
         props.onHide();
         reset();
       }
     });
+    // eventPicture == "" ? setApiError(true) : setApiError(false);
+    !apiError &&
+      createEvent({ eventInfo: data }).then((res) => {
+        if (res?.success === true) {
+          setApiResponse(res?.message);
+          setEventPicture("");
+          dispatch(getEvents());
+          props.onHide();
+          reset();
+        }
+      });
   };
 
   return (
@@ -128,6 +140,12 @@ const CreateEvent = (props) => {
                       </span>
                     </div>
                   </div>
+{/* 
+                  {apiError && eventPicture == "" ? (
+                    <div className="text-danger">Event picture is required</div>
+                  ) : (
+                    ""
+                  )} */}
                   <Form
                     className="mt-4"
                     onSubmit={handleSubmit(onSubmit)}

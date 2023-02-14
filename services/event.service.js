@@ -58,9 +58,7 @@ export const getEventByEventId = async (eventid) => {
 };
 
 export const eventActionService = async (action, id) => {
-  console.log(action, id);
   const token = await getToken();
-  console.log(token);
   try {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/${action}/${id}`,
@@ -71,7 +69,24 @@ export const eventActionService = async (action, id) => {
         },
       }
     );
-    console.log("Heyyy:: ", res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteEventService = async (eventId) => {
+  const token = await getToken();
+  try {
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/deleteEvent/${eventId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("::", res);
     return res.data;
   } catch (error) {
     console.log(error);
