@@ -34,7 +34,7 @@ const RightSidebar = () => {
                 {friendsList && friendsList.map((userData, index) => {
                   return (
 
-                    <Link href={`chat?chatId=${userData?._id}`} key={index}>
+                    <Link href={`/chat?chatId=${userData?._id}`} key={index}>
                       <div className="d-flex align-items-center mb-4"   >
 
                         <div className="iq-profile-avatar status-online">
