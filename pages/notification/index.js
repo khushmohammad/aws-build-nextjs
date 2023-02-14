@@ -1,28 +1,30 @@
-import React from 'react'
-import {Row, Col, Container, Dropdown} from 'react-bootstrap'
-import Card from '../../components/Card'
+import React, { useEffect } from 'react'
+import { Row, Col, Container, Dropdown, Card } from 'react-bootstrap'
 import Link from 'next/link'
 
 // img
 import user1 from '../../public/assets/images/user/1.jpg'
-import user2 from '../../public/assets/images/user/02.jpg'
-import user3 from '../../public/assets/images/user/03.jpg'
-import user4 from '../../public/assets/images/user/04.jpg'
-import user5 from '../../public/assets/images/user/05.jpg'
-import user6 from '../../public/assets/images/user/06.jpg'
-import user7 from '../../public/assets/images/user/07.jpg'
-import user8 from '../../public/assets/images/user/08.jpg'
-import user9 from '../../public/assets/images/user/09.jpg'
-import user10 from '../../public/assets/images/user/10.jpg'
-import user11 from '../../public/assets/images/user/11.jpg'
-import user12 from '../../public/assets/images/user/12.jpg'
-import user13 from '../../public/assets/images/user/13.jpg'
-import user14 from '../../public/assets/images/user/14.jpg'
+
 import Default from '../../layouts/default'
 import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
+import { notification } from '../../store/site/Notification'
 
 const Notification = () => {
-   return(
+
+   const dispatch = useDispatch()
+   const notificationlist = useSelector((state) => state?.notification?.list)  
+   useEffect(() => {
+      // dispatch(notification)
+
+
+   }, [])
+
+
+
+
+
+   return (
       <Default>
          <Container>
             <Row>
@@ -30,50 +32,21 @@ const Notification = () => {
                   <h4 className="card-title mb-3">Notification</h4>
                </Col>
                <Col sm="12">
-                  <Card>
-                     <Card.Body>
-                        <ul className="notification-list m-0 p-0">
-                           <li className="d-flex align-items-center justify-content-between">
-                              <div className="user-img img-fluid">
-                                 <Image src={user1} alt="story-img" className="rounded-circle avatar-40"/>
-                              </div>
-                              <div className="w-100">
-                                 <div className="d-flex justify-content-between">
-                                    <div className=" ms-3">
-                                       <h6>Paige Turner Posted in UI/UX Community</h6>
-                                       <p className="mb-0">30  ago</p>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                       <Link href="#" className="me-3 iq-notify bg-soft-primary rounded">
-                                       <i className="material-symbols-outlined md-18">
-                                          military_tech
-                                       </i>
-                                       </Link>
-                                       <div className="card-header-toolbar d-flex align-items-center">
-                                          <Dropdown>
-                                             <Link href="#">
-                                             <Dropdown.Toggle as="span" className="material-symbols-outlined">
-                                                more_horiz
-                                             </Dropdown.Toggle>
-                                             </Link>
-                                             <Dropdown.Menu className="dropdown-menu-right">
-                                                <Dropdown.Item href="#">
-                                                   <i className="ri-eye-fill me-2"></i>View</Dropdown.Item>
-                                                <Dropdown.Item href="#"><i className="ri-delete-bin-6-fill me-2"></i>Delete</Dropdown.Item>
-                                                <Dropdown.Item href="#"><i className="ri-pencil-fill me-2"></i>Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#"><i className="ri-printer-fill me-2"></i>Print</Dropdown.Item>
-                                                <Dropdown.Item href="#"><i className="ri-file-download-fill me-2"></i>Download</Dropdown.Item>
-                                             </Dropdown.Menu>
-                                          </Dropdown>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           </li>
-                        </ul>
-                     </Card.Body>
-                  </Card>
-                  <Card>
+                  {
+                     notificationlist && notificationlist.map((data, index) => {
+                        return (
+                           <React.Fragment key={index}>
+                              {data &&
+                                 <NotificatonCard notification={data} />}
+                           </React.Fragment>
+
+
+                        )
+
+                     })
+                  }
+
+                  {/* <Card>
                      <Card.Body>
                         <ul className="notification-list m-0 p-0">
                            <li className="d-flex align-items-center justify-content-between">
@@ -114,8 +87,8 @@ const Notification = () => {
                            </li>
                         </ul>
                      </Card.Body>
-                  </Card>
-                  <Card>
+                  </Card> */}
+                  {/* <Card>
                      <Card.Body>
                         <ul className="notification-list m-0 p-0">
                            <li className="d-flex align-items-center justify-content-between">
@@ -660,11 +633,62 @@ const Notification = () => {
                            </li>
                         </ul>
                      </Card.Body>
-                  </Card>
+                  </Card> */}
                </Col>
             </Row>
          </Container>
       </Default>
+   )
+}
+
+
+const NotificatonCard = ({ notification }) => {
+   // console.log(notification);
+   return (
+      <Card>
+         <Card.Body>
+            <ul className="notification-list m-0 p-0">
+               <li className="d-flex align-items-center justify-content-between">
+                  <div className="user-img img-fluid">
+                     <Image src={user1} alt="story-img" className="rounded-circle avatar-40" />
+                  </div>
+                  <div className="w-100">
+                     <div className="d-flex justify-content-between">
+                        <div className=" ms-3">
+                           <h6>{notification.message}</h6>
+                           <p className="mb-0">30  ago</p>
+                        </div>
+                        <div className="d-flex align-items-center">
+                           <Link href="#" className="me-3 iq-notify bg-soft-primary rounded">
+                              <i className="material-symbols-outlined md-18">
+                                 military_tech
+                              </i>
+                           </Link>
+                           <div className="card-header-toolbar d-flex align-items-center">
+                              <Dropdown>
+                                 <Link href="#">
+                                    <Dropdown.Toggle as="span" className="material-symbols-outlined">
+                                       more_horiz
+                                    </Dropdown.Toggle>
+                                 </Link>
+                                 <Dropdown.Menu className="dropdown-menu-right">
+                                    <Dropdown.Item href="#">
+                                       <i className="ri-eye-fill me-2"></i>View
+                                    </Dropdown.Item>
+                                    <Dropdown.Item href="#"><i className="ri-delete-bin-6-fill me-2"></i>Delete</Dropdown.Item>
+                                    <Dropdown.Item href="#"><i className="ri-pencil-fill me-2"></i>Edit</Dropdown.Item>
+                                    <Dropdown.Item href="#"><i className="ri-printer-fill me-2"></i>Print</Dropdown.Item>
+                                    <Dropdown.Item href="#"><i className="ri-file-download-fill me-2"></i>Download</Dropdown.Item>
+                                 </Dropdown.Menu>
+                              </Dropdown>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </li>
+            </ul>
+         </Card.Body>
+      </Card>
    )
 }
 

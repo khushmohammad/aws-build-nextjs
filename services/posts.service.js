@@ -406,8 +406,8 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
   // }
   // console.log(payloadData, "payloadData");
   var data = new FormData();
-  data.append("commentId", commentId);
-  data.append("postId", postId);
+  data.append("commentOrReplyId", commentId);
+ // data.append("postId", postId);
   try {
     const res = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/post/deleteCommentByCommentId`,

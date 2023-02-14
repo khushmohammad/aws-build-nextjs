@@ -17,6 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { io } from "socket.io-client";
 import { getMesasgesByreceiverId } from '../../services/chat.socket'
 import { getPostTime } from '../../services/time.service'
+import { getUserDetailsByUserId } from '../../services/user.service'
 const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION);
 
 const schema = yup.object({
@@ -41,13 +42,23 @@ const Chat = () => {
     const receiverUserId = chatId
     const senderUserId = user?.userInfo._id
     const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId }
+    useEffect(() => {
+        joinSocket()
+    }, [chatId || '']);
 
+    const getCurrentMessages = async () => {
+        const result = await getMesasgesByreceiverId(receiverUserId)
+        //  console.log(result, "result");
+        if (result && result?.status === 200) {
+            // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
+            result?.data?.body?.data?.length != undefined ? setMessages(result?.data?.body?.data) : setMessages('')
+        }
+    }
 
-    const [connection, setConnection] = useState()
 
     const joinSocket = async () => {
         const res = await socket.emit("joinSocket", JoinRoom);
-        setConnection(res.connected)
+
 
         if (res.connected == true) {
             receiverUserId && getCurrentMessages(receiverUserId)
@@ -58,15 +69,9 @@ const Chat = () => {
 
             })
         }
-        console.log(res, "res");
+        // console.log(res, "res");
     }
 
-    useEffect(() => {
-        joinSocket()
-        // console.log(con, "joinSocket")
-
-
-    }, [chatId || connection]);
 
 
 
@@ -83,25 +88,17 @@ const Chat = () => {
     };
 
 
+    // const userDetails = async (senderId) => {
+    //     const res = await getUserDetailsByUserId([senderId])
+    //     console.log(res);
+    // }
     useEffect(() => {
         messages && setMessages([...messages, newMessages])
-        // setMessages(prev => [...prev, newMessages])
-
-        //   console.log(messages, "messages");
-
+        // userDetails(newMessages.senderId)
     }, [newMessages])
 
+    // console.log(newMessages, "newMessages");
 
-    const getCurrentMessages = async () => {
-
-        const result = await getMesasgesByreceiverId(receiverUserId)
-        //  console.log(result, "result");
-        if (result && result?.status === 200) {
-            // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
-            result?.data?.body?.data?.length != 0 ? setMessages(result?.data?.body?.data) : setMessages('')
-
-        }
-    }
 
     // console.log(messages, "messages");
 
@@ -163,7 +160,7 @@ const Chat = () => {
                                                         {/* <p className="m-0">Web Designer</p> */}
                                                     </div>
                                                     <div onClick={ChatSidebarClose} className="ms-auto d-lg-none" role={"button"}>
-                                                        <span class="material-symbols-outlined">
+                                                        <span className="material-symbols-outlined">
                                                             close
                                                         </span>
                                                     </div>
@@ -257,7 +254,7 @@ const Chat = () => {
                                                                 <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                                                     <div className="d-flex align-items-center">
                                                                         <div onClick={ChatSidebar} className="d-lg-none  sidebar-toggle chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
-                                                                            <span class="material-symbols-outlined">
+                                                                            <span className="material-symbols-outlined">
                                                                                 menu
                                                                             </span>
                                                                         </div>
