@@ -21,7 +21,7 @@ import { getGroupFeeds } from "../../../store/groups";
 import PostThreeDotmenu from "./PostThreeDotmenu";
 import MediaComponent from "./MediaComponent";
 
-const Post = ({ activePage, groupId, postDetailObj }) => {
+const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [posts, setposts] = useState([]);
@@ -71,8 +71,8 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-          ? setposts((prev) => [...prev, ...StorePosts])
-          : "";
+        ? setposts((prev) => [...prev, ...StorePosts])
+        : "";
     }
   }, [StorePosts]);
 
@@ -108,7 +108,11 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
   return (
     <div>
       {activePage != "PostDetail" && (
-        <CreatePost refreshPostList={() => GetPostNet()} groupId={groupId} />
+        <CreatePost
+          refreshPostList={() => GetPostNet()}
+          groupId={groupId}
+          userId={userId}
+        />
       )}
       <div style={{ position: "relative", marginBottom: "7rem" }}>
         {posts &&
@@ -261,7 +265,5 @@ const Post = ({ activePage, groupId, postDetailObj }) => {
     </div>
   );
 };
-
-
 
 export default Post;

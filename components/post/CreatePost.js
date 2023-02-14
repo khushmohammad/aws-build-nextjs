@@ -61,6 +61,8 @@ const CreatePost = (props) => {
 
   const user = useSelector((state) => state?.user?.data);
 
+
+
   useEffect(() => {
     if (privacy === "includeFriends" || privacy === "excludeFriends") {
       if (privacyFriendList.length !== 0) {
@@ -81,9 +83,15 @@ const CreatePost = (props) => {
     }
   }, [props.groupId]);
 
+  useEffect(() => {
+    if (router.pathname === "/friends/[id]") {
+      setPostData({ ...postData, uId: props.userId });
+    }
+  }, [props.userId]);
+
   const submitPost = async (e) => {
     e.preventDefault();
-    // console.log(":::", postData);
+    //console.log(":::", postData);
     await createPost(postData).then((res) => {
       setPostData({
         description: "",

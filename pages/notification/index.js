@@ -8,18 +8,20 @@ import user1 from '../../public/assets/images/user/1.jpg'
 import Default from '../../layouts/default'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
-import { notification } from '../../store/site/Notification'
+import { getNotification, notification } from '../../store/site/Notification'
+import { getPostTime } from '../../services/time.service'
+import NotificationMessage from '../../components/notification/NotificationMessage'
 
 const Notification = () => {
 
    const dispatch = useDispatch()
-   const notificationlist = useSelector((state) => state?.notification?.list)  
-   useEffect(() => {
-      // dispatch(notification)
+   const notificationlist = useSelector((state) => state?.notification?.list)
 
+
+   useEffect(() => {
+      dispatch(getNotification())
 
    }, [])
-
 
 
 
@@ -643,20 +645,24 @@ const Notification = () => {
 
 
 const NotificatonCard = ({ notification }) => {
-   // console.log(notification);
+   //  console.log(notification, "sdfsdf");
    return (
       <Card>
          <Card.Body>
             <ul className="notification-list m-0 p-0">
                <li className="d-flex align-items-center justify-content-between">
                   <div className="user-img img-fluid">
-                     <Image src={user1} alt="story-img" className="rounded-circle avatar-40" />
+                     <Image src={notification?.userDetails?.profilePictureInfo?.file?.location || user1}
+                        alt="profile-bg"
+                        height={100}
+                        width={100} className="rounded-circle avatar-40" />
                   </div>
                   <div className="w-100">
                      <div className="d-flex justify-content-between">
                         <div className=" ms-3">
-                           <h6>{notification.message}</h6>
-                           <p className="mb-0">30  ago</p>
+                           <h6>  {notification?.userDetails?.userInfo?.firstName || ''}{" "}
+                              {notification?.userDetails?.userInfo?.lastName || ''} {NotificationMessage(notification.message)}</h6>
+                           <p className="mb-0"> {getPostTime(notification.createdAt)} ago</p>
                         </div>
                         <div className="d-flex align-items-center">
                            <Link href="#" className="me-3 iq-notify bg-soft-primary rounded">

@@ -24,6 +24,7 @@ import CreateEvent from "../../components/events";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getEvents } from "../../store/events";
+import { useRouter } from "next/router";
 
 const CalendarPage = () => {
   const [show, setShow] = useState(false);
@@ -31,6 +32,7 @@ const CalendarPage = () => {
   const [value, onChange] = useState(new Date());
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const events = useSelector((state) => state?.events?.allEvents);
 
@@ -159,8 +161,10 @@ const CalendarPage = () => {
                       weekends={true}
                       nowIndicator
                       dateClick={(e) => console.log(e.dateStr)}
-                      eventClick={(e) => console.log(e.event)}
-                      eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+                      eventClick={(e) => {
+                        router.push(`/events/${e.event.id}`);
+                      }}
+                      // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
                     />
                   </Card.Body>
                 </Card>

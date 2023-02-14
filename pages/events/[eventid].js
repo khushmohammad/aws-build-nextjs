@@ -27,11 +27,12 @@ import GuestList from "../../components/events/GuestList";
 import Image from "next/image";
 import { getEventDetail } from "../../store/events";
 import { eventActionService } from "../../services/event.service";
+import InviteFriendOnEvent from "../../components/events/InviteFriendOnEvent";
 
 const EventDetail = () => {
   const handleShow = () => setShow(true);
   const [show, setShow] = useState(false);
-  const [eventType, setEventType] = useState(null);
+  const [showFriendList, setShowFriendList] = useState(false);
   const [userDetail, setUserDetail] = useState(null);
 
   const dispatch = useDispatch();
@@ -64,14 +65,20 @@ const EventDetail = () => {
   return (
     <>
       <GuestList show={show} onHide={() => setShow(false)} />
+      <InviteFriendOnEvent
+        show={showFriendList}
+        onHide={() => setShowFriendList(false)}
+      />
       <Default className="p-0">
         <div className="position-relative">
           <div className="container event-date-container">
-            <h3 className="event-date position-relative">8</h3>
+            <h3 className="event-date position-relative">
+              {new Date(eventDetail?.eventInfo?.start).getDate()}
+            </h3>
           </div>
           <ProfileHeader
             className="banner-bg"
-            img={eventDetail?.fileInfo?.file?.location || profilebg7}
+            img={eventDetail?.eventInfo?.fileInfo?.file?.location || profilebg7}
           />
         </div>
         <Card className="card-block card-stretch card-height product">
@@ -127,7 +134,10 @@ const EventDetail = () => {
                     </i>
                     Going
                   </Button>
-                  <Button className="comments date me-2  d-flex align-items-center btn btn-secondary">
+                  <Button
+                    onClick={() => setShowFriendList(true)}
+                    className="comments date me-2  d-flex align-items-center btn btn-secondary"
+                  >
                     <i className="material-symbols-outlined pe-1 md-18 text-li">
                       mode_comment
                     </i>
@@ -264,7 +274,7 @@ const EventDetail = () => {
                               userDetail?.profilePictureInfo?.file?.location ||
                               store1
                             }
-                            className="img-fluid event-host mb-3 rounded-circle w-50"
+                            className="img-fluid event-host mb-3 rounded-circle w-30"
                             alt="product-img"
                             width={100}
                             height={100}
@@ -305,12 +315,12 @@ const EventDetail = () => {
                     <div className="header-title">
                       <h4 className="card-title">Details</h4>
                     </div>
-                    <Link
+                    {/* <Link
                       href="#"
                       // onClick={() => setShow(true)}
                     >
                       see all
-                    </Link>
+                    </Link> */}
                   </div>
                   <Row className="mt-3">
                     <Col lg="6" className="text-center">

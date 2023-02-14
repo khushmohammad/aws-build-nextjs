@@ -24,12 +24,12 @@ import user19 from "../../public/assets/images/user/19.jpg";
 import ProfileHeader from "../../components/profile-header";
 import Default from "../../layouts/default";
 import { map } from "lodash";
+import { useRouter } from "next/router";
 
 const Birthday = () => {
+
+    const router = useRouter()
   const [myFri, setMyfri] = useState([]);
-
-
- 
 
   const todaysBirthday = async () => {
     const res = await friendsBirthdayList();
@@ -90,8 +90,8 @@ const Birthday = () => {
                                       <p className="mb-0">Today</p>
                                     </div>
                                   </div>
-                                  <button className="btn btn-primary">
-                                    Create Card
+                                  <button onClick={() => router.push(`/friends/${elem._id}`)} className="btn btn-primary">
+                                    Wish
                                   </button>
                                 </div>
                               </div>
@@ -118,7 +118,7 @@ const Birthday = () => {
                                 <p className="mb-0">Today</p>
                               </div>
                             </div>
-                            <Button variant="primary">Create Card</Button>
+                            <Button variant="primary">Wish</Button>
                           </div>
                         </div>
                       </Card.Body>
@@ -126,7 +126,7 @@ const Birthday = () => {
                   </Col> */}
                 </Row>
               </div>
-              <div className="birthday-block">
+              {/* <div className="birthday-block">
                 <Card>
                   <Card.Header className=" d-flex justify-content-between rounded border-bottom-0">
                     <div className="header-title">
@@ -154,7 +154,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -180,7 +180,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -188,8 +188,8 @@ const Birthday = () => {
                     </Card>
                   </Col>
                 </Row>
-              </div>
-              <div className="birthday-block">
+              </div> */}
+              {/* <div className="birthday-block">
                 <Card>
                   <Card.Header className=" d-flex justify-content-between rounded border-bottom-0">
                     <div className="header-title">
@@ -217,7 +217,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -243,7 +243,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -269,7 +269,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -306,7 +306,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -343,7 +343,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -369,7 +369,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -395,7 +395,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -421,7 +421,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -458,7 +458,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -484,7 +484,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -510,7 +510,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -547,7 +547,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -573,7 +573,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -599,7 +599,7 @@ const Birthday = () => {
                               </div>
                             </div>
                             <button className="btn btn-primary">
-                              Create Card
+                              Wish
                             </button>
                           </div>
                         </div>
@@ -607,7 +607,7 @@ const Birthday = () => {
                     </Card>
                   </Col>
                 </Row>
-              </div>
+              </div> */}
             </Col>
           </Row>
         </Container>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { mergeUserBasicDetails } from "./posts.service";
 // import { getToken } from "./user.service";
 
 export const getToken = async () => {
@@ -42,14 +43,18 @@ export const getNotifications = async () => {
     const token = await getToken();
 
     const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_PATH}/profiles/dropdowns/values/MaritalStatus`,
+        `${process.env.NEXT_PUBLIC_API_PATH}/notification/getAllNotification?limit=300&page=1`,
         {
             headers: { authorization: `Bearer ${token}` },
         }
     );
-    const data = await res.data
+    if (res.status == 200) {
+        const data = await mergeUserBasicDetails(res?.data?.body?.docs)
+        return data;
+    } else {
+        return []
+    }
 
-    return data;
 };
 
 

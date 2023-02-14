@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getNotifications } from "../../services/basic.services";
 
 const initialState = {
     list: [
@@ -6,38 +7,32 @@ const initialState = {
             user: "123",
             message: "Ankit added a new photo.",
             isRead: "true",
-        },
-        {
-            user: "456",
-            message: "Ankit  shared your post.",
-            isRead: "",
-        },
-        {
-            user: "798",
-            message: "sagar accepted your friend request.",
-            isRead: "",
-        },
-        {
-            user: "798",
-            message: "Ankit  shared your post",
-            isRead: "",
         }
-
     ],
 };
 
 const siteNotification = createSlice({
     name: "notification",
     initialState,
-    reducers: {
-        notification: (state, action) => {
-            state.list = action.payload
-            console.log(action, "dfdfdddff")
-        },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getNotification.fulfilled, (state, action) => {
+                state.list = action.payload;
+            })
+    }
 
-    },
 });
 
-export const { notification } = siteNotification.actions
+export const getNotification = createAsyncThunk(
+    "notification",
+    async () => {
+        //  console.log(params, "paramdds");
+        const data = await getNotifications()
+        return data;
+    }
+);
+
+
+// export const { notification } = siteNotification.actions
 
 export default siteNotification.reducer;

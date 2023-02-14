@@ -76,13 +76,13 @@ const Events = () => {
                       defaultActiveKey="#pill-eventGoing"
                     >
                       <div className="d-md-flex align-items-center ">
-                        <Form.Group>
+                        {/* <Form.Group>
                           <Form.Control
                             type="datetime-local"
                             name="question2"
                             placeholder="Any date"
                           />
-                        </Form.Group>
+                        </Form.Group> */}
                         <Nav
                           as="ul"
                           variant="pills"
@@ -151,7 +151,7 @@ const Events = () => {
                               Hosting
                             </Nav.Link>
                           </Nav.Item>
-                          <Nav.Item
+                          {/* <Nav.Item
                             as="li"
                             className="p-0"
                             onClick={() => setEventType("pastEvent")}
@@ -166,7 +166,7 @@ const Events = () => {
                             >
                               Past events
                             </Nav.Link>
-                          </Nav.Item>
+                          </Nav.Item> */}
                         </Nav>
                       </div>
                     </Tab.Container>

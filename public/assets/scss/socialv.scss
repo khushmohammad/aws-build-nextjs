@@ -212,7 +212,6 @@ body {
   top: -0.188rem;
 }
 
-
 .event-tabs {
   border-left: 1px solid var(--bs-gray-tint-80);
 }
@@ -220,8 +219,8 @@ body {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0,0,0, 0.5);
-  border-radius: 5px; 
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
 }
 .dropdown-toggle-main a {
   display: flex;
@@ -245,12 +244,12 @@ body {
   object-fit: cover;
 }
 .floatingButtonWrap {
-    position: fixed;
-    z-index: 1111;
-    bottom: 0px;
-    right: 24px;
-    display: flex;
-    align-items: flex-end;
+  position: fixed;
+  z-index: 1111;
+  bottom: 0px;
+  right: 24px;
+  display: flex;
+  align-items: flex-end;
 }
 .floatingButton {
   width: 60px;
@@ -308,25 +307,25 @@ body {
   margin: 0 0.3rem 0.5rem 12px;
   background-color: #e6e6e6;
 }
-.floatingButtonWrap .chat:last-child .chat-content .chat-left .chat-message, 
+.floatingButtonWrap .chat:last-child .chat-content .chat-left .chat-message,
 .floatingButtonWrap .chat:last-child .chat-message {
   margin-bottom: 0px;
-} 
+}
 .floatingButtonWrap .chat-message > p {
   line-height: 1.5;
 }
-.floatingButtonWrap   .form-control {
+.floatingButtonWrap .form-control {
   border-radius: 20px;
 }
 .emoji-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 .background-header {
   text-align: center;
 }
-.background-header  img {
+.background-header img {
   color: transparent;
   height: 400px;
   object-fit: cover;
@@ -342,7 +341,7 @@ body {
 .event-date {
   display: inline-block;
   background: white;
-  padding: 22px 36px 12px;
+  padding: 22px 22px 12px;
   border-radius: 10px;
   font-size: 34px;
   font-weight: bold;
@@ -360,7 +359,7 @@ body {
   border-top-right-radius: 10px;
 }
 @media (max-width: 991px) {
-  .event-date { 
+  .event-date {
     padding: 22px 32px 12px;
   }
 }
