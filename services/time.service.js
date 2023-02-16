@@ -32,3 +32,20 @@ export const getPostTime = (time) => {
         return "date is not proper"
     }
 }
+
+export const getFormatedDate = (time) => {
+
+    const crdate = new Date(time)
+
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const monthName = (arrNum) => {
+        return months.find((e, index) => {
+            return index == arrNum ? e : ""
+        })
+    }
+    if (crdate) {
+        return `${crdate.getDate()} ${monthName(crdate.getMonth())}  ${crdate.getFullYear()}`;
+    } else {
+        return "date is not proper"
+    }
+}

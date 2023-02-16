@@ -19,6 +19,8 @@ function NotificationList() {
 
     }, [])
 
+    
+
 
     return (
         <Card className="shadow-none m-0">

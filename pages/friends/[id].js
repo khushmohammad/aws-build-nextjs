@@ -57,7 +57,7 @@ const FriendProfile = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  console.log("ididd", id);
+  //console.log("ididd", id);
 
   const userDetail = useSelector((state) => state?.user?.userInfo);
   const postsLength = useSelector((state) => state?.allFeed?.postcount);
@@ -121,7 +121,7 @@ const FriendProfile = () => {
                       <div className="profile-detail">
                         <h3>
                           {userDetail?.userInfo?.firstName}{" "}
-                          {userDetail?.userInfo?.middleName}{" "}
+                          {userDetail?.userInfo?.middleName || ''}{" "}
                           {userDetail?.userInfo?.lastName}
                         </h3>
                       </div>
@@ -247,7 +247,7 @@ const FriendProfile = () => {
                         </p>
                       </li>
                       {userDetail?.maritalStatusInfo &&
-                      userDetail?.maritalStatusInfo?.dropdownValue ? (
+                        userDetail?.maritalStatusInfo?.dropdownValue ? (
                         <li className="d-flex align-items-center">
                           <span className="material-symbols-outlined md-18">
                             favorite_border

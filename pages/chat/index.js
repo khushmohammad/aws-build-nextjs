@@ -69,7 +69,7 @@ const Chat = () => {
 
             })
         }
-        // console.log(res, "res");
+        console.log(res, "res");
     }
 
 
@@ -116,7 +116,7 @@ const Chat = () => {
 
     const changeRoom = (tab) => {
         setKey(tab)
-        router.push(`chat?chatId=${tab}`)
+        router.push(`/chat?chatId=${tab}`)
     }
     useEffect(() => {
         chatId ? setKey(chatId) : setKey("start")
@@ -342,7 +342,7 @@ const Chat = () => {
                                                             <div className="chat-content scroller" >
 
                                                                 {messages && messages.length !== 0 && (messages).map((data, index) => {
-                                                                    // console.log(messages.length, messages);
+
 
                                                                     return (
                                                                         <React.Fragment key={index}>

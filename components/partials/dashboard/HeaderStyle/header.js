@@ -956,7 +956,7 @@ const MessageListWithUser = () => {
       {friendsList && friendsList.map((userData, index) => {
         return (
 
-          <Link href={`chat?chatId=${userData?._id}`} className="iq-sub-card" key={index}>
+          <Link href={`/chat?chatId=${userData?._id}`} className="iq-sub-card" key={index}>
             <div className="d-flex  align-items-center">
               <div className="">
                 <Image
