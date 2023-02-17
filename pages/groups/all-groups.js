@@ -8,7 +8,7 @@ import Default from "../../layouts/default";
 
 // images
 import gi5 from "../../public/assets/images/page-img/gi-5.jpg";
-import user05 from "../../public/assets/images/user/05.jpg";
+import user05 from "../../public/assets/images/user/25.png";
 import user06 from "../../public/assets/images/user/06.jpg";
 import user07 from "../../public/assets/images/user/07.jpg";
 import user08 from "../../public/assets/images/user/08.jpg";
@@ -98,6 +98,8 @@ const Groups = () => {
                     src={img5}
                     className="img-fluid w-100"
                     alt="group-bg"
+                    height={125}
+                    width={490}
                   />
                 </div>
                 <Card.Body className="text-center">

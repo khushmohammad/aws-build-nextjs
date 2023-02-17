@@ -21,6 +21,7 @@ import img2 from "../../public/assets/images/page-img/profile-bg1.jpg";
 import { createEventService } from "../../services/event.service";
 import { getEvents } from "../../store/events";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 
 const CreateEvent = (props) => {
   const [eventPicture, setEventPicture] = useState("");
@@ -28,9 +29,11 @@ const CreateEvent = (props) => {
 
   const dispatch = useDispatch();
 
+  const router = useRouter();
+
   const schema = yup
     .object({
-      title: yup.string().required("title is required"),
+      title: yup.string().required("Title is required"),
       location: yup.string().required("Location is required"),
       description: yup.string().required("Description is required"),
       // start: yup.string().required("Start Date is required"),
@@ -61,7 +64,8 @@ const CreateEvent = (props) => {
       if (res?.success === true) {
         setApiResponse(res?.message);
         setEventPicture("");
-        dispatch(getEvents());
+        dispatch(getEvents("hosting"));
+        router.push("/events#pill-eventHosting");
         props.onHide();
         reset();
       }

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllFeeds, getAllPostsByUserId, getPostsByTokenUserId } from "../../services/posts.service";
+import { getAllFeeds, getAllPostsByUserId, getPostsByTokenUserId, getSavePostListApi } from "../../services/posts.service";
 
 const initialState = {
   allFeeds: "",
@@ -19,7 +19,7 @@ const AllFeedsSlice = createSlice({
         state.allFeeds = [];
       })
       .addCase(getAllFeedsList.fulfilled, (state, action) => {
-        state.status = "succeeded";        
+        state.status = "succeeded";
         state.allFeeds = action.payload.newarray;
         state.postcount = action.payload.PostCount;
         state.error = "";
@@ -46,7 +46,9 @@ export const getAllFeedsList = createAsyncThunk(
             ? await getAllPostsByUserId(params.page, params.limit, params.uerId, "userId")
             : params.activePage == "group"
               ? await getAllPostsByUserId(params.page, params.limit, params.groupId, "groupId") :
-              await getAllFeeds(params.page, params.limit)
+              params.activePage == "savedPost"
+                ? await getSavePostListApi(params.page, params.limit) :
+                await getAllFeeds(params.page, params.limit)
     return data;
   }
 );

@@ -13,7 +13,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
-  // const loader = useSelector((state) => state?.loader?.loader)
+  //const loader = useSelector((state) => state?.loader?.loader)
   return (
     <>
       <Head>

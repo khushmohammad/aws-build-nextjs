@@ -23,6 +23,23 @@ export const createEventService = async (data) => {
   }
 };
 
+export const discoverEventService = async (eventType) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/discover`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.body;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const getAllEvents = async (eventType) => {
   const token = await getToken();
   try {
@@ -60,9 +77,8 @@ export const getEventByEventId = async (eventid) => {
 export const eventActionService = async (action, id) => {
   const token = await getToken();
   try {
-    const res = await axios.post(
+    const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/${action}/${id}`,
-      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,6 +96,42 @@ export const deleteEventService = async (eventId) => {
   try {
     const res = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/deleteEvent/${eventId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const inviteFriendOnEventService = async (eventId, payload, status) => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/user/eventAction/invitation/${eventId}`,
+      { invitee: payload, invitationStatus: status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateEventService = async (eventId, payload) => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/events/update/${eventId}`,
+      payload,
       {
         headers: {
           Authorization: `Bearer ${token}`,

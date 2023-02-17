@@ -1,9 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import Default from "../../../layouts/default";
 import Post from "../../../components/post/postView/Post";
+import { getSavePostListApi } from '../../../services/posts.service';
 
 function SavedPost() {
+
+    const [savedPost, setSavedPost] = useState([])
+
+    useEffect(() => {
+
+        const getpost = async () => {
+
+            const res = await getSavePostListApi()
+            console.log(res);
+
+        }
+        getpost()
+
+    }, [])
+
     return (
         <div>
             <Default>

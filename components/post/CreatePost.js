@@ -6,7 +6,7 @@ import FileBase64 from "react-filebase64";
 import ModalPop from "../popupModal/ModalPop.js";
 
 // images
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import small07 from "../../public/assets/images/small/07.png";
 import small08 from "../../public/assets/images/small/08.png";
 import small09 from "../../public/assets/images/small/09.png";

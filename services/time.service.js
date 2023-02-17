@@ -32,7 +32,6 @@ export const getPostTime = (time) => {
         return "date is not proper"
     }
 }
-
 export const getFormatedDate = (time) => {
 
     const crdate = new Date(time)

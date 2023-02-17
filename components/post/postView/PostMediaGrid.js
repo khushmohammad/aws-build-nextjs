@@ -1,5 +1,5 @@
 import React from 'react'
-import user01 from "../../../public/assets/images/user/01.jpg";
+import user01 from "../../../public/assets/images/user/25.png";
 import p2 from "../../../public/assets/images/page-img/p2.jpg";
 import p3 from "../../../public/assets/images/page-img/p3.jpg";
 import p4 from "../../../public/assets/images/page-img/p4.jpg";

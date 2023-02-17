@@ -99,11 +99,11 @@ export const deleteGroupByGroupId = async (groupId) => {
 };
 
 export const getAllGroups = async (page) => {
-  console.log("::", page);
+  // console.log("::", page);
   const token = await getToken();
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupInfo/getGroups?page=${page}&limit=4`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupInfo/getGroups?pageNumber=${page}&limit=4`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

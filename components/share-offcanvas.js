@@ -13,7 +13,7 @@ import icon13 from "../public/assets/images/icon/13.png";
 import { userPostshare } from "../services/posts.service";
 // import { Link } from 'react-router-dom'
 
-const ShareOffcanvas = ({ sharePostId, refreshPostListshare }) => {
+const ShareOffcanvas = ({ sharePostId, refreshPostListshare, share }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -39,7 +39,7 @@ const ShareOffcanvas = ({ sharePostId, refreshPostListshare }) => {
           className="d-flex align-items-center"
         >
           <span className="material-symbols-outlined md-18">share</span>
-          <span className="ms-1">99 Share</span>
+          <span className="ms-1">{share.length} Share</span>
         </Link>
       </div>
       <Offcanvas show={show} onHide={handleClose} placement="bottom">

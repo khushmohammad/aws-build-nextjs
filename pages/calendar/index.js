@@ -25,34 +25,93 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getEvents } from "../../store/events";
 import { useRouter } from "next/router";
+import { getAllBirthdays } from "../../store/friends";
 
 const CalendarPage = () => {
   const [show, setShow] = useState(false);
   const [todaysEvents, setTodaysEvents] = useState([]);
   const [value, onChange] = useState(new Date());
+  const [birthdayData, setBirthdayData] = useState([]);
+  const [allEventData, setAllEventData] = useState([]);
 
   const dispatch = useDispatch();
   const router = useRouter();
 
+  useEffect(() => {
+    dispatch(getAllBirthdays());
+  }, []);
+
   const events = useSelector((state) => state?.events?.allEvents);
+  const friendsBirthdays = useSelector((state) => state?.friends?.birthdays);
+
+  const nthNumber = (number) => {
+    if (number > 3 && number < 21) return "th";
+    switch (number % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  useEffect(() => {
+    let data = { id: "", title: "", start: "", backgroundColor: "cyan" };
+
+    friendsBirthdays &&
+      friendsBirthdays.length !== 0 &&
+      friendsBirthdays.map((birthday, index) => {
+        const date = new Date(birthday?.myFriends[index]?.dateOfBirth);
+        let age = new Date().getFullYear() - date.getFullYear() + 1;
+        date.setFullYear(
+          new Date().getFullYear(),
+          date.getMonth(),
+          date.getDate() - 1
+        );
+
+        data.title = `${
+          birthday?.myFriends[index]?.firstName
+        }'s ${age}${nthNumber(age)} birthday`;
+        data.start = date;
+        data.id = birthday?.myFriends[index]?._id;
+      });
+
+    setBirthdayData([data]);
+  }, [friendsBirthdays]);
+
+  useEffect(() => {
+    setAllEventData([...events, ...birthdayData]);
+  }, birthdayData);
 
   useEffect(() => {
     dispatch(getEvents("hosting"));
 
     const today = new Date();
-    const filteredEvents = events.filter((event) => {
-      const eventDate = new Date(event.start);
-      return (
-        eventDate.getFullYear() === today.getFullYear() &&
-        eventDate.getMonth() === today.getMonth() &&
-        eventDate.getDate() === today.getDate()
-      );
-    });
+    const filteredEvents =
+      allEventData &&
+      allEventData.length !== 0 &&
+      allEventData?.filter((event) => {
+        const eventDate = new Date(event.start);
+        return (
+          eventDate.getFullYear() === today.getFullYear() &&
+          eventDate.getMonth() === today.getMonth() &&
+          eventDate.getDate() === today.getDate()
+        );
+      });
     setTodaysEvents(filteredEvents);
   }, [events]);
 
   const handleEventClick = (clickInfo) => {
     alert(clickInfo.event.title);
+    console.log(clickInfo.event.id);
+    if (birthdayData.some((el) => el.id === clickInfo.event.id)) {
+      router.push(`/friends/${clickInfo.event.id}`);
+    } else {
+      router.push(`/events/${clickInfo.event.id}`);
+    }
   };
 
   const handleEvents = (events) => {
@@ -96,25 +155,27 @@ const CalendarPage = () => {
                   </Card.Header>
                   <Card.Body>
                     <ul className="m-0 p-0 today-schedule">
-                      {todaysEvents?.map((e, i) => (
-                        <li key={i} className="d-flex">
-                          <div className="schedule-icon">
-                            <i
-                              className="material-symbols-outlined md-18"
-                              style={{ color: `${e.backgroundColor}` }}
-                            >
-                              fiber_manual_record
-                            </i>
-                          </div>
-                          <div className="schedule-text">
-                            <span className="text-capitalize">{e.title}</span>
-                            <span>
-                              {moment(e.start).format("LT")} -{" "}
-                              {moment(e.end).format("LT")}
-                            </span>
-                          </div>
-                        </li>
-                      ))}
+                      {todaysEvents &&
+                        todaysEvents.length !== 0 &&
+                        todaysEvents?.map((e, i) => (
+                          <li key={i} className="d-flex">
+                            <div className="schedule-icon">
+                              <i
+                                className="material-symbols-outlined md-18"
+                                style={{ color: `${e.backgroundColor}` }}
+                              >
+                                fiber_manual_record
+                              </i>
+                            </div>
+                            <div className="schedule-text">
+                              <span className="text-capitalize">{e.title}</span>
+                              <span>
+                                {moment(e.start).format("LT")} -{" "}
+                                {moment(e.end).format("LT")}
+                              </span>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   </Card.Body>
                 </Card>
@@ -152,7 +213,7 @@ const CalendarPage = () => {
                         center: "title",
                         right: "dayGridMonth,dayGridWeek,dayGridDay,listWeek",
                       }}
-                      events={events}
+                      events={allEventData}
                       eventLimit={3}
                       editable={true}
                       selectable={true}
@@ -161,9 +222,7 @@ const CalendarPage = () => {
                       weekends={true}
                       nowIndicator
                       dateClick={(e) => console.log(e.dateStr)}
-                      eventClick={(e) => {
-                        router.push(`/events/${e.event.id}`);
-                      }}
+                      eventClick={(e) => handleEventClick(e)}
                       // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
                     />
                   </Card.Body>

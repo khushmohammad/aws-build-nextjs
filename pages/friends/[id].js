@@ -7,8 +7,8 @@ import ShareOffcanvas from "../../components/share-offcanvas";
 
 // images
 import img1 from "../../public/assets/images/page-img/profile-bg1.jpg";
-import user1 from "../../public/assets/images/user/1.jpg";
-import user05 from "../../public/assets/images/user/05.jpg";
+import user1 from "../../public/assets/images/user/25.png";
+import user05 from "../../public/assets/images/user/25.png";
 import user06 from "../../public/assets/images/user/06.jpg";
 import user07 from "../../public/assets/images/user/07.jpg";
 import user08 from "../../public/assets/images/user/08.jpg";
@@ -57,7 +57,7 @@ const FriendProfile = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  //console.log("ididd", id);
+  console.log("ididd", id);
 
   const userDetail = useSelector((state) => state?.user?.userInfo);
   const postsLength = useSelector((state) => state?.allFeed?.postcount);
@@ -121,7 +121,7 @@ const FriendProfile = () => {
                       <div className="profile-detail">
                         <h3>
                           {userDetail?.userInfo?.firstName}{" "}
-                          {userDetail?.userInfo?.middleName || ''}{" "}
+                          {userDetail?.userInfo?.middleName}{" "}
                           {userDetail?.userInfo?.lastName}
                         </h3>
                       </div>
@@ -247,7 +247,7 @@ const FriendProfile = () => {
                         </p>
                       </li>
                       {userDetail?.maritalStatusInfo &&
-                        userDetail?.maritalStatusInfo?.dropdownValue ? (
+                      userDetail?.maritalStatusInfo?.dropdownValue ? (
                         <li className="d-flex align-items-center">
                           <span className="material-symbols-outlined md-18">
                             favorite_border

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
-import user2 from "../../public/assets/images/user/1.jpg";
+import user2 from "../../public/assets/images/user/25.png";
 import { getCommentbyPostId, postCommentByPostId } from '../../services/posts.service';
 
 function Commentapi() {

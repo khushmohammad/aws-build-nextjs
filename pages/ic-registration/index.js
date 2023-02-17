@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { registerIcUser } from "../../services/groups.service";
 import Head from "next/head";
-import user2 from "../../public/assets/images/user/1.jpg";
+import user2 from "../../public/assets/images/user/25.png";
 import { useDispatch, useSelector } from "react-redux";
 const FILE_SIZE = 20480;
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/pdf", "image/png"];

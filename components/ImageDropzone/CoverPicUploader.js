@@ -51,6 +51,11 @@ export const CoverPicUploader = (props) => {
     }
   };
 
+  const closeModel = () => {
+    props.onHide();
+    setImgSrc("");
+  };
+
   const onCropChange = (crop) => {
     setCrop(crop);
   };
@@ -82,7 +87,7 @@ export const CoverPicUploader = (props) => {
           <button
             type="button"
             className="btn btn-secondary lh-1 "
-            onClick={props.onHide}
+            onClick={closeModel}
           >
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -189,7 +194,7 @@ export const CoverPicUploader = (props) => {
                   />
                 </div>
                 <div className="d-flex justify-content-end">
-                  <button className="btn btn-danger" onClick={props.onHide}>
+                  <button className="btn btn-danger" onClick={closeModel}>
                     Cancel
                   </button>
                   <button

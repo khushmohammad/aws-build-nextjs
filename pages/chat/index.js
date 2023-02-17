@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { Row, Col, Form, Tab, Nav, Button, Dropdown } from 'react-bootstrap'
+import { Row, Col, Form, Tab, Nav, Button, Dropdown, DropdownButton } from 'react-bootstrap'
 import Card from '../../components/Card'
 import CustomToggle from '../../components/dropdowns'
 import Image from 'next/image'
 //img
-import user1 from '../../public/assets/images/user/1.jpg'
-import user5 from '../../public/assets/images/user/05.jpg'
+import user1 from '../../public/assets/images/user/25.png'
+import user5 from '../../public/assets/images/user/25.png'
 
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -35,73 +35,63 @@ const Chat = () => {
 
 
     // <<<<>>>> socket start
-    //const socket = useRef(); 
+    //const socket = useRef(); \
+    // console.log(socket, "socket");
     const [messages, setMessages] = useState([])
     const [newMessages, setNewMessages] = useState({})
 
     const receiverUserId = chatId
     const senderUserId = user?.userInfo._id
     const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId }
+
+    const joinSocket = async () => {
+        const res = await socket.emit("joinSocket", JoinRoom);
+        if (res.connected == true) {
+            receiverUserId && getCurrentMessages(receiverUserId)
+            socket.on("getMessage", (data) => {
+                //  console.log(data, "data");
+                const newMsg = { _id: data.messageId, message: data.message, senderId: data.senderId, createdAt: data.createdAt }
+                setNewMessages(newMsg)
+            })
+        }
+    }
     useEffect(() => {
         joinSocket()
     }, [chatId || '']);
+    useEffect(() => {
+        chatId && joinSocket()
+    }, []);
+
 
     const getCurrentMessages = async () => {
         const result = await getMesasgesByreceiverId(receiverUserId)
-        //  console.log(result, "result");
+        console.log(result, "result");
         if (result && result?.status === 200) {
             // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
             result?.data?.body?.data?.length != undefined ? setMessages(result?.data?.body?.data) : setMessages('')
         }
     }
 
-
-    const joinSocket = async () => {
-        const res = await socket.emit("joinSocket", JoinRoom);
-
-
-        if (res.connected == true) {
-            receiverUserId && getCurrentMessages(receiverUserId)
-            socket.on("getMessage", (data) => {
-                //  console.log(data, "data");
-                const newMsg = { message: data.message, senderId: data.senderId }
-                setNewMessages(newMsg)
-
-            })
-        }
-        console.log(res, "res");
-    }
-
-
-
-
     const sendMessage = async (NewMessage) => {
         const SendMesageToUserOBj = { senderId: senderUserId, receiverId: receiverUserId, message: NewMessage }
-
+        // console.log(NewMessage, SendMesageToUserOBj, "SendMesageToUserOBj");
         socket.emit("sendMessage", SendMesageToUserOBj);
         socket.on("getMessage", (data) => {
-            //  console.log(data, "data");
-            const newMsg = { message: data.message, senderId: data.senderId }
+            console.log(data, "data");
+            const newMsg = { _id: data.messageId, message: data.message, senderId: data.senderId, createdAt: new Date().toJSON() }
+            console.log(newMsg);
             setNewMessages(newMsg)
-
         })
     };
 
 
-    // const userDetails = async (senderId) => {
-    //     const res = await getUserDetailsByUserId([senderId])
-    //     console.log(res);
-    // }
+
+
     useEffect(() => {
         messages && setMessages([...messages, newMessages])
-        // userDetails(newMessages.senderId)
     }, [newMessages])
 
-    // console.log(newMessages, "newMessages");
-
-
-    // console.log(messages, "messages");
-
+    //console.log(newMessages, "newMessages");
     // <<<<<>>>>>>>>> close Socket
 
 
@@ -116,7 +106,7 @@ const Chat = () => {
 
     const changeRoom = (tab) => {
         setKey(tab)
-        router.push(`/chat?chatId=${tab}`)
+        router.push(`chat?chatId=${tab}`)
     }
     useEffect(() => {
         chatId ? setKey(chatId) : setKey("start")
@@ -222,10 +212,10 @@ const Chat = () => {
                                                                             <h6 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h6>
                                                                             {/* <span>Lorem Ipsum is</span> */}
                                                                         </div>
-                                                                        {/* <div className="chat-meta float-right text-center mt-2 me-1">
+                                                                        <div className="chat-meta float-right text-center mt-2 me-1">
                                                                             <div className="chat-msg-counter bg-primary text-white">20</div>
                                                                             <span className="text-nowrap">05 min</span>
-                                                                        </div> */}
+                                                                        </div>
                                                                     </div>
                                                                 </Nav.Link>
                                                             </Nav.Item>
@@ -342,28 +332,13 @@ const Chat = () => {
                                                             <div className="chat-content scroller" >
 
                                                                 {messages && messages.length !== 0 && (messages).map((data, index) => {
-
+                                                                    // console.log(messages.length, messages);
 
                                                                     return (
                                                                         <React.Fragment key={index}>
-                                                                            {data && <div className={`chat ${data.senderId === senderUserId ? 'd-flex other-user' : 'chat-left'}`}>
-                                                                                <div className="chat-user">
-                                                                                    <Link className="avatar m-0" href="">
-                                                                                        <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
-                                                                                    </Link>
-                                                                                    <span className="chat-time mt-1">
-                                                                                        <p className="mb-0 text-primary">
-                                                                                            {/* {data && getPostTime(data.createdAt) || ""} */}
-                                                                                            6:45
-                                                                                        </p>
-                                                                                    </span>
-                                                                                </div>
-                                                                                <div className="chat-detail">
-                                                                                    <div className="chat-message">
-                                                                                        <p>{data.message}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>}
+                                                                            {data &&
+                                                                                <MessageView message={data} receiverId={receiverUserId} senderId={senderUserId} />
+                                                                            }
                                                                         </React.Fragment>
                                                                     )
                                                                 })}
@@ -392,6 +367,79 @@ const Chat = () => {
     )
 }
 
+
+const MessageView = ({ message, senderId, receiverId }) => {
+    const data = message
+
+    const user = useSelector((state) => state.user.data);
+
+    const [isDeleted, setIsDeleted] = useState([]);
+
+    const deleteMessage = async (messageId) => {
+
+        const deleteMesageOBj = { userId: senderId, receiverId: receiverId, messageIds: messageId }
+        console.log(deleteMesageOBj, "deleteMesageOBj");
+        socket.emit("deleteMessage", deleteMesageOBj);
+        socket.on("messagesDeleted", (deleteData) => {
+            setIsDeleted({ [deleteData.messageIds[0]]: true });
+        }
+        )
+        // setIsDeleted({ 1: true })
+    };
+
+    useEffect(() => {
+        socket.on("messagesDeleted", (deleteData) => {
+            setIsDeleted({ [deleteData.messageIds[0]]: true });
+        }
+        )
+
+    }, [socket])
+
+
+    return (
+        <>
+            {isDeleted[data._id] ? "" :
+                <>
+                    <div className={`chat ${data.senderId === senderId ? 'd-flex other-user ' : 'chat-left'} align-items-center my-3`}>
+                        <div className="chat-user">
+                            <Link className="avatar m-0" href="">
+                                <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
+                            </Link>
+                            <span className="chat-time mt-1">
+                                <p className="mb-0 text-primary">
+                                    {data && getPostTime(data.createdAt) || ""}
+
+                                </p>
+                            </span>
+                        </div>
+                        <div className="chat-detail m-2">
+                            <div className="chat-message m-0">
+                                <p>{data.message}</p>
+                                {/* <p className='' >{data._id}</p> */}
+
+                            </div>
+                        </div><span role="button" className="material-symbols-outlined">
+
+                        </span>
+                        <Dropdown className="d-flex justify-content-center align-items-center" as="span">
+                            <Dropdown.Toggle as={CustomToggle} variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show">
+                                more_vert
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu className="dropdown-menu-right">
+                                <Dropdown.Item className="d-flex align-items-center" href="#" onClick={() => deleteMessage(data._id)}><i className="material-symbols-outlined md-18 me-1">delete</i>Delete </Dropdown.Item>
+
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
+                </>
+
+            }
+
+
+
+        </>
+    )
+}
 
 const SendMessageInput = ({ sendMsg }) => {
 

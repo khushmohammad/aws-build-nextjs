@@ -7,7 +7,7 @@ import FileBase64 from "react-filebase64";
 import Link from "next/link";
 
 // images
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import small1 from "../../public/assets/images/small/07.png";
 import small2 from "../../public/assets/images/small/08.png";
 import small3 from "../../public/assets/images/small/09.png";

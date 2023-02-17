@@ -6,7 +6,7 @@ import ShareOffcanvas from "../../components/share-offcanvas";
 
 //image
 import img1 from "../../public/assets/images/page-img/gi-1.jpg";
-import user1 from "../../public/assets/images/user/05.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import user2 from "../../public/assets/images/user/06.jpg";
 import user3 from "../../public/assets/images/user/07.jpg";
 import user4 from "../../public/assets/images/user/08.jpg";

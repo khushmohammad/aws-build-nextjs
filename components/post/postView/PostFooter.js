@@ -8,7 +8,7 @@ import icon4 from "../../../public/assets/images/icon/04.png";
 import icon5 from "../../../public/assets/images/icon/05.png";
 import icon6 from "../../../public/assets/images/icon/06.png";
 import icon7 from "../../../public/assets/images/icon/07.png";
-import user2 from "../../../public/assets/images/user/1.jpg";
+import user2 from "../../../public/assets/images/user/25.png";
 import user3 from "../../../public/assets/images/user/03.jpg";
 
 import ShareOffcanvas from '../../share-offcanvas';
@@ -26,7 +26,7 @@ import Commentapi from './Commentapi';
 
 
 
-function PostFooter({ currentPostId, refreshPostList }) {
+function PostFooter({ currentPostId, refreshPostList ,share }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([])
   const [apiError, setApiError] = useState('')
   const loginUserId = useSelector((state) => state?.user?.data?.userInfo._id)
@@ -257,7 +257,7 @@ function PostFooter({ currentPostId, refreshPostList }) {
             {currentPostId &&
               <TotalCommentBlock postId={currentPostId} />}
           </div>
-          <ShareOffcanvas sharePostId={currentPostId} refreshPostListshare={refreshPostList} />
+          <ShareOffcanvas sharePostId={currentPostId} refreshPostListshare={refreshPostList} share={share} />
         </div>
         <hr />
         {currentPostId &&

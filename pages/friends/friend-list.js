@@ -12,10 +12,9 @@ import ProfileHeader from "../../components/profile-header";
 import img1 from "../../public/assets/images/page-img/profile-bg1.jpg";
 import img3 from "../../public/assets/images/page-img/profile-bg3.jpg";
 
-import user05 from "../../public/assets/images/user/05.jpg";
+import user05 from "../../public/assets/images/user/25.png";
 
 import { useSelector } from "react-redux";
-import { getFriendListWithUserData } from "../../services/friends.service";
 import Head from "next/head";
 
 const FriendList = () => {

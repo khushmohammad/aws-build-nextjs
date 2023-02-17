@@ -1,9 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllEvents, getEventByEventId } from "../../services/event.service";
+import {
+  discoverEventService,
+  getAllEvents,
+  getEventByEventId,
+  inviteFriendOnEventService,
+} from "../../services/event.service";
 
 const initialState = {
   allEvents: [],
   eventDetail: null,
+  eventInviteeList: null,
 };
 
 const EventSlice = createSlice({
@@ -16,6 +22,12 @@ const EventSlice = createSlice({
       })
       .addCase(getEventDetail.fulfilled, (state, action) => {
         state.eventDetail = action.payload;
+      })
+      .addCase(discoverEvents.fulfilled, (state, action) => {
+        state.allEvents = action.payload;
+      })
+      .addCase(inteveFriendOnEvent.fulfilled, (state, action) => {
+        state.eventInviteeList = action.payload;
       });
   },
 });
@@ -33,6 +45,19 @@ export const getEventDetail = createAsyncThunk(
   async (eventid) => {
     const data = await getEventByEventId(eventid);
     return data;
+  }
+);
+
+export const discoverEvents = createAsyncThunk("events/discover", async () => {
+  const data = await discoverEventService();
+  return data;
+});
+
+export const inteveFriendOnEvent = createAsyncThunk(
+  "events/invitee",
+  async ({ eventid, friendId, status }) => {
+    const res = await inviteFriendOnEventService(eventid, friendId, status);
+    return res;
   }
 );
 

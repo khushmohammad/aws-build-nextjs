@@ -407,7 +407,7 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
   // console.log(payloadData, "payloadData");
   var data = new FormData();
   data.append("commentOrReplyId", commentId);
- // data.append("postId", postId);
+  // data.append("postId", postId);
   try {
     const res = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/post/deleteCommentByCommentId`,
@@ -519,4 +519,53 @@ export const savePostApi = async (postId) => {
   }
 };
 
+export const getSavePostListApi = async (
+  page = 1,
+  limit = 10,
+) => {
+  const token = await getToken();
+
+  // const page = pageName
+
+  // console.log(token);
+  //console.log(userId,"userId");
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/getAllSavedPosts?pageNumber=${page}&limit=${limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      // await response?.data?.body?.allBody?.totalDocs
+      const newarray = await Promise.all(
+        postslist.map(async (postData) => {
+          const res = await getUserInfoByUserId(postData.userId);
+          const userData = await res?.data?.body;
+          const newdata = await { ...postData, postCreatedBy: userData };
+          return newdata;
+        })
+      );
+      return { newarray, PostCount };
+    }
+  } catch (err) {
+    // try {
+    //   const response = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getAllPostsByUserId?page=${page}&limit=${limit}`,
+    //     {
+    //       headers: { Authorization: `Bearer ${token}` },
+    //     }
+    //   );
+    //   return response;
+    // }
+    console.log(err);
+    const status = err.response.status;
+    const message = err.response.data;
+
+    return { message, status };
+  }
+};
 

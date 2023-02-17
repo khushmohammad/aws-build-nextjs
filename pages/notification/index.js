@@ -1,29 +1,79 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Col, Container, Dropdown, Card } from 'react-bootstrap'
 import Link from 'next/link'
 
 // img
-import user1 from '../../public/assets/images/user/1.jpg'
+import user1 from '../../public/assets/images/user/25.png'
 
 import Default from '../../layouts/default'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
-import { getNotification, notification } from '../../store/site/Notification'
+import { getNotification } from '../../store/site/Notification'
 import { getPostTime } from '../../services/time.service'
 import NotificationMessage from '../../components/notification/NotificationMessage'
+import { io } from "socket.io-client";
+const socket = io.connect("http://localhost:3011");
+
 
 const Notification = () => {
 
+
+   console.log(socket, "socket");
+   const userId = useSelector((state) => state?.user?.data?._id)
    const dispatch = useDispatch()
    const notificationlist = useSelector((state) => state?.notification?.list)
+
+
+   const [newNotification, setNewNotification] = useState('')
+
+   userId && socket.emit('join', { id: userId });
+
+   //console.log(userId, "userId");
+   useEffect(() => {
+      dispatch(getNotification())
+
+      socket.on("new_notification", (data) => {
+         console.log(data, "data");
+         setNewNotification(data)
+
+      })
+
+   }, [newNotification])
+
+
+
 
 
    useEffect(() => {
       dispatch(getNotification())
 
+      userId && socket.emit('join', { id: userId });
+
+      socket.on('new_notification', (data) => {
+         // Handle the data received
+         console.log(data, "nitification");
+      });
+
+      // socket.on("new_notification", (data) => {
+      //    console.log(data, "data");
+      //    setNewNotification(data)
+
+
+      // })
+
    }, [])
 
+   useEffect(() => {
+      socket.on('new_notification', (data) => {
+         // Handle the data received
+         console.log(data, "nitification");
+      });
 
+
+
+   }, [socket])
+
+   console.log(newNotification);
 
 
    return (

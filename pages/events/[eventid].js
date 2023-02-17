@@ -68,7 +68,8 @@ const EventDetail = () => {
   const deleteEvent = async (eventId) => {
     const res = await deleteEventService(eventId);
     if (res?.success === true) {
-      router.push("/events");
+      dispatch(getEvents("hosting"));
+      router.push("/events#pill-eventHosting");
     }
   };
 
@@ -76,14 +77,15 @@ const EventDetail = () => {
     <>
       <GuestList show={show} onHide={() => setShow(false)} />
       <InviteFriendOnEvent
+        eventid={eventid}
         show={showFriendList}
         onHide={() => setShowFriendList(false)}
       />
       <Default className="p-0">
-        <div className="position-relative">
+        <div className="position-relative event-detail-banner">
           <div className="container event-date-container">
             <h3 className="event-date position-relative">
-              {new Date(eventDetail?.eventInfo?.start).getDate()}
+              {new Date(eventDetail?.eventInfo?.start).getDate() || 0}
             </h3>
           </div>
           <ProfileHeader
@@ -104,7 +106,7 @@ const EventDetail = () => {
                 {eventDetail?.eventInfo?.location}
               </p>
             </div>
-            <div className="d-flex justify-content-between align-items-end flex-column flex-lg-row">
+            <div className="d-flex justify-content-between align-items-lg-end flex-column flex-lg-row">
               <Tab.Container defaultActiveKey="f1">
                 <nav className="tab-bottom-bordered mb-3 mb-lg-0">
                   <Nav variant="tabs" className="mb-0 rounded-top border-0">

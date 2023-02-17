@@ -258,8 +258,8 @@ const UserProfileEdit = () => {
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
-                                    // blurDataURL={profileImage}
-                                    // placeholder="blur"
+                                  // blurDataURL={profileImage}
+                                  // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -293,8 +293,8 @@ const UserProfileEdit = () => {
                                     style={{
                                       width: "100%",
                                     }}
-                                    // blurDataURL={profileImage}
-                                    // placeholder="blur"
+                                  // blurDataURL={profileImage}
+                                  // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -439,6 +439,7 @@ const UserProfileEdit = () => {
                                 Nick Name
                               </Form.Label>
                             </Form.Floating>
+                            {console.log(userProfileData, "userProfileData")}
                             <Form.Floating className="form-group col-sm-12">
                               <Form.Control
                                 {...register("profileDescription")}
@@ -473,9 +474,9 @@ const UserProfileEdit = () => {
                               </Form.Label>
                               <fieldset
                                 className="form-group"
-                                // value={user.userInfo.gender}
-                                // checked={user.userInfo.gender}
-                                // onChange={onChange}
+                              // value={user.userInfo.gender}
+                              // checked={user.userInfo.gender}
+                              // onChange={onChange}
                               >
                                 <div>
                                   <div className="form-check custom-radio form-check-inline">
@@ -655,7 +656,7 @@ const UserProfileEdit = () => {
                                             },
                                           });
                                       }}
-                                      // defaultInputValue={{ value: 101, label: "sdjfl" }}
+                                    // defaultInputValue={{ value: 101, label: "sdjfl" }}
                                     />
                                   )}
                                 />
@@ -731,7 +732,7 @@ const UserProfileEdit = () => {
                                         city: e?.value?.toString(),
                                       });
                                   }}
-                                  // defaultInputValue={{ value: 101, label: "sdjfl" }}
+                                // defaultInputValue={{ value: 101, label: "sdjfl" }}
                                 />
                               </div>
 
@@ -810,9 +811,8 @@ const UserProfileEdit = () => {
                           <div className="p-4 pt-0">
                             <Button
                               type="submit"
-                              className={`btn btn-primary me-2 ${
-                                patchForData == "" ? "disabled" : ""
-                              } `}
+                              className={`btn btn-primary me-2 ${patchForData == "" ? "disabled" : ""
+                                } `}
                             >
                               Submit
                             </Button>

@@ -15,7 +15,7 @@ import img5 from "../../public/assets/images/icon/10.png";
 import img6 from "../../public/assets/images/icon/11.png";
 import img7 from "../../public/assets/images/icon/12.png";
 import img8 from "../../public/assets/images/icon/13.png";
-import user01 from "../../public/assets/images/user/01.jpg";
+import user01 from "../../public/assets/images/user/25.png";
 import user02 from "../../public/assets/images/user/02.jpg";
 import user03 from "../../public/assets/images/user/03.jpg";
 
@@ -399,21 +399,21 @@ const UserProfile = () => {
                                     Hobbies and Interests
                                   </Nav.Link>
                                 </Nav.Item>
-                                <Nav.Item>
+                                {/* <Nav.Item>
                                   <Nav.Link href="#" eventKey="about3">
                                     Family and Relationship
                                   </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
+                                </Nav.Item> */}
+                                {/* <Nav.Item>
                                   <Nav.Link href="#" eventKey="about4">
                                     Work and Education
                                   </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
+                                </Nav.Item> */}
+                                {/* <Nav.Item>
                                   <Nav.Link href="#" eventKey="about5">
                                     Languages Known
                                   </Nav.Link>
-                                </Nav.Item>
+                                </Nav.Item> */}
                               </Nav>
                             </Card.Body>
                           </Card>

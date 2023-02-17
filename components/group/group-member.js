@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 
 // images
-import user5 from "../../public/assets/images/user/05.jpg";
+import user5 from "../../public/assets/images/user/25.png";
 
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";

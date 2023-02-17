@@ -8,7 +8,7 @@ import Image from "next/image";
 import loader from "../../public/assets/images/page-img/page-load-loader.gif";
 import img1 from "../../public/assets/images/page-img/profile-bg2.jpg";
 
-import user05 from "../../public/assets/images/user/05.jpg";
+import user05 from "../../public/assets/images/user/25.png";
 
 import { useDispatch, useSelector } from "react-redux";
 import { SendAndCancelFriendRequest } from "../../services/friends.service";

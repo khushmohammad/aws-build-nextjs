@@ -1,24 +1,39 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
-import user2 from "../../../public/assets/images/user/1.jpg";
+import user2 from "../../../public/assets/images/user/25.png";
 import { getCommentbyPostId, mergeUserBasicDetails, postCommentByPostId, postCommentDeletebyPostId } from '../../../services/posts.service';
 import ConfirmModelReturn from '../../modals/ConfirmModelReturn';
+import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+const schema = yup.object({
+    commentInputText: yup.string().required("Please write comment !"),
 
+}).required();
 
 function Commentapi({ postId }) {
 
-    const [commentInputText, setCommentInputText] = useState('')
+    // const [commentInputText, setCommentInputText] = useState('')
     const [commentlist, setCommentlist] = useState([])
 
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        resolver: yupResolver(schema)
+    });
+    const onSubmit = data => console.log(data);
+
+
     const onFormSubmit = async (e) => {
-        e.preventDefault();
-        const res = await postCommentByPostId(postId, commentInputText, 0, null)
-        const result = await res?.data?.body
-        const withUserDetails = await mergeUserBasicDetails([result])
-        // console.log(withUserDetails, "withUserDetails")
-        commentlist && commentlist.length == 0 ? setCommentlist(withUserDetails[0]) : setCommentlist([...commentlist || [], withUserDetails[0]])
-        setCommentInputText('')
+        if (e.commentInputText !== '') {
+            const res = await postCommentByPostId(postId, e.commentInputText, 0, null)
+            const result = await res?.data?.body
+            const withUserDetails = await mergeUserBasicDetails([result])
+
+            commentlist && commentlist.length == 0 ? setCommentlist(withUserDetails[0]) : setCommentlist([...commentlist || [], withUserDetails[0]])
+            // setCommentInputText('')
+
+            reset()
+        }
     }
 
     const getCommentList = async () => {
@@ -44,8 +59,6 @@ function Commentapi({ postId }) {
                                 {commentlist &&
                                     <>
                                         <CommentList postId={postId} comment={comment} refreshcommetlist={getCommentList} />
-
-
                                     </>
                                 }
 
@@ -54,8 +67,14 @@ function Commentapi({ postId }) {
                     })
                     }
                     <div className='w-100'>
-                        <form onSubmit={onFormSubmit} >
-                            <input type="text" value={commentInputText} onChange={(e) => setCommentInputText(e.target.value)} className="form-control rounded" placeholder="Enter Your Comment" />
+                        {/* <form onSubmit={handleSubmit(onSubmit)}>
+                            <input {...register("firstName")} />
+                            <p>{errors.firstName?.message}</p>
+                        </form> */}
+
+                        <form onSubmit={handleSubmit(onFormSubmit)} >
+                            <input type="text" {...register("commentInputText")} defaultValue={""} className="form-control rounded" placeholder="Enter Your Comment" />
+                            <p className='text-primary'>{errors.commentInputText?.message}</p>
                         </form>
                     </div>
 
@@ -117,12 +136,13 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
 
     const FormSubmit = async (e) => {
         e.preventDefault()
-        const res = postId && await postCommentByPostId(postId, newReplyText, 0, comment._id)
-        const result = await res?.data?.body
-
-        setNewReply([...newReply, result])
-        setNewReplyText('')
-        setViewReplyInput(false)
+        if (newReplyText !== '') {
+            const res = postId && await postCommentByPostId(postId, newReplyText, 0, comment._id)
+            const result = await res?.data?.body
+            setNewReply([...newReply, result])
+            setNewReplyText('')
+            setViewReplyInput(false)
+        }
     }
     const [showMoreCommentReply, setshowMoreCommentReply] = useState(false)
 
@@ -136,13 +156,16 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
         if (confirm) {
             setModalShowConfirmBox(false)
             const res = await postCommentDeletebyPostId(postId, comment._id)
-            console.log(res);
-            setIsRequested((prev) =>
-                Boolean(!prev[comment._id])
-                    ? { ...prev, [comment._id]: true }
-                    : { ...prev, [comment._id]: false }
-            );
-            refreshcommetlist()
+            //  console.log(res);
+            if (res.status == 200) {
+                setIsRequested((prev) =>
+                    Boolean(!prev[comment._id])
+                        ? { ...prev, [comment._id]: true }
+                        : { ...prev, [comment._id]: false }
+                );
+                refreshcommetlist()
+            }
+
         }
     }
 
@@ -184,6 +207,7 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
 
                         <form onSubmit={FormSubmit}>
                             <input type="text" value={newReplyText} onChange={(e) => setNewReplyText(e.target.value)} className="form-control rounded ms-3" placeholder="Enter Your Comment Reply" />
+
                         </form>
                     </> : ""
                 }

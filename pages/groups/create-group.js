@@ -11,7 +11,7 @@ import FileBase64 from "react-filebase64";
 import small1 from "../../public/assets/images/small/07.png";
 import Default from "../../layouts/default";
 import { useDispatch, useSelector } from "react-redux";
-import user2 from "../../public/assets/images/user/1.jpg";
+import user2 from "../../public/assets/images/user/25.png";
 import { getGroupPrivacyKeys } from "../../store/groups";
 import Head from "next/head";
 import { useRouter } from "next/router";

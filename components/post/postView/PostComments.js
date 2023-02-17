@@ -3,7 +3,7 @@ import { getPostTime } from '../../../services/time.service';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import user2 from "../../../public/assets/images/user/1.jpg";
+import user2 from "../../../public/assets/images/user/25.png";
 import Link from 'next/link';
 import Image from 'next/image';
 import { getCommentbyPostId, mergeUserBasicDetails, postCommentByPostId } from '../../../services/posts.service';

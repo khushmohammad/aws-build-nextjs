@@ -12,11 +12,11 @@ import {
 } from "react-bootstrap";
 
 //image
-import user1 from "../../../../public/assets/images/user/1.jpg";
+import user1 from "../../../../public/assets/images/user/25.png";
 import user2 from "../../../../public/assets/images/user/02.jpg";
 import user3 from "../../../../public/assets/images/user/03.jpg";
 import user4 from "../../../../public/assets/images/user/04.jpg";
-import user5 from "../../../../public/assets/images/user/05.jpg";
+import user5 from "../../../../public/assets/images/user/25.png";
 import user6 from "../../../../public/assets/images/page-img/19.jpg";
 import user7 from "../../../../public/assets/images/page-img/18.jpg";
 import user8 from "../../../../public/assets/images/page-img/20.jpg";
@@ -894,7 +894,7 @@ const Header = () => {
                               <div className="mb-0 h6">Logout</div>
                             </div>
                           </Link>
-                          <div className=" iq-sub-card">
+                          {/* <div className=" iq-sub-card">
                             <h5>Chat Settings</h5>
                           </div>
                           <div className="d-flex align-items-center iq-sub-card border-0">
@@ -920,7 +920,7 @@ const Header = () => {
                               circle
                             </i>
                             <div className="ms-3">Invisible</div>
-                          </div>
+                          </div> */}
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>

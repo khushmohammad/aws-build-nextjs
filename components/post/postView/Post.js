@@ -14,7 +14,7 @@ import PostContentSection from "./PostContentSection";
 import PostFooter from "./PostFooter";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllFeedsList } from "../../../store/post/allFeeds";
-import user2 from "../../../public/assets/images/user/1.jpg";
+import user2 from "../../../public/assets/images/user/25.png";
 import { getPostTime } from "../../../services/time.service";
 import CreatePost from "../CreatePost";
 import { getGroupFeeds } from "../../../store/groups";
@@ -53,6 +53,16 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
     } else if (activePage == "PostDetail") {
       setposts([]);
       setposts([postDetailObj]);
+    } else if (activePage == "savedPost") {
+
+
+      dispatch(
+        getAllFeedsList({
+          activePage: activePage,
+          page: pagenum,
+          limit: limitnum,
+        })
+      );
     } else {
       dispatch(
         getAllFeedsList({
@@ -71,8 +81,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-        ? setposts((prev) => [...prev, ...StorePosts])
-        : "";
+          ? setposts((prev) => [...prev, ...StorePosts])
+          : "";
     }
   }, [StorePosts]);
 
@@ -107,13 +117,13 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
   return (
     <div>
-      {activePage != "PostDetail" && (
+      {activePage != "PostDetail" && activePage != 'savedPost' ? (
         <CreatePost
           refreshPostList={() => GetPostNet()}
           groupId={groupId}
           userId={userId}
         />
-      )}
+      ) : ""}
       <div style={{ position: "relative", marginBottom: "7rem" }}>
         {posts &&
           Array.isArray(posts) &&
@@ -126,6 +136,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
               fileInfo,
               isPin,
               is_SelfPost,
+              share
             } = data;
 
             const userDetails = data && data?.postCreatedBy;
@@ -203,6 +214,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                     <PostFooter
                       currentPostId={_id}
                       refreshPostList={onClickRefreshPostList}
+                      share={share}
                     />
                   )}
                 </Card.Body>

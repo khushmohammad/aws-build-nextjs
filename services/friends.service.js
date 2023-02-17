@@ -182,18 +182,54 @@ export const getNonFriendList = async (pageNumber = 1, limit = 10) => {
       },
     }
   );
-  return res?.data?.body;
+  if (res.status == 200) {
+    return res.data.body;
+  } else {
+    return [];
+  }
+
 };
 
 export const friendsBirthdayList = async () => {
   const token = await getToken();
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friends/birthdays`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return res?.data?.body;
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friends/birthdays`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res?.data?.body;
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+
+export const getPendingRequestFriendListApi = async () => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId`, "",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    //  console.log(res?.data?.body);
+    if (res.status == 200) {
+      return res?.data?.body;
+
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+

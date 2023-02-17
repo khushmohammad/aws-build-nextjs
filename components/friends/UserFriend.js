@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import Card from "../Card";
 import { useSelector } from "react-redux";
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 
 const UserFriend = () => {
   const userFriendList = useSelector(

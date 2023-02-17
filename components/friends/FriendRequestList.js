@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import { AcceptAndRejectfriendRequest } from '../../services/friends.service';
 import { getAllFriendsRequestsList } from '../../store/friends/friendsRequests';
 

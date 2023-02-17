@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useEffect } from 'react'
 import { Card } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import { getPostTime } from '../../services/time.service';
 import { getNotification } from '../../store/site/Notification';
 import NotificationMessage from './NotificationMessage';

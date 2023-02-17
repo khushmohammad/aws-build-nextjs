@@ -31,9 +31,9 @@ const RegistrationStatus = () => {
         </h2>
         <p className="text-zinc-400 h4">
           Did not recieve an email?{" "}
-          <a className="text-blue-500 underline" href="#">
+          {/* <a className="text-blue-500 underline" href="#">
             Resend
-          </a>
+          </a> */}
         </p>
       </div>
     </Auth>

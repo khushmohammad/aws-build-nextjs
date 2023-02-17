@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import user5 from "../../public/assets/images/user/05.jpg";
+import user5 from "../../public/assets/images/user/25.png";
 
 const ModalPop = (props) => {
   const [query, setQuery] = useState("");

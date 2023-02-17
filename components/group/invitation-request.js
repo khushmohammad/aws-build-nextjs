@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import user1 from "../../public/assets/images/user/1.jpg";
+import user1 from "../../public/assets/images/user/25.png";
 import { invitationAcceptAndDelineService } from "../../services/groups.service";
 import { groupInvitationList } from "../../store/groups";
 

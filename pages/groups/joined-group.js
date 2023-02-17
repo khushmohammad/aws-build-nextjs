@@ -16,7 +16,7 @@ import gi6 from "../../public/assets/images/page-img/gi-6.jpg";
 import gi7 from "../../public/assets/images/page-img/gi-7.jpg";
 import gi8 from "../../public/assets/images/page-img/gi-8.jpg";
 import gi9 from "../../public/assets/images/page-img/gi-9.jpg";
-import user05 from "../../public/assets/images/user/05.jpg";
+import user05 from "../../public/assets/images/user/25.png";
 import user06 from "../../public/assets/images/user/06.jpg";
 import user07 from "../../public/assets/images/user/07.jpg";
 import user08 from "../../public/assets/images/user/08.jpg";

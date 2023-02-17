@@ -12,27 +12,38 @@ import CustomToggle from "../../components/dropdowns";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import { useState } from "react";
-import { getEvents } from "../../store/events";
+import { discoverEvents, getEvents } from "../../store/events";
 import CreateEvent from "../../components/events";
 import { eventActionService } from "../../services/event.service";
+import { useRouter } from "next/router";
 
 const Events = () => {
   const [show, setShow] = useState(false);
   const [page, setPage] = useState(1);
-  const [eventType, setEventType] = useState("going");
+  const [eventType, setEventType] = useState("discover");
 
   const dispatch = useDispatch();
   const events = useSelector((state) => state?.events?.allEvents);
 
+  const router = useRouter();
+
   useEffect(() => {
-    dispatch(getEvents(eventType));
+    if (router.asPath === "/events#pill-eventHosting") setEventType("hosting");
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (eventType == "discover") {
+      dispatch(discoverEvents());
+    } else {
+      dispatch(getEvents(eventType));
+    }
     window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, [eventType]);
 
   const ChangeEventStatus = async (eventStaus, id) => {
     const res = await eventActionService(eventStaus, id);
-    if (res.success === true) {
-      dispatch(getEvents(eventType));
+    if (res?.success) {
+      dispatch(discoverEvents());
     }
   };
 
@@ -73,9 +84,13 @@ const Events = () => {
 
                     <Tab.Container
                       id="pills"
-                      defaultActiveKey="#pill-eventGoing"
+                      defaultActiveKey={
+                        router.asPath === "/events#pill-eventHosting"
+                          ? "#pill-eventHosting"
+                          : "#pill-discoverEvent"
+                      }
                     >
-                      <div className="d-md-flex align-items-center ">
+                      <div className="d-md-flex align-items-center">
                         {/* <Form.Group>
                           <Form.Control
                             type="datetime-local"
@@ -91,6 +106,23 @@ const Events = () => {
                           <Nav.Item
                             as="li"
                             className="p-0"
+                            onClick={() => setEventType("discover")}
+                          >
+                            <Nav.Link
+                              data-bs-toggle="pill"
+                              href="#pill-discoverEvent"
+                              data-bs-target="#discover"
+                              id="discover"
+                              role="button"
+                              aria-selected="false"
+                              tabIndex="-1"
+                            >
+                              Public Events
+                            </Nav.Link>
+                          </Nav.Item>
+                          <Nav.Item
+                            as="li"
+                            className="p-0"
                             onClick={() => setEventType("going")}
                           >
                             <Nav.Link
@@ -98,6 +130,7 @@ const Events = () => {
                               href="#pill-eventGoing"
                               data-bs-target="#topicstart"
                               role="button"
+                              id="going"
                               aria-selected="true"
                             >
                               Going
@@ -113,6 +146,7 @@ const Events = () => {
                               href="#pill-eventInvitations"
                               data-bs-target="#replies"
                               role="button"
+                              id="invitations"
                               aria-selected="false"
                               tabIndex="-1"
                             >
@@ -129,6 +163,7 @@ const Events = () => {
                               href="#pill-eventInterested"
                               data-bs-target="#likedtopic"
                               role="button"
+                              id="interested"
                               aria-selected="false"
                               tabIndex="-1"
                             >
@@ -143,8 +178,9 @@ const Events = () => {
                             <Nav.Link
                               data-bs-toggle="pill"
                               href="#pill-eventHosting"
-                              data-bs-target="#likedtopic"
+                              data-bs-target="#liktopic"
                               role="button"
+                              id="hosting"
                               aria-selected="false"
                               tabIndex="-1"
                             >
@@ -175,6 +211,7 @@ const Events = () => {
               </Card>
               <Row>
                 {events &&
+                  events.length !== 0 &&
                   events?.map((event, index) => (
                     <Col key={index} sm="6" md="6" lg="4">
                       <Card className="card-block card-stretch card-height product">
@@ -187,8 +224,8 @@ const Events = () => {
                                   className="img-fluid w-100 rounded-top"
                                   style={{ height: "220px", objectfit: "fill" }}
                                   alt="event-img"
-                                  width={100}
-                                  height={100}
+                                  width={500}
+                                  height={500}
                                 />
                               </div>
                               <div className="product-description p-3">
@@ -202,32 +239,34 @@ const Events = () => {
                               </div>
                             </Link>
                           </div>
-                          <div className="p-3 pt-0 d-flex">
-                            <Link href="#" className="w-100 me-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  ChangeEventStatus("interested", event._id)
-                                }
-                                className="btn d-flex me-2 w-100 justify-content-center btn-light"
-                              >
-                                <i className="material-symbols-outlined me-1">
-                                  star
-                                </i>
-                                Interested
-                              </button>
-                            </Link>
-                            <Link href="#">
-                              <button
-                                type="button"
-                                className="btn d-inline-flex btn-light"
-                              >
-                                <i className="material-symbols-outlined">
-                                  google_plus_reshare
-                                </i>
-                              </button>
-                            </Link>
-                          </div>
+                          {eventType !== "hosting" ? (
+                            <div className="p-3 pt-0 d-flex">
+                              <Link href="#" className="w-100 me-2">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    ChangeEventStatus("interested", event._id)
+                                  }
+                                  className="btn d-flex me-2 w-100 justify-content-center btn-light"
+                                >
+                                  <i className="material-symbols-outlined me-1">
+                                    star
+                                  </i>
+                                  Interested
+                                </button>
+                              </Link>
+                              <Link href="#">
+                                <button
+                                  type="button"
+                                  className="btn d-inline-flex btn-light"
+                                >
+                                  <i className="material-symbols-outlined">
+                                    google_plus_reshare
+                                  </i>
+                                </button>
+                              </Link>
+                            </div>
+                          ) : null}
                         </Card.Body>
                       </Card>
                     </Col>
