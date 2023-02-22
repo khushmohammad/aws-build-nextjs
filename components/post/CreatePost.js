@@ -61,8 +61,6 @@ const CreatePost = (props) => {
 
   const user = useSelector((state) => state?.user?.data);
 
-
-
   useEffect(() => {
     if (privacy === "includeFriends" || privacy === "excludeFriends") {
       if (privacyFriendList.length !== 0) {
@@ -274,28 +272,30 @@ const CreatePost = (props) => {
                         position: "relative",
                       }}
                     >
-                      <img
-                        loading="lazy"
-                        src={file.base64}
-                        alt="icon"
-                        width={100}
-                        height={100}
-                        style={{
-                          objectfit: "contain",
-                        }}
-                      />
+                      {file?.type.startsWith("image") ? (
+                        <img
+                          loading="lazy"
+                          src={file.base64}
+                          alt="icon"
+                          width={100}
+                          height={100}
+                          style={{
+                            objectfit: "contain",
+                          }}
+                        />
+                      ) : (
+                        <video
+                          loading="lazy"
+                          src={file.base64}
+                          alt="icon"
+                          width={100}
+                          height={100}
+                          style={{
+                            objectfit: "contain",
+                          }}
+                        />
+                      )}
 
-                      {/* <video
-                        loading="lazy"
-                        type="video/mp4"
-                        src={file.base64}
-                        alt="icon"
-                        width={100}
-                        height={100}
-                        style={{
-                          objectfit: "contain",
-                        }}
-                      /> */}
                       <div
                         onClick={() => deleteImageKey(file, index)}
                         style={{
@@ -490,6 +490,7 @@ const CreatePost = (props) => {
                     type="radio"
                     id="Public"
                     name="group-1"
+                    checked={privacy === "public"}
                     value="public"
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
@@ -504,6 +505,7 @@ const CreatePost = (props) => {
                     id="Friends"
                     name="privacy"
                     value="private"
+                    checked={privacy === "private"}
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
                 </Form.Check>
@@ -518,6 +520,7 @@ const CreatePost = (props) => {
                     name="privacy"
                     id="only-me"
                     value="onlyMe"
+                    checked={privacy === "onlyMe"}
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
                 </Form.Check>
@@ -542,6 +545,7 @@ const CreatePost = (props) => {
                     name="privacy"
                     id="friends-except"
                     value="includeFriends"
+                    checked={privacy === "includeFriends"}
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
                 </Form.Check>
@@ -566,6 +570,7 @@ const CreatePost = (props) => {
                     name="privacy"
                     id="specific-friends"
                     value="excludeFriends"
+                    checked={privacy === "excludeFriends"}
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
                 </Form.Check>

@@ -17,18 +17,14 @@ const date = new Date();
 
 const schema = yup
   .object({
+    userName: yup.string().required("Email is required"),
     firstName: yup
       .string()
-      .required("First Name must be at least 3 characters long")
+      .required("FirstName is required")
       .min(3)
+      .max(20)
       .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-    lastName: yup
-      .string()
-      .required("Last Name must be at least 3 characters long")
-      .min(3)
-      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-    userName: yup.string().email().required("Email is required"),
-    country: yup.object().nullable().required("Country is required"),
+    lastName: yup.string().required("LastName is required").min(3).max(20),
     dateOfBirth: yup
       .date()
       .transform(function (value, originalValue) {
@@ -46,7 +42,13 @@ const schema = yup
         "Age should be greater than or equal to 18",
         (date) => moment().diff(moment(date), "years") >= 18
       ),
-    password: yup.string().required("Password is required").min(8),
+    password: yup
+      .string()
+      .required("Password is required")
+      .matches(
+        /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+        "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+      ),
     confirmPassword: yup
       .string()
       .oneOf([yup.ref("password"), null], "Password doesn't match")
@@ -186,81 +188,87 @@ const Register = () => {
               </div>
             ) : null}
             <Form className="mt-4" onSubmit={handleSubmit(onSubmit)} noValidate>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  {...register("userName")}
-                  id="floatingInputCustom"
-                  type="email"
-                  placeholder="name@example.com"
-                />
-                <label htmlFor="floatingInputCustom">Email address</label>
+              <div className="mb-3">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("userName")}
+                    id="floatingInputCustom"
+                    type="email"
+                    name="userName"
+                    placeholder="name@example.com"
+                  />
+                  <label htmlFor="floatingInputCustom">Email address</label>
+                </Form.Floating>
                 {errors.userName && (
-                  <div className="text-danger">{errors.userName.message}</div>
+                  <div style={{color:"red"}}>{errors.userName.message}</div>
                 )}
                 {isEmailExist && (
-                  <div className="text-danger">Username already exists</div>
+                  <div style={{ color: "red" }}>Email already exists</div>
                 )}
-              </Form.Floating>
+              </div>
 
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  {...register("password")}
-                  type={showPassword ? "text" : "password"}
-                  className="form-control"
-                  id="floatingPassword"
-                  placeholder="Password"
-                  required
-                />
-                <label htmlFor="floatingPassword">Password</label>
-                <span
-                  role="button"
-                  onClick={() => setShowPassword((prevState) => !prevState)}
-                  className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
-                >
-                  {showPassword ? "visibility" : "visibility_off"}
-                </span>
+              <div className="mb-3">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("password")}
+                    type={showPassword ? "text" : "password"}
+                    className="form-control"
+                    id="floatingPassword"
+                    placeholder="Password"
+                  />
+                  <label htmlFor="floatingPassword">Password</label>
+                  <span
+                    role="button"
+                    onClick={() => setShowPassword((prevState) => !prevState)}
+                    className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
+                  >
+                    {showPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </Form.Floating>
                 {errors.password && (
-                  <div className="text-danger">{errors.password.message}</div>
+                  <p style={{ color: "red" }}>{errors.password.message}</p>
                 )}
-              </Form.Floating>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  {...register("confirmPassword")}
-                  type={showConfirmPassword ? "text" : "password"}
-                  className="form-control"
-                  id="cfrmPassword"
-                  placeholder="Confirm Password"
-                />
-                <label htmlFor="cfrmPassword">Confirm Password</label>
-                <span
-                  role="button"
-                  onClick={() =>
-                    setShowConfirmPassword((prevState) => !prevState)
-                  }
-                  className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
-                >
-                  {showConfirmPassword ? "visibility" : "visibility_off"}
-                </span>
+              </div>
+              <div className="mb-3">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("confirmPassword")}
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-control"
+                    id="cfrmPassword"
+                    placeholder="Confirm Password"
+                  />
+                  <label htmlFor="cfrmPassword">Confirm Password</label>
+                  <span
+                    role="button"
+                    onClick={() =>
+                      setShowConfirmPassword((prevState) => !prevState)
+                    }
+                    className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
+                  >
+                    {showConfirmPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </Form.Floating>
                 {errors.confirmPassword && (
-                  <div className="text-danger">
-                    {errors.confirmPassword.message}
-                  </div>
+                  <div style={{color:"red"}}>{errors.confirmPassword.message}</div>
                 )}
-              </Form.Floating>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  {...register("firstName")}
-                  type="text"
-                  className="form-control"
-                  id="fName"
-                  placeholder="First Name"
-                  required
-                />
-                <label htmlFor="fName">First Name</label>
+              </div>
+              <div className="mb-3">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("firstName")}
+                    type="text"
+                    className="form-control"
+                    id="fName"
+                    placeholder="First Name"
+                    required
+                  />
+                  <label htmlFor="fName">First Name</label>
+                </Form.Floating>
                 {errors.firstName && (
-                  <div className="text-danger">{errors.firstName.message}</div>
+                  <div style={{ color: "red" }}>{errors.firstName.message}</div>
                 )}
-              </Form.Floating>
+              </div>
               <Form.Floating className="mb-3">
                 <Form.Control
                   {...register("lastName")}
@@ -271,7 +279,7 @@ const Register = () => {
                 />
                 <label htmlFor="lName">Last Name</label>
                 {errors.lastName && (
-                  <div className="text-danger">{errors.lastName.message}</div>
+                  <div style={{ color: "red" }}>{errors.lastName.message}</div>
                 )}
               </Form.Floating>
               <Form.Floating className="mb-3">
@@ -295,7 +303,7 @@ const Register = () => {
                 />
                 {/* <label htmlFor="DOB">Date of Birth</label> */}
                 {errors.dateOfBirth && (
-                  <div className="text-danger">
+                  <div style={{ color: "red" }}>
                     {errors.dateOfBirth.message}
                   </div>
                 )}

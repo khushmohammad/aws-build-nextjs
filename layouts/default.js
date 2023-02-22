@@ -15,7 +15,7 @@ import Footer from "../components/partials/dashboard/FooterStyle/footer";
 //default
 
 // share-offcanvas
-// import ShareOffcanvas from "../components/share-offcanvas";
+import ShareOffcanvas from "../components/share-offcanvas";
 
 //settingoffCanvas
 import SettingOffCanvas from "../components/setting/SettingOffCanvas";
@@ -67,7 +67,7 @@ const Default = ({ children, tokenExpired }) => {
           <RightSidebar />
           <Footer />
           {/* <ChatPopup /> */}
-          {/* <SettingOffCanvas /> */}
+          <SettingOffCanvas />
         </>
       ) : null}
     </>

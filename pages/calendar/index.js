@@ -83,8 +83,8 @@ const CalendarPage = () => {
   }, [friendsBirthdays]);
 
   useEffect(() => {
-    setAllEventData([...events, ...birthdayData]);
-  }, birthdayData);
+    if (events !== undefined) setAllEventData([...events, ...birthdayData]);
+  }, [birthdayData]);
 
   useEffect(() => {
     dispatch(getEvents("hosting"));

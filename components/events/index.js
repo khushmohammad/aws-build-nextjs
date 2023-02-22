@@ -117,6 +117,7 @@ const CreateEvent = (props) => {
                         style={{ position: "absolute", opacity: 0, right: 0 }}
                       >
                         <FileBase64
+                          type="image/*"
                           multiple={false}
                           onDone={(files) => {
                             // console.log("files onDone: ", files.base64);

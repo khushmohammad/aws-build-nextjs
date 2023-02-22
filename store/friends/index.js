@@ -8,6 +8,7 @@ import {
 const initialState = {
   friendList: null,
   birthdays: null,
+  PendingRequest: { list: [], error: "", status: "loading" }
 };
 
 const friendSlice = createSlice({
@@ -21,10 +22,21 @@ const friendSlice = createSlice({
       .addCase(getAllBirthdays.fulfilled, (state, action) => {
         state.birthdays = action.payload;
       })
+      .addCase(getPendingRequestFriendList.pending, (state, action) => {
+        state.PendingRequest.status = 'loading';
+      })
       .addCase(getPendingRequestFriendList.fulfilled, (state, action) => {
+        state.PendingRequest.status = 'succeeded';
+        state.PendingRequest.list = action.payload?.data?.body;
 
-        state.PendingRequest = action.payload;
+      })
+      .addCase(getPendingRequestFriendList.rejected, (state, action) => {
+        state.PendingRequest.status = 'failed';
+        state.PendingRequest.error = action.error.message
+
+
       });
+
   },
 });
 
@@ -48,7 +60,6 @@ export const getPendingRequestFriendList = createAsyncThunk(
   "friends/pendingRequest",
   async () => {
     const data = await getPendingRequestFriendListApi();
-    console.log(data);
     return data;
   }
 );

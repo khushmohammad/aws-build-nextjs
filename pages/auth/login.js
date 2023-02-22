@@ -7,23 +7,21 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Link from "next/link";
 import Auth from "../../layouts/auth";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const schema = yup
   .object({
     userName: yup.string().required("Email is required").email(),
-    password: yup.string().required("Password is required").min(8),
+    password: yup.string().required("Password is required"),
   })
   .required();
-
-// schema.validate({
-//   userName:"not.a.valid.email"
-// })
 
 const Login = () => {
   const [ShowPage, setShowPage] = useState(null);
   const [ApiError, setApiError] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const router = useRouter();
 
@@ -36,6 +34,10 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
+  const onChangeValue = (value) => {
+    console.log("Captcha value:", value);
+    setVerified(true);
+  };
   //check valid user
   const GetSession = async () => {
     const session = await getSession();
@@ -45,6 +47,8 @@ const Login = () => {
       setShowPage(true);
     }
   };
+
+  
 
   useEffect(() => {
     GetSession();
@@ -94,46 +98,51 @@ const Login = () => {
               </div>
             ) : null}
             <Form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  {...register("userName")}
-                  id="floatingInputCustom"
-                  type={showEmail ? "text" : "email"}
-                  placeholder="name@example.com"
-                  className="form-control"
-                  required
-                />
-                <label htmlFor="floatingInputCustom">Email address</label>
+              <div className="mb-3">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("userName")}
+                    id="floatingInputCustom"
+                    type={showEmail ? "text" : "email"}
+                    placeholder="name@example.com"
+                    className="form-control"
+                    required
+                  />
+                  <label htmlFor="floatingInputCustom">Email address</label>
+                </Form.Floating>
                 {errors.userName && (
-                  <div className="text-danger">{errors.userName.message}</div>
+                  <p style={{ color: "red" }}>{errors.userName.message}</p>
                 )}
-              </Form.Floating>
-              <Form.Floating className="mb-2">
-                <Form.Control
-                  {...register("password")}
-                  type={showPassword ? "text" : "password"}
-                  className="form-control"
-                  id="floatingPassword"
-                  placeholder="Password"
-                  required
-                />
-                <label htmlFor="floatingPassword">Password</label>
-                <span
-                  role="button"
-                  onClick={() => setShowPassword((prevState) => !prevState)}
-                  className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
-                >
-                  {showPassword ? "visibility" : "visibility_off"}
-                </span>
+              </div>
+
+              <div className="mb-2">
+                <Form.Floating>
+                  <Form.Control
+                    {...register("password")}
+                    type={showPassword ? "text" : "password"}
+                    className="form-control"
+                    id="floatingPassword"
+                    placeholder="Password"
+                    required
+                  />
+                  <label htmlFor="floatingPassword">Password</label>
+                  <span
+                    role="button"
+                    onClick={() => setShowPassword((prevState) => !prevState)}
+                    className="icon cursor-pointer material-symbols-outlined material-icons-outlined position-absolute top-50 pwd-icon translate-middle-y"
+                  >
+                    {showPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </Form.Floating>
                 {errors.password && (
-                  <div className="text-danger">{errors.password.message}</div>
+                  <p style={{ color: "red" }}>{errors.password.message}</p>
                 )}
-              </Form.Floating>
+              </div>
               <Link href="/auth/forgot-password" className="float-start mb-3">
                 Forgot password?
               </Link>
               <div className="d-inline-block w-100">
-                <Form.Check className="d-inline-block mt-2 pt-1">
+                <Form.Check className="d-inline-block mt-2 pt-1 p-3">
                   <Form.Check.Input
                     type="checkbox"
                     className="me-2"
@@ -141,7 +150,18 @@ const Login = () => {
                   />
                   <Form.Check.Label>Remember Me</Form.Check.Label>
                 </Form.Check>
-                <Button variant="primary" type="submit" className="float-end">
+                <div className="mb-3 ">
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY}
+                    onChange={onChangeValue}
+                  />
+                </div>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="float-end"
+                  disabled={!verified}
+                >
                   Login
                 </Button>
               </div>

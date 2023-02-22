@@ -23,10 +23,14 @@ import {
 } from "../../store/groups";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
-import { joinGroupService } from "../../services/groups.service";
+import {
+  groupActionService,
+  joinGroupService,
+} from "../../services/groups.service";
 
 const Groups = () => {
   const [isJoined, setIsJoined] = useState([]);
+  const [isFollow, setIsFollow] = useState([]);
   const [joinedGroup, setJoinedGroup] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [page, setPage] = useState(1);
@@ -35,8 +39,6 @@ const Groups = () => {
   const groups = useSelector((state) => state?.groups?.allGroups?.allGroups);
 
   const myGroups = useSelector((state) => state?.groups?.joinedGroup);
-
-  console.log(page);
 
   useEffect(() => {
     dispatch(getAllGroupsList(page));
@@ -49,7 +51,7 @@ const Groups = () => {
       });
     });
     setGroupList(res);
-  }, []);
+  }, [page]);
 
   const joinGroup = async (groupId) => {
     const res = await joinGroupService(groupId);
@@ -75,6 +77,20 @@ const Groups = () => {
       document.documentElement.scrollHeight
     ) {
       setPage((prev) => prev + 1);
+    }
+  };
+
+  const followAndUnfollowGroup = async (groupid) => {
+    const res = await groupActionService(groupid, {
+      action: "FollowAndUnFollow",
+    });
+    console.log(res);
+    if (res?.success === true) {
+      setIsFollow((prev) =>
+        Boolean(!prev[groupid])
+          ? { ...prev, [groupid]: true }
+          : { ...prev, [groupid]: false }
+      );
     }
   };
 
@@ -182,24 +198,47 @@ const Groups = () => {
                       </Link>
                     </div>
                   </div>
-                  {isJoined[group?._id] ? (
-                    <button
-                      disabled
-                      type="submit"
-                      className="btn btn-soft-primary d-block w-100"
-                      // onClick={() => joinGroup(group._id)}
-                    >
-                      Requested
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="btn btn-primary d-block w-100"
-                      onClick={() => joinGroup(group._id)}
-                    >
-                      Join
-                    </button>
-                  )}
+                  <div className="row">
+                    <div className="col-6">
+                      {isJoined[group?._id] ? (
+                        <button
+                          disabled
+                          type="submit"
+                          className="btn btn-soft-primary d-block w-100"
+                          // onClick={() => joinGroup(group._id)}
+                        >
+                          Requested
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          className="btn btn-primary d-block w-100"
+                          onClick={() => joinGroup(group._id)}
+                        >
+                          Join
+                        </button>
+                      )}
+                    </div>
+                    <div className="col-6">
+                      {isFollow[group?._id] ? (
+                        <button
+                          type="submit"
+                          className="btn btn-soft-primary d-block w-100"
+                          onClick={() => followAndUnfollowGroup(group._id)}
+                        >
+                          Unfollow
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          className="btn btn-primary d-block w-100"
+                          onClick={() => followAndUnfollowGroup(group._id)}
+                        >
+                          Follow
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
             ))}

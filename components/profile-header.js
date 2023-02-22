@@ -7,7 +7,9 @@ import { useSelector } from "react-redux";
 const ProfileHeader = (props) => {
   const router = useRouter();
 
-  const userInfo = useSelector((state) => state?.user?.data);
+  const groupPrivilege = useSelector(
+    (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
+  );
 
   return (
     <>
@@ -27,8 +29,7 @@ const ProfileHeader = (props) => {
               </div>
             )}
           </div>
-          {userInfo?.userInfo?.roleInfo?.dropdownValue ===
-          "Integrating Coach" ? (
+          {groupPrivilege ? (
             <>
               {router.pathname === "/groups/[groupId]" ? (
                 <div

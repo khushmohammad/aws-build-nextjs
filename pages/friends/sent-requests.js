@@ -20,8 +20,8 @@ import { getPendingRequestFriendList } from "../../store/friends";
 import { SendAndCancelFriendRequest } from "../../services/friends.service";
 
 const SentRequest = () => {
-    const pendingRequests = useSelector(
-        (state) => state?.friends?.PendingRequest
+    const pendingRequestslist = useSelector(
+        (state) => state?.friends?.PendingRequest?.list
     );
 
     //console.log(pendingRequests, "pendingRequests");
@@ -56,8 +56,8 @@ const SentRequest = () => {
             <div id="content-page" className="content-page">
                 <Container>
                     <Row>
-                        {pendingRequests &&
-                            pendingRequests.map((userData, index) => {
+                        {pendingRequestslist &&
+                            pendingRequestslist.map((userData, index) => {
                                 return (
                                     <React.Fragment key={index}>
                                         {userData && (
@@ -82,12 +82,7 @@ const SentRequest = () => {
                                                                     }}
                                                                 />
 
-                                                                {/* <Image
-                                  loading="lazy"
-                                  src={img1}
-                                  alt="profile-bg"
-                                  className="rounded img-fluid w-100"
-                                /> */}
+
                                                             </div>
                                                             <div className="profile-info p-4">
                                                                 <div className="user-detail">
@@ -116,10 +111,7 @@ const SentRequest = () => {
                                                                                     </Link>
                                                                                 </h4>
                                                                                 <h6>@designer</h6>
-                                                                                {/* <p>
-                                          Lorem Ipsum is simply dummy text of
-                                          the
-                                        </p> */}
+
                                                                             </div>
                                                                         </div>
 
@@ -164,10 +156,10 @@ const SentRequest = () => {
                                 );
                             })}
 
-                        {Array.isArray(pendingRequests) && pendingRequests.length === 0 && (
+                        {pendingRequestslist && pendingRequestslist.length === 0 && (
                             <Col>
                                 <div>
-                                    <p className="p-3 bg-danger text-alert text-center">
+                                    <p className="p-3 bg-light text-alert text-center">
                                         No user found!
                                     </p>
                                 </div>

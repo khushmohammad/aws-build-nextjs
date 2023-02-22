@@ -210,26 +210,17 @@ export const friendsBirthdayList = async () => {
 
 export const getPendingRequestFriendListApi = async () => {
   const token = await getToken();
-  try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId`, "",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
 
-    //  console.log(res?.data?.body);
-    if (res.status == 200) {
-      return res?.data?.body;
-
-    } else {
-      return []
+  const res = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId`, "",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  } catch (error) {
-    console.log(error);
-  }
+  );
+  return res
+
 };
 
 

@@ -8,8 +8,6 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllFriendList } from "../../store/friends";
-import { inviteFriend } from "../../services/groups.service";
-import { inviteFriendOnEventService } from "../../services/event.service";
 import { inteveFriendOnEvent } from "../../store/events";
 
 const InviteFriendOnEvent = (props) => {
@@ -35,7 +33,6 @@ const InviteFriendOnEvent = (props) => {
   const inviteAFriend = async (friendId) => {
     let eventid = props.eventid;
     dispatch(inteveFriendOnEvent({ eventid, friendId, status: "invited" }));
-    // const res = await inviteFriendOnEventService(props.eventid, friendId);
     if (inviteeList?.success) {
       setIsInvited((prev) =>
         Boolean(!prev[friendId])

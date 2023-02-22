@@ -12,7 +12,7 @@ import { getUserInfoById } from "../../store/profile";
 
 const GroupMemeber = (props) => {
   const [page, setPage] = useState(1);
-  const [memberId, setMemberId] = useState([]);
+  let [memberId, setMemberId] = useState([]);
   const dispatch = useDispatch();
   let limit = 4;
 
@@ -20,29 +20,37 @@ const GroupMemeber = (props) => {
 
   const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
+  const groupPrivilege = useSelector(
+    (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
+  );
+
   useEffect(() => {
     memberList();
 
+    let getmember = [];
+
     members &&
-      members.length !== 0 &&
-      members[0]?.memberList?.map((data) => {
-        setMemberId([...memberId, data.memberId]);
+      members?.memberList?.map(async (data) => {
+        getmember.push(data.memberId);
       });
+    setMemberId(getmember);
     window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, []);
 
   useEffect(() => {
-    if (memberId.length !== 0) dispatch(getUserInfoById(memberId));
-  }, [members]);
+    if (memberId && memberId.length !== 0) dispatch(getUserInfoById(memberId));
+  }, [members, memberId]);
 
   const memberList = () => {
-    dispatch(
-      groupMemberList({
-        limit: limit,
-        pageNumber: page,
-        groupId: props.groupid,
-      })
-    );
+    if (props.groupid !== undefined) {
+      dispatch(
+        groupMemberList({
+          limit: limit,
+          pageNumber: page,
+          groupId: props.groupid,
+        })
+      );
+    }
   };
 
   const handleScroll = () => {
@@ -53,6 +61,8 @@ const GroupMemeber = (props) => {
       memberList();
     }
   };
+
+  const removeMember = async () => {};
 
   return (
     <Modal {...props} size="lg" style={{ top: "8%" }}>
@@ -74,7 +84,7 @@ const GroupMemeber = (props) => {
             <Col sm="12">
               {members &&
                 userDetail !== null &&
-                members[0]?.memberList?.map((member, index) => (
+                members?.memberList?.map((member, index) => (
                   <Card key={index}>
                     <Card.Body>
                       <ul className="request-list list-inline m-0 p-0">
@@ -82,7 +92,7 @@ const GroupMemeber = (props) => {
                           <div className="user-img img-fluid flex-shrink-0">
                             <Image
                               src={
-                                userDetail[index + 1]?.profilePictureInfo?.file
+                                userDetail[index]?.profilePictureInfo?.file
                                   ?.location || user5
                               }
                               alt="story-img"
@@ -109,15 +119,16 @@ const GroupMemeber = (props) => {
                                 Visit Profile
                               </Button>
                             </div>
-                            <Button
-                              href="#"
-                              // onClick={questionAlert}
-                              className="btn btn-secondary rounded"
-                              data-extra-toggle="delete"
-                              data-closest-elem=".item"
-                            >
-                              Remove
-                            </Button>
+                            {groupPrivilege && (
+                              <Button
+                                onClick={removeMember}
+                                className="btn btn-secondary rounded"
+                                data-extra-toggle="delete"
+                                data-closest-elem=".item"
+                              >
+                                Remove
+                              </Button>
+                            )}
                           </div>
                         </li>
 

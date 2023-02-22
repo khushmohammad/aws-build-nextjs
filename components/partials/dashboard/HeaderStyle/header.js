@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   Dropdown,
@@ -29,6 +29,7 @@ import user14 from "../../../../public/assets/images/page-img/03.jpg";
 import user15 from "../../../../public/assets/images/page-img/02.jpg";
 import user16 from "../../../../public/assets/images/page-img/01.jpg";
 //Componets
+import { useRouter } from "next/router";
 import CustomToggle from "../../../dropdowns";
 import { DropdownMenu } from "react-bootstrap";
 import Link from "next/link";
@@ -37,20 +38,25 @@ import { signOut } from "next-auth/react";
 import { useSelector } from "react-redux";
 import FriendRequestList from "../../../friends/FriendRequestList";
 import NotificationList from "../../../notification/NotificationList";
+import { searchMemberByFullName } from "../../../../services/profile.service";
 
 const Header = () => {
   const minisidebar = () => {
     document.getElementsByTagName("ASIDE")[0].classList.toggle("sidebar-mini");
   };
+
+  //implement refex state
+  const router = useRouter();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [show1, setShow1] = useState(false);
-
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
   const user = useSelector((state) => state?.user?.data);
 
+  console.log("<<<>>>>",searchResults)
   const LogedInUserName =
     user &&
     `${user?.userInfo?.firstName}  ${user?.userInfo?.lastName.substring(
@@ -61,6 +67,23 @@ const Header = () => {
   const friendRequestList = useSelector(
     (state) => state?.friendsRequests?.FriendsRequests
   );
+
+  //handlechange the function when we search the things
+  const handleChange = async (event) => {
+    setSearchResults("");
+
+    const { value } = event.target;
+
+    const res = await searchMemberByFullName(value);
+    console.log(res);
+
+    if (value.trim() === "") {
+      setSearchResults([]);
+    }
+    const regex = new RegExp(value, "i");
+    const filteredResults = res?.filter((item) => regex.test(item.fullName));
+    setSearchResults(filteredResults);
+  };
 
   return (
     <>
@@ -149,7 +172,12 @@ const Header = () => {
                   type="text"
                   className="text search-input form-control bg-soft-primary  d-none d-lg-block"
                   placeholder="Search here..."
+                  defaultValue={searchTerm}
+                  onChange={(e) => {
+                    handleChange(e), setSearchTerm(e.target.value);
+                  }}
                 />
+
                 <Link
                   className="d-lg-none d-flex"
                   href="/"
@@ -218,108 +246,62 @@ const Header = () => {
                             Clear All
                           </Link>
                         </div>
-                        <div className="d-flex align-items-center border-bottom search-hover py-2 px-3">
-                          <div className="flex-shrink-0">
-                            <Image
-                              className="align-self-center img-fluid avatar-50 rounded-pill"
-                              src={user6}
-                              alt=""
-                              loading="lazy"
-                            />
-                          </div>
-
-                          <div className="d-flex flex-column ms-3">
-                            <Link href="/" className="h5">
-                              Paige Turner
-                            </Link>
-
-                            <span>Paige001</span>
-                          </div>
-
-                          <div className="d-flex align-items-center ms-auto">
-                            <Link
-                              href="/"
-                              className="me-3 d-flex align-items-center"
+                        {searchResults && searchResults.length > 0 && (
+                          <div style={{ height: "200px", overflow: "auto" }}>
+                            <ul
+                              style={{
+                                listStyle: "none",
+                                margin: 0,
+                                padding: 0,
+                              }}
                             >
-                              <small>Follow</small>
-                            </Link>
+                              {searchResults.map((item) => (
+                                <div
+                                  className="d-flex align-items-center border-bottom search-hover py-2 px-3"
+                                  onClick={() =>
+                                    router.push(`/friends/${item._id}`)
+                                  }
+                                >
+                                  <div className="flex-shrink-0">
+                                    <Image
+                                      className="align-self-center img-fluid avatar-50 rounded-pill"
+                                      src={item?.profileInfo?.profilePictureInfo[0]?.file?.location||user1}
+                                      alt=""
+                                      loading="lazy"
+                                      height={400}
+                                      width={900}
+                                    />
+                                  </div>
 
-                            <Link
-                              href="/"
-                              className="material-symbols-outlined text-dark"
-                            >
-                              close
-                            </Link>
+                                  <div className="d-flex flex-column ms-3">
+                                    <Link href="/" className="h5">
+                                      {item.fullName}
+                                    </Link>
+
+                                  {/* <span>Paige001</span> */}
+                                </div>
+
+                                <div className="d-flex align-items-center ms-auto">
+                                  <Link 
+                                    href="/"
+                                    className="me-3 d-flex align-items-center"
+                                  >
+                                    {/* <small>Follow</small> */}
+                                  </Link>
+
+                                  {/* <Link
+                                    href="/"
+                                    className="material-symbols-outlined text-dark"
+                                  >
+                                    close
+                                  </Link> */}
+                                </div>
+                              </div>
+                            ))}
+                          </ul>
                           </div>
-                        </div>
-                        <div className="d-flex align-items-center border-bottom search-hover py-2 px-3">
-                          <div className="flex-shrink-0">
-                            <Image
-                              className="align-self-center img-fluid avatar-50 rounded-pill"
-                              src={user7}
-                              alt=""
-                              loading="lazy"
-                            />
-                          </div>
-
-                          <div className="d-flex flex-column ms-3">
-                            <Link href="/" className="h5">
-                              Monty Carlo
-                            </Link>
-
-                            <span>Carlo.m</span>
-                          </div>
-
-                          <div className="d-flex align-items-center ms-auto">
-                            <Link
-                              href="/"
-                              className="me-3 d-flex align-items-center"
-                            >
-                              <small>Unfollow</small>
-                            </Link>
-
-                            <Link
-                              href="/"
-                              className="material-symbols-outlined text-dark"
-                            >
-                              close
-                            </Link>
-                          </div>
-                        </div>
-                        <div className="d-flex align-items-center search-hover py-2 px-3 border-bottom">
-                          <div className="flex-shrink-0">
-                            <Image
-                              className="align-self-center img-fluid avatar-50 rounded-pill"
-                              src={user8}
-                              alt=""
-                              loading="lazy"
-                            />
-                          </div>
-
-                          <div className="d-flex flex-column ms-3">
-                            <Link href="/" className="h5">
-                              Paul Molive
-                            </Link>
-
-                            <span>Paul.45</span>
-                          </div>
-
-                          <div className="d-flex align-items-center ms-auto">
-                            <Link
-                              href="/"
-                              className="me-3 d-flex align-items-center"
-                            >
-                              <small>Request</small>
-                            </Link>
-
-                            <Link
-                              href="/"
-                              className="material-symbols-outlined text-dark"
-                            >
-                              close
-                            </Link>
-                          </div>
-                        </div>
+                        )}
+{/* 
                         <div className="">
                           <h4 className="px-3 py-0">Suggestions</h4>
 
@@ -549,7 +531,7 @@ const Header = () => {
                               </Link>
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                       </Modal.Body>
                     </div>
                   </div>
@@ -558,8 +540,9 @@ const Header = () => {
             </div>
 
             <div
-              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${show1 === true ? "show" : ""
-                } `}
+              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${
+                show1 === true ? "show" : ""
+              } `}
               tabIndex="-1"
               id="offcanvasBottom"
               style={{ visibility: `${show1 === true ? "visible" : "hidden"}` }}
@@ -790,7 +773,6 @@ const Header = () => {
                         </Card.Header>
                         <Card.Body className="p-0 ">
                           <MessageListWithUser />
-
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>
@@ -816,8 +798,8 @@ const Header = () => {
                         alt="user"
                         height={100}
                         width={100}
-                      // blurDataURL={profileImage}
-                      // placeholder="blur"
+                        // blurDataURL={profileImage}
+                        // placeholder="blur"
                       />
                       <i className="material-symbols-outlined profile-drop-down">
                         expand_more
@@ -945,64 +927,56 @@ const Header = () => {
 };
 
 const MessageListWithUser = () => {
-
-
   const friendsList = useSelector(
     (state) => state?.friends?.friendList?.friendsList
   );
 
   return (
     <>
-      {friendsList && friendsList.map((userData, index) => {
-        return (
-
-          <Link href={`/chat?chatId=${userData?._id}`} className="iq-sub-card" key={index}>
-            <div className="d-flex  align-items-center">
-              <div className="">
-                <Image
-                  className="avatar-40 rounded"
-                  src={
-                    userData?.profileInfo
-                      ?.profilePictureInfo?.file
-                      ?.location || user1
-                  }
-                  alt="profile-bg"
-                  height={100}
-                  width={100}
-                  style={{
-                    maxHeight: "150px",
-                    objectfit: "cover",
-                  }}
-
-                  loading="lazy"
-                />
+      {friendsList &&
+        friendsList.map((userData, index) => {
+          return (
+            <Link
+              href={`/chat?chatId=${userData?._id}`}
+              className="iq-sub-card"
+              key={index}
+            >
+              <div className="d-flex  align-items-center">
+                <div className="">
+                  <Image
+                    className="avatar-40 rounded"
+                    src={
+                      userData?.profileInfo?.profilePictureInfo?.file
+                        ?.location || user1
+                    }
+                    alt="profile-bg"
+                    height={100}
+                    width={100}
+                    style={{
+                      maxHeight: "150px",
+                      objectfit: "cover",
+                    }}
+                    loading="lazy"
+                  />
+                </div>
+                <div className=" w-100 ms-3">
+                  <h6 className="mb-0 ">
+                    {userData?.firstName || ""} {userData?.lastName || ""}
+                  </h6>
+                  <small className="float-left font-size-12">13 Jun</small>
+                </div>
               </div>
-              <div className=" w-100 ms-3">
-                <h6 className="mb-0 ">
-                  {userData?.firstName || ''}{" "}
-                  {userData?.lastName || ''}
-                </h6>
-                <small className="float-left font-size-12">
-                  13 Jun
-                </small>
-              </div>
-            </div>
-          </Link>
-        )
-      })}
+            </Link>
+          );
+        })}
 
       <div className="text-center iq-sub-card">
-        <Link
-          href="/chat"
-          className=" btn text-primary"
-        >
+        <Link href="/chat" className=" btn text-primary">
           View All
         </Link>
       </div>
     </>
-
-  )
-
-}
+  );
+};
 
 export default Header;

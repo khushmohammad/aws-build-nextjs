@@ -99,7 +99,6 @@ export const deleteGroupByGroupId = async (groupId) => {
 };
 
 export const getAllGroups = async (page) => {
-  // console.log("::", page);
   const token = await getToken();
   try {
     const res = await axios.get(
@@ -108,7 +107,6 @@ export const getAllGroups = async (page) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    console.log(res);
     return res.data.body;
   } catch (err) {
     console.log(err);
@@ -193,57 +191,6 @@ export const registerIcUser = async (formData) => {
   }
 };
 
-export const getGroupPosts = async (groupId) => {
-  const token = await getToken();
-
-  try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/postInfo/getAllPosts/${groupId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return res.data.body;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getPostByPostId = async (postId) => {
-  const token = await getToken();
-
-  try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/postInfo/getAllPosts/${postId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    return res.data.body;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const updatePost = async (postData, groupId, memberId) => {
-  const token = await getToken();
-  await axios
-    .patch(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/updatePosts/post/${postId}`,
-      postData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-    .then((res) => console.log(res))
-    .catch((err) => console.log(err));
-};
-
 export const getInvitationList = async () => {
   const token = await getToken();
   try {
@@ -320,6 +267,8 @@ export const groupJoinedList = async () => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
+    console.log("joined Group list::", res.data);
     return res.data.body;
   } catch (error) {
     console.log(error);
@@ -331,6 +280,37 @@ export const groupMemberListService = async (limit, pageNumber, groupId) => {
   try {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupMembers/?${limit}&${pageNumber}&groupId=${groupId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const groupActionService = async (groupid, data) => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/group/actions/${groupid}`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const groupPrivilegesService = async (groupid) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupInfo/groupPrivileges/${groupid}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

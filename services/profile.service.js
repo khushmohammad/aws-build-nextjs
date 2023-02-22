@@ -111,3 +111,35 @@ export const getAllPhotos = async () => {
     console.log(error);
   }
 };
+
+export const deleteGaleryImage = async (fileId, data) => {
+  console.log(fileId, data);
+  const token = await getToken();
+  try {
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/gallery/delete/Image/${fileId}`,
+      {
+        headers: { authorization: `Bearer ${token}` },
+      },
+      data
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const searchMemberByFullName = async (input = "") => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/userProfile/usersInfo?fullName=${input}`,
+      {
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};

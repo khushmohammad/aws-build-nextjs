@@ -85,21 +85,23 @@ const ModalPop = (props) => {
                         <div className="confirm-click-btn"></div>
                         {props.title == "friends-except" ? (
                           <Button
-                            href="#"
                             onClick={(e) =>
                               handleAdd(e, data?.profileInfo?._id)
                             }
-                            className="btn btn-secondary rounded"
+                            className={
+                              userInfo[data?.profileInfo?._id] !== true
+                                ? "btn btn-primary rounded"
+                                : "btn btn-soft-primary rounded"
+                            }
                             data-extra-toggle="delete"
                             data-closest-elem=".item"
                           >
-                            {userInfo[data?.profileInfo?._id] == true
+                            {userInfo[data?.profileInfo?._id] === true
                               ? "removed"
                               : "remove"}
                           </Button>
                         ) : (
                           <Button
-                            href="#"
                             onClick={(e) =>
                               handleAdd(e, data?.profileInfo?._id)
                             }

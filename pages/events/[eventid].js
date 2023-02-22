@@ -113,9 +113,9 @@ const EventDetail = () => {
                     <Nav.Link eventKey="f1" href="#">
                       About
                     </Nav.Link>
-                    <Nav.Link eventKey="f2" href="#">
+                    {/* <Nav.Link eventKey="f2" href="#">
                       Discussion
-                    </Nav.Link>
+                    </Nav.Link> */}
                   </Nav>
                 </nav>
               </Tab.Container>
@@ -359,7 +359,7 @@ const EventDetail = () => {
                     </Col>
                   </Row>
                 </div>
-                <Card.Body>
+                {/* <Card.Body>
                   <li className="d-flex align-items-center flex-wrap py-2">
                     <div className="user-img img-fluid flex-shrink-0">
                       <img
@@ -408,7 +408,7 @@ const EventDetail = () => {
                       <button className="btn btn-light rounded">Invite</button>
                     </div>
                   </li>
-                </Card.Body>
+                </Card.Body> */}
               </Card>
               <Card>
                 <div className="card-header d-flex justify-content-between">

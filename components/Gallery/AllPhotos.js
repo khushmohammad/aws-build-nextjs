@@ -62,7 +62,7 @@ const AllPhotos = () => {
                       loading="lazy"
                       src={pic}
                       className="img-fluid rounded"
-                      alt="Responsive"
+                      alt="img"
                       width="100%"
                       height="100%"
                       layout="responsive"

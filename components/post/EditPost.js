@@ -35,11 +35,14 @@ const EditPost = (props) => {
     (state) => state?.user?.data?.profilePictureInfo?.file?.location
   );
   const postDetails = useSelector((state) => state?.post?.postDetail?.allBody);
+
   const [postData, setPostData] = useState({
+    postId: props.postid,
     description: "",
     share: "",
     keys: [],
     fileIds: [],
+    privacy: "public",
   });
 
   const dispatch = useDispatch();
@@ -89,16 +92,17 @@ const EditPost = (props) => {
     }
 
     setPostData({
+      postId: props.postid,
       description: postDetails?.description,
       share: postDetails?.share,
       keys: imageKey,
       fileIds: imageFileIds,
+      privacy: postDetails?.privacy,
+      privacyFriendList: postDetails?.privacyFriendList || [],
     });
     setPrivacy(postDetails?.privacy);
     setPrivacyFriendList();
   }, [postDetails, imageKey, imageFileIds]);
-
-  // console.log("props", props.postid);
 
   useEffect(() => {
     props.postid && dispatch(getPostDetails(props.postid));
@@ -137,8 +141,17 @@ const EditPost = (props) => {
     props.onHide();
   };
 
+  console.log("hhhh", selectedFile);
+
   return (
     <>
+      <ModalPop
+        show={modalShowFriendList?.show}
+        onHide={() => setModalShowFriendList(false)}
+        onShow={() => setShowPopup(true)}
+        title={modalShowFriendList?.title}
+        getfriends={setPrivacyFriendList}
+      />
       <Modal {...props} size="lg" style={{ top: "10%" }}>
         <Modal.Header className="d-flex justify-content-between">
           <h5 className="modal-title" id="post-modalLabel">
@@ -242,16 +255,29 @@ const EditPost = (props) => {
                         position: "relative",
                       }}
                     >
-                      <img
-                        loading="lazy"
-                        src={file.base64}
-                        alt="icon"
-                        width={100}
-                        height={100}
-                        style={{
-                          objectfit: "contain",
-                        }}
-                      />
+                      {file?.type.startsWith("image") ? (
+                        <img
+                          loading="lazy"
+                          src={file.base64}
+                          alt="icon"
+                          width={100}
+                          height={100}
+                          style={{
+                            objectfit: "contain",
+                          }}
+                        />
+                      ) : (
+                        <video
+                          loading="lazy"
+                          src={file.base64}
+                          alt="icon"
+                          width={100}
+                          height={100}
+                          style={{
+                            objectfit: "contain",
+                          }}
+                        />
+                      )}
                       <div
                         onClick={() => deleteImage(file, index)}
                         style={{
@@ -294,6 +320,7 @@ const EditPost = (props) => {
                 <div style={{ position: "absolute", top: 0, opacity: 0 }}>
                   <FileBase64
                     multiple={true}
+                    // accept=".jpeg, .png, .jpg, .mp4"
                     onDone={(files) => {
                       setSelectedFile(files);
                       const reqFiles = [];
@@ -539,13 +566,6 @@ const EditPost = (props) => {
             Done
           </Button>
         </Modal.Footer>
-        <ModalPop
-          show={modalShowFriendList?.show}
-          onHide={() => setModalShowFriendList({ show: false })}
-          onShow={() => setShowPopup(true)}
-          title={modalShowFriendList?.title}
-          getfriends={setPrivacyFriendList}
-        />
       </Modal>
     </>
   );

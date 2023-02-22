@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Dropdown } from "react-bootstrap";
 import ProfileHeader from "../../components/profile-header";
 import CustomToggle from "../../components/dropdowns";
 import ShareOffcanvas from "../../components/share-offcanvas";
@@ -23,18 +23,23 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  allJoinedGroupList,
+  getAllGroupsList,
   getGroupByID,
   groupInvitationList,
   groupJoinRequestLists,
+  groupPrivileges,
 } from "../../store/groups";
 import Post from "../../components/post/postView/Post";
 import InviteFriend from "../../components/group/invite-friend";
 import GroupJoinRequest from "../../components/group/join-request";
+import { groupActionService } from "../../services/groups.service";
 
 const GroupDetail = () => {
   const [showGroupMember, setShowGroupMember] = useState(false);
   const [showInviteFriends, setShowInviteFriends] = useState(false);
   const [showJoinRequest, setShowJoinRequest] = useState(false);
+  const [follow, setFollow] = useState(false);
 
   const groupData = useSelector((state) => state?.groups?.groupInfo);
 
@@ -42,15 +47,48 @@ const GroupDetail = () => {
 
   const memberCount = useSelector((state) => state?.groups?.groupMember);
 
+  const groupPrivilege = useSelector(
+    (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
+  );
+
   const dispatch = useDispatch();
   const router = useRouter();
   const { groupId } = router.query;
 
   useEffect(() => {
-    dispatch(getGroupByID(groupId));
-    dispatch(groupInvitationList());
-    dispatch(groupJoinRequestLists(groupId));
+    if (groupId !== undefined) {
+      dispatch(getGroupByID(groupId));
+      dispatch(groupInvitationList());
+      dispatch(groupJoinRequestLists(groupId));
+      dispatch(groupPrivileges(groupId));
+    }
   }, [groupId]);
+
+  const deleteGroup = async () => {
+    const res = await groupActionService(groupId, {
+      action: "Delete",
+      // actionData: {
+      //   reason: "Test reason",
+      //   pauseTime: new Date(),
+      // },
+    });
+
+    if (res?.success) {
+      dispatch(getAllGroupsList(1));
+      dispatch(allJoinedGroupList());
+      router.push("/groups/all-groups");
+    }
+  };
+
+  const followAndUnfollowGroup = async () => {
+    const res = await groupActionService(groupId, {
+      action: "FollowAndUnFollow",
+    });
+    console.log(res);
+    if (res?.success) {
+      setFollow((prev) => !prev);
+    }
+  };
 
   return (
     <>
@@ -98,16 +136,14 @@ const GroupDetail = () => {
                           className="btn-link"
                           onClick={() => setShowGroupMember(true)}
                         >
-                          {(memberCount &&
-                            memberCount[0]?.memberCount?.members) ||
+                          {(memberCount && memberCount?.memberCount?.members) ||
                             0}{" "}
                           members
                         </Link>
                       </p>
                     </div>
                   </div>
-                  {userInfo?.userInfo?.roleInfo?.dropdownValue ===
-                  "Integrating Coach" ? (
+                  {groupPrivilege && (
                     <div
                       mt-md="0"
                       mt="2"
@@ -179,8 +215,31 @@ const GroupDetail = () => {
                       >
                         <i className="ri-add-line me-1"></i>Invite
                       </Button>
+
+                      <Dropdown className="dropdown-toggle-main ms-2">
+                        <Dropdown.Toggle
+                          as={CustomToggle}
+                          id="post-option"
+                          className="d-flex"
+                        >
+                          <span className="material-symbols-outlined">
+                            more_vert
+                          </span>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu
+                          className=" dropdown-menu-right"
+                          aria-labelledby="post-option"
+                        >
+                          <Dropdown.Item onClick={deleteGroup}>
+                            Delete Group
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={followAndUnfollowGroup}>
+                            {follow ? "Follow" : "Unfollow"} Group
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </Col>
               <Col lg="8">
@@ -195,7 +254,7 @@ const GroupDetail = () => {
                   </Card.Header>
                   <Card.Body>
                     <ul className="list-inline p-0 m-0">
-                      <li className="mb-3 pb-3 border-bottom">
+                      {/* <li className="mb-3 pb-3 border-bottom">
                         <div className="iq-search-bar members-search p-0">
                           <form action="#" className="searchbox w-auto">
                             <input
@@ -208,7 +267,7 @@ const GroupDetail = () => {
                             </Link>
                           </form>
                         </div>
-                      </li>
+                      </li> */}
                       <Link href="#">
                         <li className="mb-3 d-flex align-items-center">
                           <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
@@ -227,31 +286,31 @@ const GroupDetail = () => {
                           <h6 className="mb-0">Discover</h6>
                         </li>
                       </Link>
+
+                      {groupPrivilege && (
+                        <li
+                          className="mb-3 text-primary d-flex align-items-center"
+                          onClick={() => setShowJoinRequest(true)}
+                          role="button"
+                        >
+                          <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
+                            <span className="material-symbols-outlined">
+                              add_circle
+                            </span>
+                          </div>
+                          <h6 className="mb-0">Member Requests</h6>
+                        </li>
+                      )}
                       {userInfo?.userInfo?.roleInfo?.dropdownValue ===
                       "Integrating Coach" ? (
-                        <>
-                          <li
-                            className="mb-3 text-primary d-flex align-items-center"
-                            onClick={() => setShowJoinRequest(true)}
-                            role="button"
+                        <li>
+                          <Link
+                            href="/groups/create-group"
+                            className="btn btn-primary d-block w-100"
                           >
-                            <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
-                              <span className="material-symbols-outlined">
-                                add_circle
-                              </span>
-                            </div>
-                            <h6 className="mb-0">Member Requests</h6>
-                          </li>
-                          <li>
-                            <Link
-                              href="/groups/create-group"
-                              className="btn btn-primary d-block w-100"
-                            >
-                              <i className="ri-add-line pe-2"></i>Create New
-                              Group
-                            </Link>
-                          </li>
-                        </>
+                            <i className="ri-add-line pe-2"></i>Create New Group
+                          </Link>
+                        </li>
                       ) : null}
                     </ul>
                   </Card.Body>
@@ -265,7 +324,7 @@ const GroupDetail = () => {
                   <Card.Body>
                     <ul className="list-inline p-0 m-0">
                       <li className="mb-3">
-                        <p className="mb-0 text-capitalize">
+                        <p className="mb-0 text-capitalize display-6">
                           {groupData?.groupName}
                         </p>
                       </li>
