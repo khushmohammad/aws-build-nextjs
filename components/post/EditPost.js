@@ -1,4 +1,3 @@
-import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Card, Dropdown, Modal, Button, Form } from "react-bootstrap";
@@ -29,12 +28,13 @@ const EditPost = (props) => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [privacy, setPrivacy] = useState(null);
-  const [privacyFriendList, setPrivacyFriendList] = useState([]);
+  const [privacyFriendList, setPrivacyFriendList] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const profileImage = useSelector(
     (state) => state?.user?.data?.profilePictureInfo?.file?.location
   );
-  const postDetails = useSelector((state) => state?.post?.postDetail?.allBody);
+  const postDetails = useSelector((state) => state?.post?.postDetail);
 
   const [postData, setPostData] = useState({
     postId: props.postid,
@@ -78,30 +78,33 @@ const EditPost = (props) => {
   useEffect(() => {
     setPostData(postDetails);
 
-    if (count) {
-      let images = [];
-      postDetails?.filesInfo?.map((files) => {
-        images.push({
-          src: files.file.location,
-          fileId: files._id,
-          key: files.file.key,
+    if (postDetails && postDetails?.feeds !== 0) {
+      if (count) {
+        let images = [];
+        postDetails?.feeds[0]?.fileInfo?.map((files) => {
+          images.push({
+            src: files.file.location,
+            fileId: files._id,
+            key: files.file.key,
+          });
         });
+
+        setImageAndId({ data: images });
+      }
+
+      setPrivacyFriendList(postDetails?.friendList);
+
+      setPostData({
+        postId: props.postid,
+        description: postDetails?.feeds[0]?.description,
+        share: postDetails?.feeds[0]?.share,
+        keys: imageKey,
+        fileIds: imageFileIds,
+        privacy: postDetails?.feeds[0]?.privacy,
+        privacyFriendList: privacyFriendList || [],
       });
-
-      setImageAndId({ data: images });
+      setPrivacy(postDetails?.feeds[0]?.privacy);
     }
-
-    setPostData({
-      postId: props.postid,
-      description: postDetails?.description,
-      share: postDetails?.share,
-      keys: imageKey,
-      fileIds: imageFileIds,
-      privacy: postDetails?.privacy,
-      privacyFriendList: postDetails?.privacyFriendList || [],
-    });
-    setPrivacy(postDetails?.privacy);
-    setPrivacyFriendList();
   }, [postDetails, imageKey, imageFileIds]);
 
   useEffect(() => {
@@ -131,6 +134,7 @@ const EditPost = (props) => {
 
   const updatePostData = async (e) => {
     e.preventDefault();
+    console.log("postData: ", postData);
     await updatePost(postData, props.postid);
     setPostData({ description: "", file: null });
     setSelectedFile(null);
@@ -141,8 +145,6 @@ const EditPost = (props) => {
     props.onHide();
   };
 
-  console.log("hhhh", selectedFile);
-
   return (
     <>
       <ModalPop
@@ -150,6 +152,7 @@ const EditPost = (props) => {
         onHide={() => setModalShowFriendList(false)}
         onShow={() => setShowPopup(true)}
         title={modalShowFriendList?.title}
+        friendlist={privacyFriendList}
         getfriends={setPrivacyFriendList}
       />
       <Modal {...props} size="lg" style={{ top: "10%" }}>
@@ -439,11 +442,12 @@ const EditPost = (props) => {
               </div>
             </div>
             <Button
+              disabled={isLoading ? true : false}
               type="submit"
               variant="primary"
               className="d-block w-100 mt-3"
             >
-              Update
+              {isLoading ? "Updating..." : "Update"}
             </Button>
           </Form>
         </Modal.Body>
@@ -484,8 +488,8 @@ const EditPost = (props) => {
                     type="radio"
                     id="Friends"
                     name="privacy"
-                    value="private"
-                    checked={privacy === "private"}
+                    value="friends"
+                    checked={privacy === "friends"}
                     onChange={(e) => setPrivacy((prev) => e.target.value)}
                   />
                 </Form.Check>

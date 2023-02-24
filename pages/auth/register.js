@@ -12,6 +12,8 @@ import { parse, isDate } from "date-fns";
 import Auth from "../../layouts/auth";
 import AsyncSelect from "react-select/async";
 import moment from "moment";
+import {useDispatch} from 'react-redux'
+import { getUserName } from "../../store/site/Loader";
 
 const date = new Date();
 
@@ -68,6 +70,7 @@ const Register = () => {
   const [countriesDataArrayObj, setCountriesDataArrayObj] = useState();
 
   const router = useRouter();
+  const dispatch = useDispatch()
 
   //form validate and config
   const {
@@ -117,6 +120,8 @@ const Register = () => {
     // console.log(data);
     // const formData = { ...data, country: data.country.value, isSocialMediaSignup: false }
     // console.log(formData);
+
+    dispatch(getUserName(data.userName))
 
     const payload = {
       firstName: data.firstName,

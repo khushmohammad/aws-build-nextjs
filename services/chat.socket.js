@@ -15,7 +15,7 @@ export const getMesasgesByreceiverId = async (receiverUserId) => {
 
     try {
         const res = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_PATH}/chats/messages/${receiverUserId}?pageNumber=1&limit=500`,
+            `${process.env.NEXT_PUBLIC_API_PATH}/chats/messages/${receiverUserId}?pageNumber=1&limit=30`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }

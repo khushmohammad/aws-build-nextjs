@@ -176,19 +176,19 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
     return (
         <>
 
-            {!isRequested[comment._id] ? <li className={`mb-2 `} >
-                <div className="d-flex">
+            {!isRequested[comment._id] ? <li className={`mb-2  border-top py-2`} >
+                <div className="d-flex ">
                     <div className="user-img flex-shrink-0">
                         <Image
-                            className="avatar-35 rounded-circle img-fluid"
+                            className="avatar-35 rounded-circle img-fluid "
                             src={comment.userDetails?.profilePictureInfo?.file?.location || user2}
                             alt=""
                             height={35}
                             width={35}
                         />
                     </div>
-                    <div className="comment-data-block ms-3 flex-grow-1">
-                        <h6>{comment.userDetails?.userInfo?.firstName || 'Name'} {comment.userDetails?.userInfo?.lastName || ''}</h6>
+                    <div className="comment-data-block ms-3 flex-grow-1 ">
+                        <h6 className='fw-semibold'>{comment.userDetails?.userInfo?.firstName || 'Name'} {comment.userDetails?.userInfo?.lastName || ''}</h6>
                         <p className="mb-0">{comment?.textInfo}</p>
                         <div className="d-flex flex-wrap align-items-center comment-activity">
 

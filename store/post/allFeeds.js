@@ -1,34 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllFeeds, getAllPostsByUserId, getPostsByTokenUserId, getSavePostListApi } from "../../services/posts.service";
+import { getAllFeeds, getAllPostsByUserId, getFeeds, getPostsByTokenUserId, getSavePostListApi } from "../../services/posts.service";
 
 const initialState = {
-  allFeeds: "",
+  allFeeds: { postList: [], postcount: 0 },
   status: "loading",
+  error: "",
+
 };
 
 const AllFeedsSlice = createSlice({
   name: "post",
   initialState,
-  activePage: "",
-  allFeeds: [],
   extraReducers: (builder) => {
     builder
-      .addCase(getAllFeedsList.pending, (state, action) => {
+      .addCase(getAllFeedsList.pending, (state) => {
         state.status = "loading";
-        state.error = "";
-        state.allFeeds = [];
+        state.allFeeds.postList = [];
+
       })
       .addCase(getAllFeedsList.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.allFeeds = action.payload.newarray;
-        state.postcount = action.payload.PostCount;
-        state.error = "";
+        state.allFeeds.postList = action.payload.postWithUserDetails;
+        state.allFeeds.postcount = action.payload.PostCount;
       })
       .addCase(getAllFeedsList.rejected, (state, action) => {
         state.status = "failed";
         //console.log(action,"action");
         state.error = action.error.message;
-        state.allFeeds = [];
       });
   },
 });
@@ -36,19 +34,8 @@ const AllFeedsSlice = createSlice({
 export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
-    //  console.log(params, "paramdds");
-    const data =
-      params.activePage == "home"
-        ? await getAllFeeds(params.page, params.limit)
-        : params.activePage == "myProfile"
-          ? await getPostsByTokenUserId(params.page, params.limit)
-          : params.activePage == "userProfile"
-            ? await getAllPostsByUserId(params.page, params.limit, params.uerId, "userId")
-            : params.activePage == "group"
-              ? await getAllPostsByUserId(params.page, params.limit, params.groupId, "groupId") :
-              params.activePage == "savedPost"
-                ? await getSavePostListApi(params.page, params.limit) :
-                await getAllFeeds(params.page, params.limit)
+
+    const data = await getFeeds(params)
     return data;
   }
 );

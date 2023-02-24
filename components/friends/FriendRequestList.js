@@ -40,7 +40,7 @@ function FriendRequestList() {
             {apiError && apiError}
 
             {friendRequestList &&
-                friendRequestList.map((data, index) => {
+                friendRequestList.slice(0, 5).map((data, index) => {
                     return (
                         <React.Fragment key={index}>
                             <div className="iq-friend-request">
@@ -90,6 +90,17 @@ function FriendRequestList() {
                     <h5 className="card-title">No Request Found!</h5>
                 </div>
             )}
+            {friendRequestList && friendRequestList.length > 4 &&
+                <div className="text-center">
+                    <Link
+                        href="/friends/friend-request"
+                        className=" btn text-primary w-100"
+                    >
+                        View More Request
+                    </Link>
+                </div>
+            }
+
         </div>
     )
 }

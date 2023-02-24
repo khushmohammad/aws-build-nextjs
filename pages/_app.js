@@ -8,11 +8,19 @@ import { SessionProvider } from "next-auth/react";
 import { SSRProvider } from "react-bootstrap";
 import { PersistGate } from "redux-persist/integration/react";
 import "react-datepicker/dist/react-datepicker.css";
-import Spinner from 'react-bootstrap/Spinner';
-
+import Spinner from "react-bootstrap/Spinner";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-
+  // const handleSignOut = () => {
+  //   signOut({ redirect: true });
+  // };
+  // if (typeof global.window === undefined) {
+  //   window.addEventListener("load", function (e) {
+  //     var confirmationMessage = "hello friends ";
+  //     console.log(confirmationMessage);
+  //     handleSignOut();
+  //   });
+  // }
   //const loader = useSelector((state) => state?.loader?.loader)
   return (
     <>
@@ -29,7 +37,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </div>
             } */}
             <Component {...pageProps} />
-
           </PersistGate>
           {/* </Provider> */}
         </SessionProvider>

@@ -83,9 +83,9 @@ const ForgotPassword = () => {
                   <p className="my-2 text-danger">{errors.userName.message}</p>
                 )}
               </div>
-              <div className="d-inline-block w-100">
+              <div className="d-flex w-100 justify-content-end">
                 <button type="submit" className="btn btn-primary float-right">
-                  Search
+                  Submit
                 </button>
                 <Link
                   href="/auth/login"

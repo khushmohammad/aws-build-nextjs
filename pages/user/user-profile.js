@@ -340,7 +340,7 @@ const UserProfile = () => {
                               </div>
                               <div className="card-header-toolbar d-flex align-items-center">
                                 <p className="m-0">
-                                  <Link href="#">Add Photo</Link>
+                                  {/* <Link href="#">Add Photo</Link> */}
                                 </p>
                               </div>
                             </div>
@@ -404,11 +404,11 @@ const UserProfile = () => {
                                     Family and Relationship
                                   </Nav.Link>
                                 </Nav.Item> */}
-                                {/* <Nav.Item>
+                                <Nav.Item>
                                   <Nav.Link href="#" eventKey="about4">
                                     Work and Education
                                   </Nav.Link>
-                                </Nav.Item> */}
+                                </Nav.Item>
                                 {/* <Nav.Item>
                                   <Nav.Link href="#" eventKey="about5">
                                     Languages Known
@@ -1105,7 +1105,7 @@ const UserProfile = () => {
                                   All Friends
                                 </Nav.Link>
                               </Nav.Item>
-                              <Nav.Item>
+                              {/* <Nav.Item>
                                 <Nav.Link
                                   href="#pill-recently-add"
                                   eventKey="recently-add"
@@ -1138,7 +1138,7 @@ const UserProfile = () => {
                                 >
                                   Following
                                 </Nav.Link>
-                              </Nav.Item>
+                              </Nav.Item> */}
                             </Nav>
                             <Tab.Content>
                               <Tab.Pane eventKey="all-friends">

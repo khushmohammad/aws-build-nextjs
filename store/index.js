@@ -7,6 +7,7 @@ import allFeedsReducer from "./post/allFeeds";
 import groupReducer from "./groups";
 import friendReducer from "./friends";
 import eventReducer from "./events";
+import modeReducer from "./mode/mode";
 import friendsRequests from "./friends/friendsRequests";
 import nonFriendsLIst from "./friends/nonFriendsList";
 import loaderReducer from "./site/Loader";
@@ -26,6 +27,7 @@ const persistConfig = {
 
 const reducers = combineReducers({
   setting: settingReducer,
+  mode: modeReducer,
   user: profileReducer,
   post: postReducer,
   allFeed: allFeedsReducer,

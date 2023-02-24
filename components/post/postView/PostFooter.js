@@ -26,7 +26,7 @@ import Commentapi from './Commentapi';
 
 
 
-function PostFooter({ currentPostId, refreshPostList ,share }) {
+function PostFooter({ currentPostId, refreshPostList, share }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([])
   const [apiError, setApiError] = useState('')
   const loginUserId = useSelector((state) => state?.user?.data?.userInfo._id)
@@ -35,7 +35,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
     const reaction = props && props.reactionByUser ? props.reactionByUser : 'Like'
 
     if (reaction == 'Like') {
-      return <><AiFillLike size={30} color={"#dd300e"} /></>;
+      return <><AiFillLike size={28} className="text-primary" /></>;
     } else if (reaction == 'Think') {
       return <><Image
         src={icon5}
@@ -106,7 +106,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
       setLikesListWithUserDetails(res)
 
     }
-    
+
   }
 
 
@@ -131,7 +131,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                 <Dropdown>
                   <Dropdown.Toggle as={CustomToggle}>
                     <div onClick={() => LikeThePost("Like")}>
-                      {isliked != -1 ? <GetReactionIcon reactionByUser={islikedData && islikedData.reactionEmoji} /> : <AiOutlineLike size={36} color={"#dd300e"} />}
+                      {isliked != -1 ? <GetReactionIcon reactionByUser={islikedData && islikedData.reactionEmoji} /> : <AiOutlineLike size={30} className="text-primary" />}
                     </div>
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="py-2">
@@ -140,7 +140,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                       overlay={<Tooltip >Like</Tooltip>}
                       className="ms-2 me-2"
                     >
-                      <AiOutlineLike size={36} onClick={() => LikeThePost("Like")} color={"#dd300e"} />
+                      <AiOutlineLike size={28} onClick={() => LikeThePost("Like")} className="text-primary mx-1" />
                     </OverlayTrigger>
                     <OverlayTrigger
                       placement="top"
@@ -149,7 +149,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon2}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("Love")}
                       />
@@ -161,7 +161,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon3}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("Happy")}
                       />
@@ -173,7 +173,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon4}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("HaHa")}
                       />
@@ -185,7 +185,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon5}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("Think")}
 
@@ -199,7 +199,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon6}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("Sade")}
                       />
@@ -211,7 +211,7 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                     >
                       <Image
                         src={icon7}
-                        className="img-fluid"
+                        className="img-fluid mx-1"
                         alt=""
                         onClick={() => LikeThePost("Lovely")}
                       />
@@ -232,15 +232,15 @@ function PostFooter({ currentPostId, refreshPostList ,share }) {
                           return (
                             <React.Fragment key={index}>
                               {index < 10 &&
-                                <Dropdown.ItemText key={index} className="bg-secondary p-2" style={{ overflow: "hiddle", minWidth: "200px" }}>
+                                <Dropdown.ItemText key={index} className="bg-light p-2" style={{ overflow: "hiddle", minWidth: "200px" }}>
                                   {/* <Link href={`/friends/${data?.userDetails._id}`}> */}
                                   <GetReactionIcon reactionByUser={data.reactionEmoji && data.reactionEmoji} />  <Image
                                     className="avatar-35 rounded-circle img-fluid"
                                     src={data?.userDetails?.profilePictureInfo?.file?.location || user2}
                                     alt=""
-                                    height={35}
-                                    width={35}
-                                  />  {data?.userDetails && `${data.userDetails?.userInfo.firstName} ${data.userDetails?.userInfo.lastName}`}
+                                    height={30}
+                                    width={30}
+                                  /><span className='mx-2 text-primary' >{data?.userDetails && `${data.userDetails?.userInfo.firstName || ""} ${data.userDetails?.userInfo.lastName || ""}`} </span>
                                   {/* </Link> */}
                                 </Dropdown.ItemText>
                               }

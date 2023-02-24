@@ -2,13 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getNotifications } from "../../services/basic.services";
 
 const initialState = {
-    list: [
-        {
-            user: "123",
-            message: "Ankit added a new photo.",
-            isRead: "true",
-        }
-    ],
+    list: [],
 };
 
 const siteNotification = createSlice({
@@ -25,9 +19,9 @@ const siteNotification = createSlice({
 
 export const getNotification = createAsyncThunk(
     "notification",
-    async () => {
-        //  console.log(params, "paramdds");
-        const data = await getNotifications()
+    async (params) => {
+        
+        const data = await getNotifications(params)
         return data;
     }
 );

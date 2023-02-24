@@ -47,9 +47,15 @@ const MailId = () => {
             </div>
           </>
         ) : (
-          <h1 className="mb-4 text-5xl font-medium leading-tight">
-            {apiError}
-          </h1>
+          <div className="sign-in-from justify-content-center align-items-start d-flex flex-column mt-lg-5 pt-lg-5">
+            <h2 className="h4 mb-4">{apiError}</h2>
+            <Link className="btn btn-primary mt-3" href="/">
+              <span className="d-flex align-items-center">
+                <i className="material-symbols-outlined md-18 me-1">home</i>
+                Back to Home
+              </span>
+            </Link>
+          </div>
         )}
       </div>
     </Auth>

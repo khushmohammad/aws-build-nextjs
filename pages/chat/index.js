@@ -65,7 +65,7 @@ const Chat = () => {
 
     const getCurrentMessages = async () => {
         const result = await getMesasgesByreceiverId(receiverUserId)
-        console.log(result, "result");
+
         if (result && result?.status === 200) {
             // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
             result?.data?.body?.data?.length != undefined ? setMessages(result?.data?.body?.data) : setMessages('')
@@ -77,9 +77,9 @@ const Chat = () => {
         // console.log(NewMessage, SendMesageToUserOBj, "SendMesageToUserOBj");
         socket.emit("sendMessage", SendMesageToUserOBj);
         socket.on("getMessage", (data) => {
-            console.log(data, "data");
+
             const newMsg = { _id: data.messageId, message: data.message, senderId: data.senderId, createdAt: new Date().toJSON() }
-            console.log(newMsg);
+
             setNewMessages(newMsg)
         })
     };
@@ -90,6 +90,29 @@ const Chat = () => {
     useEffect(() => {
         messages && setMessages([...messages, newMessages])
     }, [newMessages])
+
+
+    // <<<<>>>> Delete Message with socket
+
+
+    const [isDeleted, setIsDeleted] = useState('');
+
+    const deleteMessage = async (messageId) => {
+        const deleteMesageOBj = { userId: senderUserId, receiverId: receiverUserId, messageIds: messageId }
+        socket.emit("deleteMessage", deleteMesageOBj);
+        hideMessage()
+    };
+
+    const hideMessage = async () => {
+        await socket.on("messagesDeleted", (deleteData) => {
+            deleteData.messageIds[0] && setIsDeleted((prev) => ({ ...prev, [deleteData.messageIds[0]]: true }))
+        })
+    }
+    //  console.log(isDeleted, "isDeleted")
+    useEffect(() => {
+        hideMessage()
+
+    }, [socket])
 
     //console.log(newMessages, "newMessages");
     // <<<<<>>>>>>>>> close Socket
@@ -121,7 +144,7 @@ const Chat = () => {
 
     useEffect(() => {
         scrollToView != null ? scrollToView?.scrollIntoView() : ""
-    }, [messages])
+    }, [messages || newMessages])
 
 
 
@@ -331,14 +354,27 @@ const Chat = () => {
                                                             </div>
                                                             <div className="chat-content scroller" >
 
-                                                                {messages && messages.length !== 0 && (messages).map((data, index) => {
-                                                                    // console.log(messages.length, messages);
+                                                                {messages && messages.length !== 0 && (messages).map((message, index) => {
 
                                                                     return (
                                                                         <React.Fragment key={index}>
-                                                                            {data &&
-                                                                                <MessageView message={data} receiverId={receiverUserId} senderId={senderUserId} />
+                                                                            {isDeleted[message._id] === true ? "" :
+                                                                                <div className={`chat ${message.senderId === senderUserId ? 'd-flex other-user ' : 'chat-left'} align-items-center my-3`}>
+                                                                                    <MessageView data={message} />
+
+                                                                                    <Dropdown className="d-flex justify-content-center align-items-center" as="span">
+                                                                                        <Dropdown.Toggle as={CustomToggle} variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show">
+                                                                                            more_vert
+                                                                                        </Dropdown.Toggle>
+                                                                                        <Dropdown.Menu className="dropdown-menu-right">
+                                                                                            <Dropdown.Item className="d-flex align-items-center" href="#" onClick={() => deleteMessage(message._id)}><i className="material-symbols-outlined md-18 me-1">delete</i>Delete </Dropdown.Item>
+
+                                                                                        </Dropdown.Menu>
+                                                                                    </Dropdown>
+                                                                                </div>
                                                                             }
+
+
                                                                         </React.Fragment>
                                                                     )
                                                                 })}
@@ -368,73 +404,59 @@ const Chat = () => {
 }
 
 
-const MessageView = ({ message, senderId, receiverId }) => {
-    const data = message
+const MessageView = ({ data }) => {
 
     const user = useSelector((state) => state.user.data);
 
-    const [isDeleted, setIsDeleted] = useState([]);
+    // const [isDeleted, setIsDeleted] = useState('');
 
-    const deleteMessage = async (messageId) => {
+    // const deleteMessage = async (messageId) => {
 
-        const deleteMesageOBj = { userId: senderId, receiverId: receiverId, messageIds: messageId }
-        console.log(deleteMesageOBj, "deleteMesageOBj");
-        socket.emit("deleteMessage", deleteMesageOBj);
-        socket.on("messagesDeleted", (deleteData) => {
-            setIsDeleted({ [deleteData.messageIds[0]]: true });
-        }
-        )
-        // setIsDeleted({ 1: true })
-    };
+    //     const deleteMesageOBj = { userId: senderId, receiverId: receiverId, messageIds: messageId }
 
-    useEffect(() => {
-        socket.on("messagesDeleted", (deleteData) => {
-            setIsDeleted({ [deleteData.messageIds[0]]: true });
-        }
-        )
+    //     socket.emit("deleteMessage", deleteMesageOBj);
+    //     socket.on("messagesDeleted", (deleteData) => {
+    //         //setIsDeleted({ [deleteData.messageIds[0]]: true });
 
-    }, [socket])
+    //         console.log(deleteData.messageIds[0], "deleteData")
+    //         setIsDeleted({ [deleteData.messageIds[0]]: true })
+
+    //     }
+    //     )
+    // };
+    //  console.log(isDeleted)
+    // useEffect(() => {
+    //     socket.on("messagesDeleted", (deleteData) => {
+    //         setIsDeleted({ [deleteData.messageIds[0]]: true });
+    //     }
+    //     )
+
+    // }, [socket])
 
 
     return (
         <>
-            {isDeleted[data._id] ? "" :
-                <>
-                    <div className={`chat ${data.senderId === senderId ? 'd-flex other-user ' : 'chat-left'} align-items-center my-3`}>
-                        <div className="chat-user">
-                            <Link className="avatar m-0" href="">
-                                <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
-                            </Link>
-                            <span className="chat-time mt-1">
-                                <p className="mb-0 text-primary">
-                                    {data && getPostTime(data.createdAt) || ""}
+            <div className="chat-user">
+                <Link className="avatar m-0" href="">
+                    <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" className="avatar-35 " />
+                </Link>
+                <span className="chat-time mt-1">
+                    <p className="mb-0 text-primary">
+                        {data && getPostTime(data.createdAt) || ""}
 
-                                </p>
-                            </span>
-                        </div>
-                        <div className="chat-detail m-2">
-                            <div className="chat-message m-0">
-                                <p>{data.message}</p>
-                                {/* <p className='' >{data._id}</p> */}
+                    </p>
+                </span>
+            </div>
+            <div className="chat-detail m-2">
+                <div className="chat-message m-0">
+                    <p>{data.message}</p>
+                    {/* <p className='' >{data._id}</p> */}
 
-                            </div>
-                        </div><span role="button" className="material-symbols-outlined">
+                </div>
+            </div>
+            <span role="button" className="material-symbols-outlined">
 
-                        </span>
-                        <Dropdown className="d-flex justify-content-center align-items-center" as="span">
-                            <Dropdown.Toggle as={CustomToggle} variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show">
-                                more_vert
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className="dropdown-menu-right">
-                                <Dropdown.Item className="d-flex align-items-center" href="#" onClick={() => deleteMessage(data._id)}><i className="material-symbols-outlined md-18 me-1">delete</i>Delete </Dropdown.Item>
-
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </div>
-                </>
-
-            }
-
+            </span>
 
 
         </>

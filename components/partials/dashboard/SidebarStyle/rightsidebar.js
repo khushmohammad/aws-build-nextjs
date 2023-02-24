@@ -16,7 +16,7 @@ const RightSidebar = () => {
   const friendsList = useSelector(
     (state) => state?.friends?.friendList?.friendsList
   );
-  console.log(friendsList, "friendsList")
+  //console.log(friendsList, "friendsList")
 
   return (
     <>

@@ -34,6 +34,7 @@ const CreatePost = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [privacy, setPrivacy] = useState("public");
   const [privacyFriendList, setPrivacyFriendList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
     setShow(false);
@@ -48,12 +49,6 @@ const CreatePost = (props) => {
   const closeHandle = () => {
     setShowPopup(false);
     setShow(true);
-    // setPostData({
-    //   description: "",
-    //   file: null,
-    // });
-    // setPrivacy("public");
-    // setSelectedFile(null);
   };
 
   const router = useRouter();
@@ -89,6 +84,7 @@ const CreatePost = (props) => {
 
   const submitPost = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     //console.log(":::", postData);
     await createPost(postData).then((res) => {
       setPostData({
@@ -99,9 +95,10 @@ const CreatePost = (props) => {
       setSelectedFile(null);
       dispatch(allPhotos());
       dispatch(allPostPhotos());
+      setIsLoading(false);
+      handleClose();
+      props.refreshPostList();
     });
-    handleClose();
-    props.refreshPostList();
   };
 
   const deleteImageKey = (img, imgIndex) => {
@@ -251,7 +248,10 @@ const CreatePost = (props) => {
                   autoFocus
                   value={postData?.description}
                   onChange={(e) =>
-                    setPostData({ ...postData, description: e.target.value })
+                    setPostData({
+                      ...postData,
+                      description: e.target.value,
+                    })
                   }
                   className="form-control rounded"
                   placeholder="Write something here..."
@@ -459,11 +459,12 @@ const CreatePost = (props) => {
               </div>
             </div>
             <Button
+              disabled={isLoading ? true : false}
               type="submit"
               variant="primary"
               className="d-block w-100 mt-3"
             >
-              Post
+              {isLoading ? "Posting..." : "Post"}
             </Button>
           </Form>
         </Modal.Body>
@@ -504,8 +505,8 @@ const CreatePost = (props) => {
                     type="radio"
                     id="Friends"
                     name="privacy"
-                    value="private"
-                    checked={privacy === "private"}
+                    value="friends"
+                    checked={privacy === "friends"}
                     onChange={(e) => setPrivacy(e.target.value)}
                   />
                 </Form.Check>

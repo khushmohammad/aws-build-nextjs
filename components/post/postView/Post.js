@@ -6,6 +6,7 @@ import loader from "../../../public/assets/images/page-img/page-load-loader.gif"
 import {
   deletePostByPostId,
   getAllPostsByUserId,
+  getFeeds,
   pinPostByUser,
 } from "../../../services/posts.service";
 import { useRouter } from "next/router";
@@ -20,6 +21,7 @@ import CreatePost from "../CreatePost";
 import { getGroupFeeds } from "../../../store/groups";
 import PostThreeDotmenu from "./PostThreeDotmenu";
 import MediaComponent from "./MediaComponent";
+import moment from "moment";
 
 const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [page, setPage] = useState(1);
@@ -27,51 +29,30 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [posts, setposts] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
-  const StorePosts = useSelector((state) => state?.allFeed?.allFeeds);
+  const StorePosts = useSelector((state) => state?.allFeed?.allFeeds?.postList);
   const loading = useSelector((state) => state?.allFeed?.status);
+  const error = useSelector((state) => state?.allFeed?.error);
+
 
   const GetPostNet = async (pagenum = page, limitnum = limit) => {
-    const userIdFromQueryPath = router?.query?.id;
-    if (userIdFromQueryPath && userIdFromQueryPath) {
-      dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: pagenum,
-          limit: limitnum,
-          uerId: userIdFromQueryPath,
-        })
-      );
-    } else if (groupId && activePage == "groups") {
-      dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: pagenum,
-          limit: limitnum,
-          groupId: groupId,
-        })
-      );
-    } else if (activePage == "PostDetail") {
+    const groupanduserId = router?.query?.id ? router?.query?.id : groupId;
+    const params = {
+      activePage: activePage,
+      page: pagenum,
+      limit: limitnum,
+      groupanduserId: groupanduserId,
+    }
+    if (activePage == "PostDetail") {
       setposts([]);
-      setposts([postDetailObj]);
-    } else if (activePage == "savedPost") {
-
-
-      dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: pagenum,
-          limit: limitnum,
-        })
-      );
+      setposts(postDetailObj);
     } else {
       dispatch(
-        getAllFeedsList({
-          activePage: activePage,
-          page: pagenum,
-          limit: limitnum,
-        })
+        getAllFeedsList(params)
       );
     }
+
+    // await getFeeds(params)
+
   };
 
   useEffect(() => {
@@ -139,8 +120,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
               share
             } = data;
 
-            const userDetails = data && data?.postCreatedBy;
-            const userprofilePicture = data && data?.postCreatedBy;
+            const userDetails = data && data?.userDetails;
+            const userprofilePicture = data && data?.userDetails;
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
@@ -164,7 +145,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                       <div className="w-100">
                         <div className="d-flex justify-content-between">
                           <div>
-                            <h5 className="mb-0 d-inline-block">
+                            <h5 className="mb-0 d-inline-block fw-bold">
                               {" "}
                               {userDetails &&
                                 `${userDetails.userInfo.firstName}   ${userDetails.userInfo.lastName} `}
@@ -178,7 +159,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                               ""
                             )}
                             <p className="mb-0 text-primary">
-                              {createdAt && getPostTime(createdAt)}
+                              {/* {createdAt && getPostTime(createdAt)} */}
+                              {createdAt && moment(createdAt).fromNow()}
                             </p>
                           </div>
                           <div className="card-post-toolbar">
@@ -252,6 +234,28 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
             StorePosts &&
             loading != "loading" &&
             StorePosts.length == 0 && (
+              <div
+                className="card card-block card-stretch card-height"
+                style={{
+                  marginBottom: "-6rem",
+                  height: "90px",
+                  width: "100%",
+                  position: "absolute",
+                  bottom: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <Card.Body>
+                  <div className="col-sm-12 text-center">
+                    <p className="p-3  text-alert text-center">
+                      No posts found!
+                    </p>
+                  </div>
+                </Card.Body>
+              </div>
+            )}
+          {activePage == "PostDetail" &&
+            posts.length == 0 && (
               <div
                 className="card card-block card-stretch card-height"
                 style={{

@@ -16,6 +16,8 @@ import { discoverEvents, getEvents } from "../../store/events";
 import CreateEvent from "../../components/events";
 import { eventActionService } from "../../services/event.service";
 import { useRouter } from "next/router";
+//comingsoon birthday 
+import Comingsoon from "../../pages/test/comingsoon";
 
 const Events = () => {
   const [show, setShow] = useState(false);
@@ -58,7 +60,9 @@ const Events = () => {
 
   return (
     <>
+    <Comingsoon/>
       <CreateEvent show={show} onHide={() => setShow(false)} />
+      <div style={{display:"none"}}>
       <Default>
         <Container>
           <Row>
@@ -283,6 +287,7 @@ const Events = () => {
           </Row>
         </Container>
       </Default>
+      </div>
     </>
   );
 };

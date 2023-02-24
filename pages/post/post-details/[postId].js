@@ -15,13 +15,11 @@ function PostDetailsById() {
     const router = useRouter()
 
     const PostId = router.query.postId
-
-
     const [postDetail, setPostDetail] = useState("")
     const postData = async () => {
         const res = await getPostsByPostId(PostId)
-        const data = res
-        setPostDetail(data)
+        res.length == 0 ? setPostDetail(res) : setPostDetail([res])
+
     }
     useEffect(() => {
         PostId && postData()
@@ -32,7 +30,7 @@ function PostDetailsById() {
         <Default>
             <Container>
                 <Row>
-                    <Col lg={8} className="row m-0 p-0">
+                    <Col lg={8} className="row m-0 p-0 mx-auto">
 
                         <Col sm={12}>
                             {postDetail &&

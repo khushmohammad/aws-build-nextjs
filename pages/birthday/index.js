@@ -8,7 +8,9 @@ import React, { useState, useEffect } from "react";
 import { friendsBirthdayList } from "../../services/friends.service";
 import user7 from "../../public/assets/images/user/07.jpg";
 
-//profile-header 
+//comingsoon birthday
+import Comingsoon from "../../pages/test/comingsoon";
+//profile-header
 import ProfileHeader from "../../components/profile-header";
 import Default from "../../layouts/default";
 import { map } from "lodash";
@@ -37,11 +39,12 @@ const Birthday = () => {
   };
   let dt = new Date();
   let upcommingBdyDigits = [1, 2, 3, 4, 5, 6, 7];
-  const sevenDays = upcommingBdyDigits.map((_) =>{return{
-   date: new Date(dt?.setDate(dt?.getDate() + 1))?.getDate(),
-   month: new Date(dt?.setMonth(dt?.getMonth()))?.getMonth()+1
-  }}
-  );
+  const sevenDays = upcommingBdyDigits.map((_) => {
+    return {
+      date: new Date(dt?.setDate(dt?.getDate() + 1))?.getDate(),
+      month: new Date(dt?.setMonth(dt?.getMonth()))?.getMonth() + 1,
+    };
+  });
 
   const upcomingBirthdays = (birthdayArr) => {
     birthdayArr.filter((elem) => {
@@ -52,9 +55,8 @@ const Birthday = () => {
           }
         });
     });
-  
   };
-console.log("upcomingBirthdayState",upcomingBirthdayState)
+  console.log("upcomingBirthdayState", upcomingBirthdayState);
   const birthdayMonthArry = async () => {
     const res = await friendsBirthdayList();
     const dob = await res;
@@ -103,54 +105,51 @@ console.log("upcomingBirthdayState",upcomingBirthdayState)
                 </div>
               </Card.Header>
             </Card>
-           
-              {friendsByMonth[month]?.map((friend, index) => (
-                <Col lg="6" md="12" key={index}>
-                  <Card>
-                    <Card.Body>
-                      <div className="iq-birthday-block">
-                        <div className="d-flex align-items-center justify-content-between">
-                          <div className="d-flex align-items-center">
-                            <Link href="#">
-                              <Image
-                                src={
-                                  friend?.profileInfo?.profileInfo?.file
-                                    ?.location || user7
-                                }
-                                alt="profile-img"
-                                height={100}
-                                width={100}
-                                className="img-fluid"
-                              />
-                            </Link>
-                            <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
-                              <h5>{`${friend?.firstName}  ${friend?.lastName}`}</h5>
-                              <p className="mb-0">
-                                {`${
-                                  new Date(friend?.dateOfBirth)?.getDate() - 1
-                                } ${
-                                  year[new Date(friend?.dateOfBirth)?.getMonth()]
-                                }  ${new Date(
-                                  friend?.dateOfBirth
-                                )?.getFullYear()}`}
-                              </p>
-                            </div>
+
+            {friendsByMonth[month]?.map((friend, index) => (
+              <Col lg="6" md="12" key={index}>
+                <Card>
+                  <Card.Body>
+                    <div className="iq-birthday-block">
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <Link href="#">
+                            <Image
+                              src={
+                                friend?.profileInfo?.profileInfo?.file
+                                  ?.location || user7
+                              }
+                              alt="profile-img"
+                              height={100}
+                              width={100}
+                              className="img-fluid"
+                            />
+                          </Link>
+                          <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
+                            <h5>{`${friend?.firstName}  ${friend?.lastName}`}</h5>
+                            <p className="mb-0">
+                              {`${
+                                new Date(friend?.dateOfBirth)?.getDate() - 1
+                              } ${
+                                year[new Date(friend?.dateOfBirth)?.getMonth()]
+                              }  ${new Date(
+                                friend?.dateOfBirth
+                              )?.getFullYear()}`}
+                            </p>
                           </div>
-                          <button
-                            onClick={() =>
-                              router.push(`/friends/${friend._id}`)
-                            }
-                            className="btn btn-primary"
-                          >
-                            Wish
-                          </button>
                         </div>
+                        <button
+                          onClick={() => router.push(`/friends/${friend._id}`)}
+                          className="btn btn-primary"
+                        >
+                          Wish
+                        </button>
                       </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
           </div>
         </div>
       );
@@ -165,148 +164,158 @@ console.log("upcomingBirthdayState",upcomingBirthdayState)
   }, []);
 
   return (
-    <Default>
-      <ProfileHeader title="Birthday" img={profilebg4} />
-      <div id="content-page" className="content-page">
-        <Container>
-          <Row>
-            <Col sm="12">
-              <div className="birthday-block">
-                <Card>
-                  <Card.Header className="d-flex justify-content-between rounded border-bottom-0">
-                    <div className="header-title">
-                      <h4 className="card-title">Today Birthday</h4>
-                    </div>
-                  </Card.Header>
-                </Card>
-                <Row>
-                  {myFri[0] ? (
-                    myFri.map((elem, index) => (
-                      <Col lg="6" md="12" key={index}>
-                        <Card>
-                          <Card.Body>
-                            <div className="iq-birthday-block">
-                              <div className="d-flex align-items-center justify-content-between">
-                                <div className="d-flex align-items-center">
-                                  <Link href="#">
-                                    <Image
-                                      src={
-                                        elem?.profileInfo?.profileInfo?.file
-                                          ?.location || user7
+    <>
+      <Comingsoon />
+
+      <div style={{ display: "none" }}>
+        <Default>
+          <ProfileHeader title="Birthday" img={profilebg4} />
+          <div id="content-page" className="content-page">
+            <Container>
+              <Row>
+                <Col sm="12">
+                  <div className="birthday-block">
+                    <Card>
+                      <Card.Header className="d-flex justify-content-between rounded border-bottom-0">
+                        <div className="header-title">
+                          <h4 className="card-title">Today Birthday</h4>
+                        </div>
+                      </Card.Header>
+                    </Card>
+                    <Row>
+                      {myFri[0] ? (
+                        myFri.map((elem, index) => (
+                          <Col lg="6" md="12" key={index}>
+                            <Card>
+                              <Card.Body>
+                                <div className="iq-birthday-block">
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    <div className="d-flex align-items-center">
+                                      <Link href="#">
+                                        <Image
+                                          src={
+                                            elem?.profileInfo?.profileInfo?.file
+                                              ?.location || user7
+                                          }
+                                          alt="profile-img"
+                                          height={100}
+                                          width={100}
+                                          className="img-fluid"
+                                        />
+                                      </Link>
+                                      <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
+                                        <h5>{`${elem?.firstName}  ${elem?.lastName}`}</h5>
+                                        <p className="mb-0">Today</p>
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        router.push(`/friends/${elem?._id}`)
                                       }
-                                      alt="profile-img"
-                                      height={100}
-                                      width={100}
-                                      className="img-fluid"
-                                    />
-                                  </Link>
-                                  <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
-                                    <h5>{`${elem?.firstName}  ${elem?.lastName}`}</h5>
-                                    <p className="mb-0">Today</p>
+                                      className="btn btn-primary"
+                                    >
+                                      Wish
+                                    </button>
                                   </div>
                                 </div>
-                                <button
-                                  onClick={() =>
-                                    router.push(`/friends/${elem?._id}`)
-                                  }
-                                  className="btn btn-primary"
-                                >
-                                  Wish
-                                </button>
-                              </div>
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))
-                  ) : (
-                    <h4
-                      style={{
-                        textAlign: "center",
-                        width: "100%",
-                        padding: "5px",
-                      }}
-                    >
-                      No birthday today
-                    </h4>
-                  )}
-                </Row>
-              </div>
-              <div className="birthday-block">
-                <Card>
-                  <Card.Header className=" d-flex justify-content-between rounded border-bottom-0">
-                    <div className="header-title">
-                      <h4 className="card-title">Upcoming Birthday</h4>
-                    </div>
-                  </Card.Header>
-                </Card>
-                {upcomingBirthdayState[0] ? (
-                  upcomingBirthdayState.map((elem, index) => (
-                    <Col lg="6" md="12" key={index}>
-                      <Card>
-                        <Card.Body>
-                          <div className="iq-birthday-block">
-                            <div className="d-flex align-items-center justify-content-between">
-                              <div className="d-flex align-items-center">
-                                <Link href="#">
-                                  <Image
-                                    src={
-                                      elem?.profileInfo?.profileInfo?.file
-                                        ?.location || user7
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        ))
+                      ) : (
+                        <h4
+                          style={{
+                            textAlign: "center",
+                            width: "100%",
+                            padding: "5px",
+                          }}
+                        >
+                          No birthday today
+                        </h4>
+                      )}
+                    </Row>
+                  </div>
+                  <div className="birthday-block">
+                    <Card>
+                      <Card.Header className=" d-flex justify-content-between rounded border-bottom-0">
+                        <div className="header-title">
+                          <h4 className="card-title">Upcoming Birthday</h4>
+                        </div>
+                      </Card.Header>
+                    </Card>
+                    {upcomingBirthdayState[0] ? (
+                      upcomingBirthdayState.map((elem, index) => (
+                        <Col lg="6" md="12" key={index}>
+                          <Card>
+                            <Card.Body>
+                              <div className="iq-birthday-block">
+                                <div className="d-flex align-items-center justify-content-between">
+                                  <div className="d-flex align-items-center">
+                                    <Link href="#">
+                                      <Image
+                                        src={
+                                          elem?.profileInfo?.profileInfo?.file
+                                            ?.location || user7
+                                        }
+                                        alt="profile-img"
+                                        height={100}
+                                        width={100}
+                                        className="img-fluid"
+                                      />
+                                    </Link>
+                                    <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
+                                      <h5>{`${elem.firstName}  ${elem.lastName}`}</h5>
+                                      <p className="mb-0">
+                                        {`${
+                                          new Date(
+                                            elem?.dateOfBirth
+                                          )?.getDate() - 1
+                                        } ${
+                                          year[
+                                            new Date(
+                                              elem?.dateOfBirth
+                                            )?.getMonth()
+                                          ]
+                                        }  ${new Date(
+                                          elem?.dateOfBirth
+                                        )?.getFullYear()}`}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() =>
+                                      router.push(`/friends/${elem._id}`)
                                     }
-                                    alt="profile-img"
-                                    height={100}
-                                    width={100}
-                                    className="img-fluid"
-                                  />
-                                </Link>
-                                <div className="friend-info ms-0 ms-md-3 mt-md-0 mt-2">
-                                  <h5>{`${elem.firstName}  ${elem.lastName}`}</h5>
-                                  <p className="mb-0">
-                                    {`${
-                                      new Date(elem?.dateOfBirth)?.getDate() - 1
-                                    } ${
-                                      year[
-                                        new Date(elem?.dateOfBirth)?.getMonth()
-                                      ]
-                                    }  ${new Date(
-                                      elem?.dateOfBirth
-                                    )?.getFullYear()}`}
-                                  </p>
+                                    className="btn btn-primary"
+                                  >
+                                    Wish
+                                  </button>
                                 </div>
                               </div>
-                              <button
-                                onClick={() =>
-                                  router.push(`/friends/${elem._id}`)
-                                }
-                                className="btn btn-primary"
-                              >
-                                Wish
-                              </button>
-                            </div>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))
-                ) : (
-                  <h4
-                    style={{
-                      textAlign: "center",
-                      width: "100%",
-                      padding: "5px",
-                    }}
-                  >
-                    No birthday today
-                  </h4>
-                )}
-              </div>
-              <div>{friendsByMonthList}</div>
-            </Col>
-          </Row>
-        </Container>
+                            </Card.Body>
+                          </Card>
+                        </Col>
+                      ))
+                    ) : (
+                      <h4
+                        style={{
+                          textAlign: "center",
+                          width: "100%",
+                          padding: "5px",
+                        }}
+                      >
+                        No birthday today
+                      </h4>
+                    )}
+                  </div>
+                  <div>{friendsByMonthList}</div>
+                </Col>
+              </Row>
+            </Container>
+          </div>
+        </Default>
       </div>
-    </Default>
+    </>
   );
 };
 export default Birthday;

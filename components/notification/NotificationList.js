@@ -6,21 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import user1 from "../../public/assets/images/user/25.png";
 import { getPostTime } from '../../services/time.service';
 import { getNotification } from '../../store/site/Notification';
+import NewNotification from './NewNotification';
 import NotificationMessage from './NotificationMessage';
 
 function NotificationList() {
 
     const notificationlist = useSelector((state) => state?.notification?.list)
     const dispatch = useDispatch()
-
-
     useEffect(() => {
         dispatch(getNotification())
-
     }, [])
 
     
-
 
     return (
         <Card className="shadow-none m-0">
@@ -33,8 +30,10 @@ function NotificationList() {
                 <small className="badge  bg-light text-dark">{notificationlist?.length}</small>
             </Card.Header>
             <Card.Body className="p-0">
+
+                <NewNotification type="headerNotification" />
                 {
-                    notificationlist && notificationlist.map((data, index) => {
+                    notificationlist && notificationlist.slice(0, 5).map((data, index) => {
                         return (
                             <React.Fragment key={index}>
                                 {data &&
@@ -53,7 +52,7 @@ function NotificationList() {
 
                         <Link
                             href="/notification"
-                            className=" btn text-primary"
+                            className=" btn text-primary w-100 d-block"
                         >
                             View All
                         </Link>

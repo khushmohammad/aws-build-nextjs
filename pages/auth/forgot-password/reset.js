@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Auth from "../../../layouts/auth";
 const Reset = () => {
   return (
@@ -7,12 +8,12 @@ const Reset = () => {
           Link has been sent to your registered email address.
         </h1>
         <h2 className="h4 mb-4">Check your mail to reset password</h2>
-        <a className="btn btn-primary mt-3" href="index.html">
+        <Link className="btn btn-primary mt-3" href="/">
           <span className="d-flex align-items-center">
             <i className="material-symbols-outlined md-18 me-1">home</i>Back to
             Home
           </span>
-        </a>
+        </Link>
       </div>
     </Auth>
   );

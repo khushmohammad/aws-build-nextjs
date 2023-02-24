@@ -1,9 +1,41 @@
 import Auth from "../../layouts/auth";
 
+import { resendEmail } from "../../services/basic.services";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Link from "next/link";
+
 const RegistrationStatus = () => {
+  const userNameForResend = useSelector((state) => state?.loader?.userName);
+
+  const [seconds, setSeconds] = useState(30);
+  const [disabled, setDisabled] = useState(true);
+  const [running, setRunning] = useState(true);
+
+  const handleClick = async () => {
+    console.log("hello");
+    setSeconds(30);
+    setDisabled(!disabled);
+    setRunning(true);
+    const res = await resendEmail(userNameForResend);
+  };
+  useEffect(() => {
+    if (running) {
+      const timer = setInterval(() => {
+        setSeconds((seconds) => seconds - 1);
+      }, 1000);
+      if (seconds === 0) {
+        setDisabled(false);
+        setRunning(false);
+        clearInterval(timer);
+      }
+      return () => clearInterval(timer);
+    }
+  }, [seconds, running]);
+
   return (
     <Auth>
-      <div className="container flex flex-col m-12 m-auto mt-40 text-center"></div>
       <div className="sign-in-from justify-content-center align-items-start d-flex flex-column mt-lg-5 pt-lg-5">
         <div className="d-flex justify-content-center mb-4 w-100">
           <svg
@@ -31,10 +63,24 @@ const RegistrationStatus = () => {
         </h2>
         <p className="text-zinc-400 h4">
           Did not recieve an email?{" "}
-          {/* <a className="text-blue-500 underline" href="#">
-            Resend
-          </a> */}
+          <Button
+            variant="primary"
+            className="text-blue-500 underline"
+            href="#"
+            onClick={handleClick}
+            disabled={disabled}
+          >
+            {disabled ? `Resend in ${seconds} sec` : `Resend`}
+          </Button>
+          {/* <h1>{seconds}</h1> */}
         </p>
+
+        <Link className="btn btn-primary mt-4 mb-4" href="/">
+          <span className="d-flex align-items-center">
+            <span class="material-symbols-outlined m-1">login</span>
+            Back to Login
+          </span>
+        </Link>
       </div>
     </Auth>
   );

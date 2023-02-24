@@ -8,8 +8,8 @@ import { getCookie, setCookie } from "cookies-next";
 export default NextAuth({
   providers: [
     FacebookProvider({
-      clientId: "1054766325191423",
-      clientSecret: "c36697ad5356b64c63c3831c9a06e5ff",
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -40,6 +40,18 @@ export default NextAuth({
       },
     }),
   ],
+  session: {
+    httpOnly: true,
+    jwt: true,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: null, // Expires when the browser is closed
+      sameSite: "lax",
+      path: "/",
+    },
+  },
 
   callbacks: {
     jwt: async ({ account, token, user }) => {
@@ -70,11 +82,16 @@ export default NextAuth({
       }
       return token;
     },
-    session: ({ session, token }) => {
+    session: ({ session, token, user }) => {
       if (token) {
         session.user = token.user;
         session.accessToken = token.accessToken;
         session.error = token.error;
+      }
+      if (token.user.remember) {
+        session.maxAge = 30 * 24 * 60 * 60; // 30 days
+      } else {
+        session.maxAge = null; // delete when close the browser
       }
       return session;
     },

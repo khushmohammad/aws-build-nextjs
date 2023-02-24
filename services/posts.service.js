@@ -42,6 +42,99 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
   }
 };
 
+export const getFeeds = async (params) => {
+  const token = await getToken();
+
+  if (params.activePage == "home") {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?pageNumber=${params.page}&limit=${params.limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      const postWithUserDetails = await mergeUserBasicDetails(postslist);
+      //console.log(dataWithUserDetails, "newarray");
+      const res = { postWithUserDetails, PostCount };
+      return res;
+    } else {
+      return response;
+    }
+  } else if (params.activePage == "myProfile") {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?pageNumber=${params.page}&limit=${params.limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      const postWithUserDetails = await mergeUserBasicDetails(postslist);
+
+      const res = { postWithUserDetails, PostCount };
+      return res;
+    } else {
+      return response;
+    }
+  } else if (params.activePage == "userProfile") {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?userId=${params.groupanduserId}&pageNumber=${params.page}&limit=${params.limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      const postWithUserDetails = await mergeUserBasicDetails(postslist);
+
+      const res = { postWithUserDetails, PostCount };
+      return res;
+    } else {
+      return response;
+    }
+  } else if (params.activePage == "group") {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?group=${params.groupanduserId}&pageNumber=${params.page}&limit=${params.limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    console.log(response, "response");
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      const postWithUserDetails = await mergeUserBasicDetails(postslist);
+      const res = { postWithUserDetails, PostCount };
+      return res;
+    } else {
+      return response;
+    }
+  } else if (params.activePage == "savedPost") {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/getAllSavedPosts?pageNumber=${params.page}&limit=${params.limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (response.status == 200) {
+      const postslist = await response?.data?.body?.feeds;
+      const PostCount = await response?.data?.body?.postCount?.postCount;
+      const postWithUserDetails = await mergeUserBasicDetails(postslist);
+      const res = { postWithUserDetails, PostCount };
+      return res;
+    } else {
+      return response;
+    }
+  } else {
+    throw new Error(404);
+  }
+};
 export const getAllPostsByUserId = async (
   page = 1,
   limit = 10,
@@ -144,14 +237,13 @@ export const getPostsByPostId = async (PostId) => {
       const res = await getUserInfoByUserId(postdata.userId);
       const userData = await res?.data?.body;
       //console.log(userData);
-      const newdata = await { ...postdata, postCreatedBy: userData };
+      const newdata = await { ...postdata, userDetails: userData };
       return newdata;
+    } else {
+      return [];
     }
-    return response;
   } catch (err) {
-    console.log(err);
-
-    return err;
+    return [];
   }
 };
 export const getAllLikesByPostId = async (postId) => {
@@ -229,7 +321,7 @@ export const editPostByPostId = async (postId) => {
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${postId}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/posts//getUserPost/getPostByPostId/${postId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

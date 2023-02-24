@@ -8,14 +8,37 @@ const ModalPop = (props) => {
   const [query, setQuery] = useState("");
   const [userInfo, setUserInfo] = useState([]);
   const [userIdArr, setUserIdArr] = useState([]);
+  const [count, setCount] = useState(true);
 
   const friendList = useSelector(
     (state) => state?.friends?.friendList?.friendsList
   );
 
   useEffect(() => {
+    if (props.friendlist) {
+      if (count) {
+        setUserIdArr(props.friendlist);
+        let list = {};
+        props.friendlist &&
+          props.friendlist?.map((id) => {
+            list[id] = true;
+          });
+        setUserInfo(list);
+        setCount(false);
+      }
+    }
+  }, [props.friendlist]);
+
+  // console.log("posps: ", props.friendlist);
+  // console.log("hhh:::", list);
+  console.log("userIdArr:::", userIdArr);
+  console.log("userInfo:::", userInfo);
+
+  useEffect(() => {
     props.getfriends(userIdArr);
   }, [userIdArr]);
+
+  // console.log("::", userInfo, userIdArr);
 
   const handleAdd = (event, id) => {
     setUserInfo((prev) =>
@@ -79,7 +102,7 @@ const ModalPop = (props) => {
                         <h6 className="text-capitalize">
                           {data?.firstName} {data?.lastName}
                         </h6>
-                        <p className="mb-0">40 friends</p>
+                        {/* <p className="mb-0">40 friends</p> */}
                       </div>
                       <div className="d-flex align-items-center mt-2 mt-md-0">
                         <div className="confirm-click-btn"></div>

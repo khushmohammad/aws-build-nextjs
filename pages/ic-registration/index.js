@@ -17,45 +17,45 @@ const schema = yup.object().shape({
   question1: yup.string().required("question  1 is required").min(5).max(500),
   question2: yup.string().required("question  2 is required").min(5).max(500),
   question3: yup.string().required("question  3 is required").min(5).max(500),
-  // document1: yup
-  //   .mixed()
-  //   .test("required", "please select a file", (value) => {
-  //     return value && value.length;
-  //   })
-  //   .test("fileFormat", "Unsupported Format", (value) => {
-  //     return SUPPORTED_FORMATS.includes(value && value[0]?.type);
-  //   })
-  //   .test("fileSize", "File too large", (value) => {
-  //     //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
-  //     return value[0]?.size <= FILE_SIZE;
-  //   }),
+  document1: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
 
-  // document2: yup
-  //   .mixed()
-  //   .test("required", "please select a file", (value) => {
-  //     return value && value.length;
-  //   })
-  //   .test("fileFormat", "Unsupported Format", (value) => {
-  //     //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
-  //     return SUPPORTED_FORMATS.includes(value && value[0]?.type);
-  //   })
-  //   .test("fileSize", "File too large", (value) => {
-  //     //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
-  //     return value[0]?.size <= FILE_SIZE;
-  //   }),
-  // document3: yup
-  //   .mixed()
-  //   .test("required", "please select a file", (value) => {
-  //     return value && value.length;
-  //   })
-  //   .test("fileFormat", "Unsupported Format", (value) => {
-  //     //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
-  //     return SUPPORTED_FORMATS.includes(value && value[0]?.type);
-  //   })
-  //   .test("fileSize", "File too large", (value) => {
-  //     //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
-  //     return value[0]?.size <= FILE_SIZE;
-  //   }),
+  document2: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
+  document3: yup
+    .mixed()
+    .test("required", "please select a file", (value) => {
+      return value && value.length;
+    })
+    .test("fileFormat", "Unsupported Format", (value) => {
+      //console.log(value[0].type,SUPPORTED_FORMATS.includes(value[0].type));
+      return SUPPORTED_FORMATS.includes(value && value[0]?.type);
+    })
+    .test("fileSize", "File too large", (value) => {
+      //console.log(value[0].size, value[0].size <= FILE_SIZE,FILE_SIZE,"fhfhhf");
+      return value[0]?.size <= FILE_SIZE;
+    }),
 
   checked: yup.bool().oneOf([true], "Checkbox selection is required"),
 });
@@ -168,7 +168,7 @@ const IcRegistrationForm = () => {
                   as="textarea"
                   name="question1"
                   placeholder="Answer of First Question..."
-                  rows={3}
+                  rows={2}
                   {...register("question1")}
                 />
                 {errors && (
@@ -184,7 +184,7 @@ const IcRegistrationForm = () => {
                 <Form.Control
                   id="question-second"
                   as="textarea"
-                  rows={3}
+                  rows={2}
                   name="question2"
                   placeholder="Answer of Second Question..."
                   {...register("question2")}
@@ -204,7 +204,7 @@ const IcRegistrationForm = () => {
                   id="question-third"
                   as="textarea"
                   className="form-control"
-                  rows={3}
+                  rows={2}
                   name="question3"
                   placeholder="Answer of third question..."
                   {...register("question3")}
@@ -261,6 +261,17 @@ const IcRegistrationForm = () => {
                     {errors?.document3?.message}
                   </p>
                 )}
+              </Form.Group>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Select
+                  aria-label="Default select example"
+                  className="shadow-none"
+                >
+                  <option>--Annual plan options--</option>
+                  <option value="1">Can create upto One groups</option>
+                  <option value="2">Can create upto Two groups</option>
+                  <option value="3">Can create upto Three groups</option>
+                </Form.Select>
               </Form.Group>
 
               <Form.Group controlId="formFile" className="mb-3">

@@ -28,6 +28,7 @@ import user13 from "../../../../public/assets/images/page-img/09.jpg";
 import user14 from "../../../../public/assets/images/page-img/03.jpg";
 import user15 from "../../../../public/assets/images/page-img/02.jpg";
 import user16 from "../../../../public/assets/images/page-img/01.jpg";
+
 //Componets
 import { useRouter } from "next/router";
 import CustomToggle from "../../../dropdowns";
@@ -35,15 +36,24 @@ import { DropdownMenu } from "react-bootstrap";
 import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FriendRequestList from "../../../friends/FriendRequestList";
 import NotificationList from "../../../notification/NotificationList";
 import { searchMemberByFullName } from "../../../../services/profile.service";
+import { ModeAction } from "../../../../store/mode/mode";
 
 const Header = () => {
+  const [theme_scheme_color, setTheme_scheme_color] = useState(false);
+
   const minisidebar = () => {
     document.getElementsByTagName("ASIDE")[0].classList.toggle("sidebar-mini");
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(ModeAction(theme_scheme_color));
+  }, [theme_scheme_color]);
 
   //implement refex state
   const router = useRouter();
@@ -56,7 +66,6 @@ const Header = () => {
   const handleShow = () => setShow(true);
   const user = useSelector((state) => state?.user?.data);
 
-  console.log("<<<>>>>",searchResults)
   const LogedInUserName =
     user &&
     `${user?.userInfo?.firstName}  ${user?.userInfo?.lastName.substring(
@@ -265,7 +274,10 @@ const Header = () => {
                                   <div className="flex-shrink-0">
                                     <Image
                                       className="align-self-center img-fluid avatar-50 rounded-pill"
-                                      src={item?.profileInfo?.profilePictureInfo[0]?.file?.location||user1}
+                                      src={
+                                        item?.profileInfo?.profilePictureInfo[0]
+                                          ?.file?.location || user1
+                                      }
                                       alt=""
                                       loading="lazy"
                                       height={400}
@@ -278,260 +290,29 @@ const Header = () => {
                                       {item.fullName}
                                     </Link>
 
-                                  {/* <span>Paige001</span> */}
-                                </div>
+                                    {/* <span>Paige001</span> */}
+                                  </div>
 
-                                <div className="d-flex align-items-center ms-auto">
-                                  <Link 
-                                    href="/"
-                                    className="me-3 d-flex align-items-center"
-                                  >
-                                    {/* <small>Follow</small> */}
-                                  </Link>
+                                  <div className="d-flex align-items-center ms-auto">
+                                    <Link
+                                      href="/"
+                                      className="me-3 d-flex align-items-center"
+                                    >
+                                      {/* <small>Follow</small> */}
+                                    </Link>
 
-                                  {/* <Link
+                                    {/* <Link
                                     href="/"
-                                    className="material-symbols-outlined text-dark"
-                                  >
-                                    close
-                                  </Link> */}
+                                      className="material-symbols-outlined text-dark"
+                                    >
+                                      close
+                                    </Link> */}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                          </ul>
+                              ))}
+                            </ul>
                           </div>
                         )}
-{/* 
-                        <div className="">
-                          <h4 className="px-3 py-0">Suggestions</h4>
-
-                          <div className="suggestion-card px-3 d-flex">
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user8}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Ammy Paul
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Follow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user9}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Roger Carlo
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Unfollow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story ">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user10}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Justin Molive
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Follow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile ">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user11}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Roy Fisher
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Request</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user12}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Johan Carlo
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Follow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user13}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  MedrLink Miles
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Unfollow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user14}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Aohan Paul
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Request</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user15}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Rokni Joy
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Follow</small>
-                              </Link>
-                            </div>
-
-                            <div className="text-center story">
-                              <div className="story-profile">
-                                <Image
-                                  className="avatar-50 rounded-pill"
-                                  src={user16}
-                                  alt=""
-                                  loading="lazy"
-                                />
-
-                                <Link
-                                  href="/"
-                                  className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small"
-                                >
-                                  Sepid Ryan
-                                </Link>
-                              </div>
-
-                              <Link
-                                href="/"
-                                className="d-lg-none align-items-center d-flex"
-                              >
-                                <small>Unfollow</small>
-                              </Link>
-                            </div>
-                          </div>
-                        </div> */}
                       </Modal.Body>
                     </div>
                   </div>
@@ -540,9 +321,8 @@ const Header = () => {
             </div>
 
             <div
-              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${
-                show1 === true ? "show" : ""
-              } `}
+              className={`offcanvas offcanvas-end iq-profile-menu-responsive ${show1 === true ? "show" : ""
+                } `}
               tabIndex="-1"
               id="offcanvasBottom"
               style={{ visibility: `${show1 === true ? "visible" : "hidden"}` }}
@@ -554,6 +334,29 @@ const Header = () => {
               </Offcanvas.Header>
               <Offcanvas.Body className="pt-0">
                 <ul className="navbar-nav navbar-list">
+                  <Nav.Item as="li">
+                    <a href="#" className="d-flex align-items-center">
+                      <input
+                        type="checkbox"
+                        class="checkbox"
+                        id="checkbox"
+                        value={theme_scheme_color}
+                        name="theme_scheme"
+                        onClick={() =>
+                          setTheme_scheme_color((prevState) => !prevState)
+                        }
+                      />
+                      <label for="checkbox" class="checkbox-label">
+                        <span class="icon-moon material-symbols-outlined">
+                          dark_mode
+                        </span>
+                        <span class="icon-sun material-symbols-outlined">
+                          light_mode
+                        </span>
+                        <span class="ball"></span>
+                      </label>
+                    </a>
+                  </Nav.Item>
                   <Nav.Item as="li">
                     <Link href="/" className="d-flex align-items-center">
                       <i className="material-symbols-outlined">home</i>
@@ -584,134 +387,8 @@ const Header = () => {
                         </Card.Header>
                         <Card.Body className="p-0">
                           <FriendRequestList />
-                          {/* <div className="iq-friend-request">
-                            <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
-                              <div className="d-flex align-items-center">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user1}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                                <div className="ms-3">
-                                  <h6 className="mb-0 ">Jaques Amole</h6>
-                                  <p className="mb-0">40 friends</p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-primary rounded"
-                                >
-                                  Confirm
-                                </Link>
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-secondary rounded"
-                                >
-                                  Delete Request
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="iq-friend-request">
-                            <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
-                              <div className="d-flex align-items-center">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user2}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                                <div className="ms-3">
-                                  <h6 className="mb-0 ">Lucy Tania</h6>
-                                  <p className="mb-0">12 friends</p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-primary rounded"
-                                >
-                                  Confirm
-                                </Link>
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-secondary rounded"
-                                >
-                                  Delete Request
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="iq-friend-request">
-                            <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
-                              <div className="d-flex align-items-center">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user3}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                                <div className=" ms-3">
-                                  <h6 className="mb-0 ">Manny Petty</h6>
-                                  <p className="mb-0">3 friends</p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-primary rounded"
-                                >
-                                  Confirm
-                                </Link>
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-secondary rounded"
-                                >
-                                  Delete Request
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="iq-friend-request">
-                            <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
-                              <div className="d-flex align-items-center">
-                                <Image
-                                  className="avatar-40 rounded"
-                                  src={user4}
-                                  alt=""
-                                  loading="lazy"
-                                />
-                                <div className="ms-3">
-                                  <h6 className="mb-0 ">Marsha Mello</h6>
-                                  <p className="mb-0">15 friends</p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-primary rounded"
-                                >
-                                  Confirm
-                                </Link>
-                                <Link
-                                  href="#"
-                                  className="me-3 btn btn-secondary rounded"
-                                >
-                                  Delete Request
-                                </Link>
-                              </div>
-                            </div>
-                          </div> */}
-                          <div className="text-center">
-                            <Link
-                              href="/friends/friend-request"
-                              className=" btn text-primary"
-                            >
-                              View More Request
-                            </Link>
-                          </div>
+
+                          
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>
@@ -798,8 +475,8 @@ const Header = () => {
                         alt="user"
                         height={100}
                         width={100}
-                        // blurDataURL={profileImage}
-                        // placeholder="blur"
+                      // blurDataURL={profileImage}
+                      // placeholder="blur"
                       />
                       <i className="material-symbols-outlined profile-drop-down">
                         expand_more
@@ -971,7 +648,7 @@ const MessageListWithUser = () => {
         })}
 
       <div className="text-center iq-sub-card">
-        <Link href="/chat" className=" btn text-primary">
+        <Link href="/chat" className=" btn text-primary w-100">
           View All
         </Link>
       </div>
