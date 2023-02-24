@@ -148,7 +148,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                             <h5 className="mb-0 d-inline-block fw-bold">
                               {" "}
                               {userDetails &&
-                                `${userDetails.userInfo.firstName}   ${userDetails.userInfo.lastName} `}
+                                `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
                             </h5>
 
                             {isPin == true && is_SelfPost ? (
