@@ -240,7 +240,7 @@ function PostFooter({ currentPostId, refreshPostList, share }) {
                                     alt=""
                                     height={30}
                                     width={30}
-                                  /><span className='mx-2 text-primary' >{data?.userDetails && `${data.userDetails?.userInfo.firstName || ""} ${data.userDetails?.userInfo.lastName || ""}`} </span>
+                                  /><span className='mx-2 text-primary' >{data?.userDetails && `${data.userDetails?.userInfo?.firstName || ""} ${data.userDetails?.userInfo?.lastName || ""}`} </span>
                                   {/* </Link> */}
                                 </Dropdown.ItemText>
                               }

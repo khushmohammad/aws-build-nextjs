@@ -46,11 +46,12 @@ const UserProfile = () => {
   const [professionalModal, setProfessionalModal] = useState(false);
   const [languageModal, setLanguageModal] = useState(false);
   const [collegeModal, setCollegeModal] = useState(false);
-  const postsLength = useSelector((state) => state?.allFeed?.postcount);
+  const postsLength = useSelector((state) => state?.allFeed?.allFeeds?.postcount);
 
   const user = useSelector((state) => state?.user?.data);
   const allHobbies = user?.hobbies;
-
+  const ProfessionalDetails = user?.professionalDetails;
+  const [professionIndex, setprofessionIndex] = useState("")
   const handleShowHobby = () => setShowHobby(false);
 
   const dispatch = useDispatch();
@@ -256,6 +257,7 @@ const UserProfile = () => {
                           <li className="text-center ps-3">
                             <h6>Posts</h6>
                             <p className="mb-0">
+
                               {postsLength && postsLength > 0 ? postsLength : 0}
                             </p>
                           </li>
@@ -618,7 +620,7 @@ const UserProfile = () => {
                                     </div>
                                     <div className="col-9">
                                       {user.maritalStatusInfo &&
-                                      user.maritalStatusInfo.dropdownValue ? (
+                                        user.maritalStatusInfo.dropdownValue ? (
                                         <p className="mb-0">
                                           {user.maritalStatusInfo.dropdownValue}
                                         </p>
@@ -932,7 +934,7 @@ const UserProfile = () => {
                                     <li
                                       className="d-flex mb-4 align-items-center"
                                       role="button"
-                                      onClick={() => setProfessionalModal(true)}
+                                      onClick={() => { setProfessionalModal(true), setprofessionIndex("") }}
                                     >
                                       <div className="user-img img-fluid">
                                         <span className="material-symbols-outlined md-18">
@@ -947,36 +949,66 @@ const UserProfile = () => {
                                       show={professionalModal}
                                       heading="Add Professional Skills"
                                       onHide={() => setProfessionalModal(false)}
+                                      EditProfessionIndex={professionIndex}
                                     />
-                                    <li className="d-flex mb-4 align-items-center justify-content-between">
-                                      <div className="user-img img-fluid">
-                                        <Image
-                                          loading="lazy"
-                                          src={user01}
-                                          alt="story-img"
-                                          className="rounded-circle avatar-40"
-                                        />
-                                      </div>
-                                      <div className="w-100">
-                                        <div className="d-flex justify-content-between">
-                                          <div className="ms-3">
-                                            <h6>Themeforest</h6>
-                                            <p className="mb-0">Web Designer</p>
-                                          </div>
-                                          <div className="edit-relation">
-                                            <Link
-                                              href="#"
-                                              className="d-flex align-items-center"
-                                            >
-                                              <span className="material-symbols-outlined me-2 md-18">
-                                                edit
-                                              </span>
-                                              Edit
-                                            </Link>
+                                    {console.log(ProfessionalDetails, "ProfessionalDetails")}
+
+
+                                    {!ProfessionalDetails &&
+                                      <li className="d-flex mb-4 align-items-center justify-content-center bg-light">
+
+
+
+                                        <div className="w-100  ">
+                                          <div className="d-flex justify-content-center">
+                                            No Record Found
                                           </div>
                                         </div>
-                                      </div>
-                                    </li>
+                                      </li>}
+
+                                    {ProfessionalDetails && ProfessionalDetails.map((data, index) => {
+
+                                      return (
+                                        <li className="d-flex mb-4 align-items-center justify-content-between" key={index}>
+
+                                          {/* <div className="user-img img-fluid">
+                                              <Image
+                                                loading="lazy"
+                                                src={user01}
+                                                alt="story-img"
+                                                className="rounded-circle avatar-40"
+                                              />
+                                            </div> */}
+
+
+
+                                          <div className="w-100">
+                                            <div className="d-flex justify-content-between">
+                                              <div className="ms-3">
+                                                <h6>{data.company}</h6>
+                                                <p className="mb-0">{data.profession}</p>
+                                              </div>
+                                              <div className="edit-relation">
+                                                <a
+                                                  onClick={() => { setProfessionalModal(true), setprofessionIndex(index) }} role="button"
+                                                  className="d-flex align-items-center"
+                                                >
+                                                  <span className="material-symbols-outlined me-2 md-18">
+                                                    edit
+                                                  </span>
+                                                  Edit
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                        </li>
+                                      )
+                                    })
+
+                                    }
+
+
                                   </ul>
                                   <h4 className="mt-3 mb-3">College/School</h4>
                                   <ul className="suggestions-lists m-0 p-0">

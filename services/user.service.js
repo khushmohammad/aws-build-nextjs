@@ -21,6 +21,7 @@ export const getUserData = async () => {
 
 export const updateUserData = async (data) => {
   const token = await getToken();
+  console.log(data)
 
   const res = await axios.patch(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update`,

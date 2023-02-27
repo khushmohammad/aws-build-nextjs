@@ -4,7 +4,7 @@ import NotificatonCard from './NotificatonCard'
 import { io } from "socket.io-client";
 import { useSelector } from 'react-redux';
 
-const socket = io.connect("http://localhost:3011");
+const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION_FOR_NOTIFICATION);
 
 function NewNotification({ type }) {
 

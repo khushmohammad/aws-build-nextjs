@@ -34,7 +34,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AsyncSelect from "react-select/async";
 import {
-  clearEmpties,
   countriesList,
   getMaritalStatus,
 } from "../../services/basic.services";
@@ -154,11 +153,10 @@ const UserProfileEdit = () => {
 
   // console.log(patchForData,"patchForData");
   const onSubmit = async () => {
-    dispatch(loaderStatus(true));
+
     const res = await updateUserData(patchForData);
     if (res.status == 200) {
-      router.push("/user/user-profile");
-      dispatch(loaderStatus(false));
+      router.push("/user/user-profile");      
     }
   };
 

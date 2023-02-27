@@ -155,27 +155,25 @@ export const getFriendListWithUserData = async (friendsArr) => {
 
 // new friendlist api
 
-export const getFriendList = async (limit = 10, pageNumber = 1) => {
+export const getFriendList = async (params) => {
   const token = await getToken();
+  console.log(params, "params");
+
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriends?${limit}&${pageNumber}`,
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriend?limit=${params.limit}&pageNumber=${params.page}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  if (res.status == 200) {
-    return res.data.body;
-  } else {
-    return [];
-  }
+  return res;
 };
 
-export const getNonFriendList = async (pageNumber = 1, limit = 10) => {
+export const getNonFriendList = async (params) => {
   const token = await getToken();
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/nonFriend`,
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/nonFriend?limit=${params.limit}&pageNumber=${params.page}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -187,7 +185,6 @@ export const getNonFriendList = async (pageNumber = 1, limit = 10) => {
   } else {
     return [];
   }
-
 };
 
 export const friendsBirthdayList = async () => {
@@ -207,20 +204,17 @@ export const friendsBirthdayList = async () => {
   }
 };
 
-
-export const getPendingRequestFriendListApi = async () => {
+export const getPendingRequestFriendListApi = async (params) => {
   const token = await getToken();
-
+  console.log(params,"sdfsdf");
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId`, "",
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId?limit=${params.limit}&pageNumber=${params.page}`,
+    "",
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  return res
-
+  return res;
 };
-
-

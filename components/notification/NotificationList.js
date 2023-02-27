@@ -17,7 +17,7 @@ function NotificationList() {
         dispatch(getNotification())
     }, [])
 
-    
+
 
     return (
         <Card className="shadow-none m-0">
@@ -27,7 +27,7 @@ function NotificationList() {
                         All Notifications
                     </h5>
                 </div>
-                <small className="badge  bg-light text-dark">{notificationlist?.length}</small>
+                <small className="badge  bg-light text-dark">{notificationlist && notificationlist?.length}</small>
             </Card.Header>
             <Card.Body className="p-0">
 
@@ -47,9 +47,7 @@ function NotificationList() {
                 }
 
                 {notificationlist?.length > 4 &&
-
                     <div className="text-center iq-sub-card">
-
                         <Link
                             href="/notification"
                             className=" btn text-primary w-100 d-block"
@@ -58,9 +56,7 @@ function NotificationList() {
                         </Link>
                     </div>}
                 {notificationlist?.length == 0 &&
-
                     <div className="text-center iq-sub-card">
-
                         <p>
                             No record found!
                         </p>

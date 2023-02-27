@@ -16,41 +16,39 @@ import { getNonFriendsList } from "../../store/friends/nonFriendsList";
 import Head from "next/head";
 
 const FriendList = () => {
+  const [limit, setLimit] = useState(4);
   const [page, setPage] = useState(1);
   // const [user, setUser] = useState([]);
   const [isRequested, setIsRequested] = useState([]);
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.nonFriendsLIst?.NonFriendList);
   const loading = useSelector((state) => state?.nonFriendsLIst?.status);
-  const limit = 50;
-  // console.log(findFriendsList, "findFriendsList");
 
+  const [notificationListState, setNotificationListState] = useState([]);
   useEffect(() => {
-    fetchUser();
-    window.addEventListener("scroll", handleScroll); // attaching scroll event listener
-  }, []);
+    // setNotificationListState(notificationlist)
+    // setNotificationListState((prev) => [...prev, ...notificationlist])
 
-  const fetchUser = () => {
-    dispatch(getNonFriendsList({ page: page }));
-    //setUser(findFriendsList);
-  };
-
-  // const handleScroll = () => {
-  //   let userScrollHeight = window.innerHeight + window.scrollY;
-  //   let windowBottomHeight = document.documentElement.offsetHeight;
-
-  //   if (userScrollHeight >= windowBottomHeight) {
-  //     fetchUser();
-  //   }
-  // };
-
-  const handleScroll = async () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop >=
-      document.documentElement.scrollHeight
-    ) {
-      setPage((prev) => prev + 1);
+    if (page && page == 1) {
+      user?.length == 0
+        ? setNotificationListState("")
+        : setNotificationListState(user);
+    } else {
+      user?.length == 0
+        ? ""
+        : Array.isArray(user)
+        ? setNotificationListState((prev) => [...prev, ...user])
+        : "";
     }
+  }, [user]);
+
+  const params = { page: page, limit: limit };
+  useEffect(() => {
+    dispatch(getNonFriendsList(params));
+  }, [page]);
+
+  const LoadMore = () => {
+    setPage((prev) => prev + 1);
   };
 
   const SendAndCancelFriendRequestOnClick = async (userId, status) => {
@@ -64,7 +62,7 @@ const FriendList = () => {
       );
     }
   };
-
+  console.log(notificationListState, "hjkfbhbkf");
   return (
     <Default>
       <Head>
@@ -74,8 +72,8 @@ const FriendList = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            {user &&
-              user?.map((user, index) => (
+            {notificationListState &&
+              notificationListState?.map((user, index) => (
                 <Col md={6} key={index}>
                   <Card className=" card-block card-stretch card-height">
                     <Card.Body className=" profile-page p-0">
@@ -158,28 +156,22 @@ const FriendList = () => {
                   </Card>
                 </Col>
               ))}
-            <Col>
-              <div>
-                {loading && loading == "loading" ? (
-                  <div className="col-sm-12 text-center">
-                    <Image
-                      src={loader}
-                      alt="loader"
-                      style={{ height: "100px", width: "100px" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="w-100">
-                    {user && user.length == 0 && (
-                      <div>
-                        <p className="p-3 bg-danger text-alert text-center">
-                          No user found!
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+
+            <Col sm={12}>
+              {user && user?.length != 0 ? (
+                <div className="text-center iq-sub-card">
+                  <button
+                    onClick={() => LoadMore()}
+                    className=" btn text-primary  mb-3"
+                  >
+                    View More
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center iq-sub-card">
+                  <p>No record found!</p>
+                </div>
+              )}
             </Col>
           </Row>
         </Container>

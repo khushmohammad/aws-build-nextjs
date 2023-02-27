@@ -58,7 +58,7 @@ const FriendProfile = () => {
   const { id } = router.query;
 
   const userDetail = useSelector((state) => state?.user?.userInfo);
-  const postsLength = useSelector((state) => state?.allFeed?.postcount);
+  const postsLength = useSelector((state) => state?.allFeed?.allFeeds?.postcount);
 
   useEffect(() => {
     dispatch(getUserByUserId(id));

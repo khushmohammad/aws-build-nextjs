@@ -14,25 +14,43 @@ import img3 from "../../public/assets/images/page-img/profile-bg3.jpg";
 
 import user05 from "../../public/assets/images/user/25.png";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
+import { getAllFriendList } from "../../store/friends";
 
 const FriendList = () => {
-  const friendsList = useSelector(
-    (state) => state?.friends?.friendList?.friendsList
-  );
-
-  //console.log(friendsList, "friendsList");
+  // state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
   const [friendListState, setFriendListState] = useState([]);
-  const GetFriendList = async () => {
-    // const friendsWithDetails = await getFriendListWithUserData(friendsList);
-    // console.log(friendsWithDetails, "friendsWithDetails")
-    setFriendListState(friendsList);
-  };
 
+  // redux method
+  const dispatch = useDispatch();
+
+  const friendsList = useSelector((state) => state?.friends?.friendList?.list);
+
+  //logic for load more data
   useEffect(() => {
-    GetFriendList();
+    if (page && page == 1) {
+      friendsList?.length == 0
+        ? setFriendListState("")
+        : setFriendListState(friendsList);
+    } else {
+      friendsList?.length == 0
+        ? ""
+        : Array.isArray(friendsList)
+        ? setFriendListState((prev) => [...prev, ...friendsList])
+        : "";
+    }
   }, [friendsList]);
+  const LoadMore = () => {
+    setPage((prev) => prev + 1);
+  };
+  useEffect(() => {
+    const params = { page: page, limit: limit };
+
+    dispatch(getAllFriendList(params));
+  }, [page]);
 
   return (
     <Default>
@@ -127,15 +145,22 @@ const FriendList = () => {
                 );
               })}
 
-            {Array.isArray(friendsList) && friendsList.length === 0 && (
-              <Col>
-                <div>
-                  <p className="p-3 bg-danger text-alert text-center">
-                    No user found!
-                  </p>
+            <Col sm={12}>
+              {friendsList && friendsList?.length != 0 ? (
+                <div className="text-center iq-sub-card">
+                  <button
+                    onClick={() => LoadMore()}
+                    className=" btn text-primary  mb-3"
+                  >
+                    View More
+                  </button>
                 </div>
-              </Col>
-            )}
+              ) : (
+                <div className="text-center iq-sub-card">
+                  <p>No record found!</p>
+                </div>
+              )}
+            </Col>
           </Row>
         </Container>
       </div>

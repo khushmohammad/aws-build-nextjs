@@ -24,7 +24,7 @@ const UserFriend = () => {
       </div>
       <Card.Body>
         <ul className="profile-img-gallary p-0 m-0 list-unstyled">
-          {userFriendList.map((data, index) => (
+          {userFriendList&&userFriendList.map((data, index) => (
             <li key={index}>
               <Link href={`/friends/${data?._id}`}>
                 <Image

@@ -6,9 +6,9 @@ import {
 } from "../../services/friends.service";
 
 const initialState = {
-  friendList: null,
+  friendList: { list: [], error: "", status: "loading" },
   birthdays: null,
-  PendingRequest: { list: [], error: "", status: "loading" }
+  PendingRequest: { list: [], error: "", status: "loading" },
 };
 
 const friendSlice = createSlice({
@@ -16,34 +16,39 @@ const friendSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(getAllFriendList.fulfilled, (state, action) => {
-        state.friendList = action.payload;
-      })
+
       .addCase(getAllBirthdays.fulfilled, (state, action) => {
         state.birthdays = action.payload;
       })
       .addCase(getPendingRequestFriendList.pending, (state, action) => {
-        state.PendingRequest.status = 'loading';
+        state.PendingRequest.status = "loading";
       })
       .addCase(getPendingRequestFriendList.fulfilled, (state, action) => {
-        state.PendingRequest.status = 'succeeded';
+        state.PendingRequest.status = "succeeded";
         state.PendingRequest.list = action.payload?.data?.body;
-
       })
       .addCase(getPendingRequestFriendList.rejected, (state, action) => {
-        state.PendingRequest.status = 'failed';
-        state.PendingRequest.error = action.error.message
-
-
+        state.PendingRequest.status = "failed";
+        state.PendingRequest.error = action.error.message;
+      })
+      .addCase(getAllFriendList.pending, (state, action) => {
+        state.friendList.status = "loading";
+      })
+      .addCase(getAllFriendList.fulfilled, (state, action) => {
+        state.friendList.status = "succeeded";
+        state.friendList.list = action.payload?.data?.body.friendsList;
+      })
+      .addCase(getAllFriendList.rejected, (state, action) => {
+        state.friendList.status = "failed";
+        state.friendList.error = action.error.message;
       });
-
   },
 });
 
 export const getAllFriendList = createAsyncThunk(
-  "friends/allFriend",
-  async () => {
-    const data = await getFriendList();
+  "friends/allFriendList",
+  async (params) => {
+    const data = params && (await getFriendList(params));
     return data;
   }
 );
@@ -58,8 +63,8 @@ export const getAllBirthdays = createAsyncThunk(
 
 export const getPendingRequestFriendList = createAsyncThunk(
   "friends/pendingRequest",
-  async () => {
-    const data = await getPendingRequestFriendListApi();
+  async (params) => {
+    const data = params && (await getPendingRequestFriendListApi(params));
     return data;
   }
 );

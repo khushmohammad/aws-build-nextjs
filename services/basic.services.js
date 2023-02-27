@@ -37,14 +37,7 @@ export const getMaritalStatus = async () => {
 };
 
 
-// export const clearEmpties = (obj) => {
-//     for (var propName in obj) {
-//         if (typeof obj[propName] == "object")
-//             clearEmpties(obj[propName])
-//         if (obj[propName] === '' || obj[propName] === '')
-//             delete obj[propName];
-//     }
-// }
+
 
 export const resendEmail = async (userName) => {
   const token = await getToken();
