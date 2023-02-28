@@ -6,7 +6,7 @@ import { getAllFeedsList } from "../../../store/post/allFeeds";
 import ConfirmBox from "../../modals/ConfirmBox";
 import EditPost from "../EditPost";
 
-function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshPostList }) {
+function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
   const [showModal, setShowModal] = useState(false);
 
   const [modalShowConfirmBox, setModalShowConfirmBox] = React.useState(false);
@@ -17,7 +17,7 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshPostList }) {
 
     const postDeleted = res.status;
     if (postDeleted == 200) {
-      refreshPostList();
+      refreshpostlist();
     }
   };
   const pinPost = async (postId) => {

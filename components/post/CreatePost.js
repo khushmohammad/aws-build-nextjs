@@ -97,7 +97,7 @@ const CreatePost = (props) => {
       dispatch(allPostPhotos());
       setIsLoading(false);
       handleClose();
-      props.refreshPostList();
+      props.refreshpostlist();
     });
   };
 

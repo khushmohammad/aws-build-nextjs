@@ -1,12 +1,30 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Container, Form } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import Card from "../../components/Card";
 import Default from "../../layouts/default";
 
-// import {Link} from 'react-router-dom'
+import { privacySettingToggle } from "../../services/basic.services";
 
 const UserPrivacySetting = () => {
+  const privacySetting = useSelector((state) => state?.user?.data?.privacy);
+  console.log(privacySetting, "hhnixkjbjhfh");
+  console.log(privacySetting, "hhnixkjbjhfh");
+  const [selectedOption, setSelectedOption] = useState(privacySetting);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await privacySettingToggle(selectedOption);
+  };
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+  useEffect(() => {
+    privacySetting && setSelectedOption(privacySetting);
+  }, [privacySetting]);
+
   return (
     <Default>
       <Container>
@@ -19,8 +37,9 @@ const UserPrivacySetting = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <div className="acc-privacy">
-                  <div className="data-privacy">
+                <form onSubmit={handleSubmit}>
+                  <div className="acc-privacy">
+                    {/* <div className="data-privacy">
                     <h4 className="mb-2">Account Privacy</h4>
                     <Form.Check>
                       <Form.Check.Input type="checkbox" id="customCheck5" />{" "}
@@ -115,32 +134,37 @@ const UserPrivacySetting = () => {
                       opposed to using 'Content here, content here', making it
                       look like readable English.
                     </p>
-                  </div>
-                  <hr />
-                  <div className="data-privacy">
-                    <h4 className="mb-2"> Your Profile </h4>
-                    <Form.Check>
-                      <Form.Check.Input
-                        type="radio"
-                        name="customRadio1"
-                        id="public"
-                        defaultChecked
-                      />{" "}
-                      <Form.Check.Label htmlFor="public" className="pl-2">
-                        Public
-                      </Form.Check.Label>
-                    </Form.Check>
-                    <Form.Check>
-                      <Form.Check.Input
-                        type="radio"
-                        name="customRadio1"
-                        id="friend"
-                      />{" "}
-                      <Form.Check.Label htmlFor="friend" className="pl-2">
-                        Friend
-                      </Form.Check.Label>
-                    </Form.Check>
-                    <Form.Check>
+                  </div> */}
+                    <hr />
+                    <div className="data-privacy">
+                      <h4 className="mb-2"> Your Profile </h4>
+                      <Form.Check className="me-4">
+                        <Form.Check.Input
+                          type="radio"
+                          name="option"
+                          value="public"
+                          checked={selectedOption === "public"}
+                          onChange={handleOptionChange}
+                          id="public"
+                        />{" "}
+                        <Form.Check.Label htmlFor="public" className="pl-2">
+                          Public
+                        </Form.Check.Label>
+                      </Form.Check>
+                      <Form.Check>
+                        <Form.Check.Input
+                          type="radio"
+                          name="option"
+                          value="private"
+                          checked={selectedOption === "private"}
+                          onChange={handleOptionChange}
+                          id="friend"
+                        />{" "}
+                        <Form.Check.Label htmlFor="friend" className="pl-2">
+                          Friend
+                        </Form.Check.Label>
+                      </Form.Check>
+                      {/* <Form.Check>
                       <Form.Check.Input
                         type="radio"
                         name="customRadio1"
@@ -149,8 +173,8 @@ const UserPrivacySetting = () => {
                       <Form.Check.Label htmlFor="spfriend" className="pl-2">
                         Specific Friend
                       </Form.Check.Label>
-                    </Form.Check>
-                    <Form.Check>
+                    </Form.Check> */}
+                      {/* <Form.Check>
                       <Form.Check.Input
                         type="radio"
                         name="customRadio1"
@@ -159,18 +183,18 @@ const UserPrivacySetting = () => {
                       <Form.Check.Label htmlFor="onlyme" className="pl-2">
                         Only Me
                       </Form.Check.Label>
-                    </Form.Check>
-                    <p>
-                      It is a long established fact that a reader will be
-                      distracted by the readable content of a page when looking
-                      at its layout. The point of using Lorem Ipsum is that it
-                      has a more-or-less normal distribution of letters, as
-                      opposed to using 'Content here, content here', making it
-                      look like readable English.
-                    </p>
-                  </div>
-                  <hr />
-                  <div className="data-privacy">
+                    </Form.Check> */}
+                      <p>
+                        It is a long established fact that a reader will be
+                        distracted by the readable content of a page when
+                        looking at its layout. The point of using Lorem Ipsum is
+                        that it has a more-or-less normal distribution of
+                        letters, as opposed to using 'Content here, content
+                        here', making it look like readable English.
+                      </p>
+                    </div>
+                    <hr />
+                    {/* <div className="data-privacy">
                     <h4 className="mb-2"> Login Notification </h4>
                     <Form.Check>
                       <Form.Check.Input
@@ -201,15 +225,20 @@ const UserPrivacySetting = () => {
                       opposed to using 'Content here, content here', making it
                       look like readable English.
                     </p>
-                  </div>
-                  <hr />
-                  <div className="data-privacy">
+                  </div> */}
+                    {/* <hr /> */}
+                    {/* <div className="data-privacy">
                     <h4 className="mb-2">Privacy Help</h4>{" "}
                     <Link href="#">
                       <i className="ri-customer-service-2-line mr-2"></i>Support
                     </Link>
+                  </div> */}
+
+                    <button className="btn btn-primary" type="submit">
+                      Submit
+                    </button>
                   </div>
-                </div>
+                </form>
               </Card.Body>
             </Card>
           </Col>

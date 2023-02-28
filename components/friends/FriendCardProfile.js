@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import user05 from "../../public/assets/images/user/25.png";
 
 function FriendCardProfile() {
-    const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList);
+    const friendsList = useSelector((state) => state?.friends?.friendList?.list);
 
     return (
         <>

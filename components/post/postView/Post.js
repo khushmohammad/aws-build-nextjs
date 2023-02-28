@@ -35,12 +35,14 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
 
   const GetPostNet = async (pagenum = page, limitnum = limit) => {
-    const groupanduserId = router?.query?.id ? router?.query?.id : groupId;
+
+    const groupanduserId = userId && userId ? userId : groupId;
+
     const params = {
       activePage: activePage,
       page: pagenum,
       limit: limitnum,
-      groupanduserId: groupanduserId,
+      groupanduserId: groupanduserId && groupanduserId,
     }
     if (activePage == "PostDetail") {
       setposts([]);
@@ -93,14 +95,14 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
   const onClickRefreshPostList = () => {
     setposts([]);
-    GetPostNet(1, posts.length);
+    GetPostNet(1, limit);
   };
 
   return (
     <div>
       {activePage != "PostDetail" && activePage != 'savedPost' ? (
         <CreatePost
-          refreshPostList={() => GetPostNet()}
+          refreshpostlist={() => onClickRefreshPostList()}
           groupId={groupId}
           userId={userId}
         />
@@ -125,81 +127,89 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
-                <Card.Body>
-                  <div className="user-post-data">
-                    <div className="d-flex justify-content-between">
-                      <div className="me-3">
-                        {userprofilePicture && (
-                          <Image
-                            className="rounded-circle img-fluid"
-                            src={
-                              userprofilePicture?.profilePictureInfo?.file
-                                ?.location || user2
-                            }
-                            alt=""
-                            height={53}
-                            width={53}
-                          />
-                        )}
-                      </div>
-                      <div className="w-100">
-                        <div className="d-flex justify-content-between">
-                          <div>
-                            <h5 className="mb-0 d-inline-block fw-bold">
-                              {" "}
-                              {userDetails &&
-                                `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
-                            </h5>
+                {data && data?.isDeleted === false ?
+                  <Card.Body>
+                    <div className="user-post-data">
+                      <div className="d-flex justify-content-between">
+                        <div className="me-3">
+                          {userprofilePicture && (
+                            <Image
+                              className="rounded-circle img-fluid"
+                              src={
+                                userprofilePicture?.profilePictureInfo?.file
+                                  ?.location || user2
+                              }
+                              alt=""
+                              height={53}
+                              width={53}
+                            />
+                          )}
+                        </div>
+                        <div className="w-100">
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h5 className="mb-0 d-inline-block fw-bold">
+                                {" "}
+                                {userDetails &&
+                                  `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
+                              </h5>
 
-                            {isPin == true && is_SelfPost ? (
-                              <span className="material-symbols-outlined">
-                                push_pin
-                              </span>
-                            ) : (
-                              ""
-                            )}
-                            <p className="mb-0 text-primary">
-                              {/* {createdAt && getPostTime(createdAt)} */}
-                              {createdAt && moment(createdAt).fromNow()}
-                            </p>
-                          </div>
-                          <div className="card-post-toolbar">
-                            {_id && (
-                              <PostThreeDotmenu
-                                postLength={posts.length}
-                                refreshPostList={() => onClickRefreshPostList()}
-                                PostId={_id}
-                                isPin={isPin}
-                                is_SelfPost={is_SelfPost}
-                              />
-                            )}
+                              {isPin == true && is_SelfPost ? (
+                                <span className="material-symbols-outlined">
+                                  push_pin
+                                </span>
+                              ) : (
+                                ""
+                              )}
+                              <p className="mb-0 text-primary">
+                                {/* {createdAt && getPostTime(createdAt)} */}
+                                {createdAt && moment(createdAt).fromNow()}
+                              </p>
+                            </div>
+                            <div className="card-post-toolbar">
+                              {_id && (
+                                <PostThreeDotmenu
+                                  postLength={posts.length}
+                                  refreshpostlist={() => onClickRefreshPostList()}
+                                  PostId={_id}
+                                  isPin={isPin}
+                                  is_SelfPost={is_SelfPost}
+                                />
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-3">
-                    {description && (
-                      <PostContentSection stringContent={description} />
-                    )}
-                  </div>
-                  {fileInfo && (
-                    <>
-                      {activePage != "PostDetail" ? (
-                        <PostMediaGrid mediaContent={data && data} />
-                      ) : (
-                        <MediaComponent mediaData={fileInfo} />
+                    <div className="mt-3">
+                      {description && (
+                        <PostContentSection stringContent={description} />
                       )}
-                    </>
-                  )}
-                  {_id && (
-                    <PostFooter
-                      currentPostId={_id}
-                      refreshPostList={onClickRefreshPostList}
-                      share={share}
-                    />
-                  )}
-                </Card.Body>
+                    </div>
+                    {fileInfo && (
+                      <>
+                        {activePage != "PostDetail" ? (
+                          <PostMediaGrid mediaContent={data && data} />
+                        ) : (
+                          <MediaComponent mediaData={fileInfo} />
+                        )}
+                      </>
+                    )}
+                    {_id && (
+                      <PostFooter
+                        currentPostId={_id}
+                        refreshpostlist={onClickRefreshPostList}
+                        share={share}
+                      />
+                    )}
+                  </Card.Body>
+                  :
+                  <Card.Body>
+                    <h4 className="justify-content-center  d-flex align-items-center" style={{ height: "18vh" }}>
+                      Sorry, this content isn't available at this time
+                    </h4>
+                  </Card.Body>
+                }
               </Card>
             );
           })}

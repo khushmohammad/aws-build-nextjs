@@ -9,6 +9,9 @@ import { getNotification } from '../../store/site/Notification'
 import NotificatonCard from '../../components/notification/NotificatonCard'
 import NewNotification from '../../components/notification/NewNotification'
 import Link from 'next/link'
+import { io } from "socket.io-client";
+
+const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION_FOR_NOTIFICATION);
 
 
 const Notification = () => {
@@ -48,6 +51,14 @@ const Notification = () => {
 
    }
 
+   useEffect(() => {
+      socket.on("new_notification", (data) => {
+        // console.log(data, "data")
+         dispatch(getNotification(params))
+      })
+   }, [socket])
+
+
 
    return (
       <Default>
@@ -57,7 +68,7 @@ const Notification = () => {
                   <h4 className="card-title mb-3">Notification</h4>
                </Col>
                <Col sm="12">
-                  <NewNotification  />
+                  {/* <NewNotification  /> */}
                   {
                      notificationListState && notificationListState.map((data, index) => {
                         return (

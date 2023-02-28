@@ -55,7 +55,7 @@ const FriendProfile = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router?.query;
 
   const userDetail = useSelector((state) => state?.user?.userInfo);
   const postsLength = useSelector((state) => state?.allFeed?.allFeeds?.postcount);
@@ -66,11 +66,11 @@ const FriendProfile = () => {
 
   return (
     <>
-      <FsLightbox
+      {/* <FsLightbox
         toggler={imageController.toggler}
         sources={[g1, g2, g3, g4, g5, g6, g7, g8, g9]}
         slide={imageController.slide}
-      />
+      /> */}
       <Default>
         <Container>
           <Row>
@@ -245,7 +245,7 @@ const FriendProfile = () => {
                         </p>
                       </li>
                       {userDetail?.maritalStatusInfo &&
-                      userDetail?.maritalStatusInfo?.dropdownValue ? (
+                        userDetail?.maritalStatusInfo?.dropdownValue ? (
                         <li className="d-flex align-items-center">
                           <span className="material-symbols-outlined md-18">
                             favorite_border
@@ -490,7 +490,25 @@ const FriendProfile = () => {
                 </Card>
               </Col>
               <Col lg={8}>
-                <Post activePage={"userProfile"} userId={id} />
+
+                {id && userDetail?.showDetails ? <Post activePage={"userProfile"} userId={id} /> :
+                  <Card className="">
+                    <Card.Body className="bg-light text-dark   rounded">
+                      <div className="d-flex justify-content-center align-items-center">
+                        <span class="material-symbols-outlined fs-1">
+                          lock_person
+                        </span>
+                        <h4 className="ps-3 ">
+
+                          <b>{userDetail?.userInfo?.firstName}{" "}
+                            {userDetail?.userInfo?.middleName}{" "}
+                            {userDetail?.userInfo?.lastName}</b> his profile
+                            <br></br>
+                          Only his friends can see what he shares on his profile.
+                        </h4>
+                      </div>
+                    </Card.Body>
+                  </Card>}
               </Col>
             </Row>
           </Row>

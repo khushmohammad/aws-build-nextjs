@@ -11,7 +11,7 @@ const ModalPop = (props) => {
   const [count, setCount] = useState(true);
 
   const friendList = useSelector(
-    (state) => state?.friends?.friendList?.friendsList
+    (state) => state?.friends?.friendList?.list
   );
 
   useEffect(() => {

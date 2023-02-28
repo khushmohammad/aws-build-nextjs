@@ -11,6 +11,8 @@ import modeReducer from "./mode/mode";
 import friendsRequests from "./friends/friendsRequests";
 import nonFriendsLIst from "./friends/nonFriendsList";
 import loaderReducer from "./site/Loader";
+import helpReducer from "./site/help";
+import activityReducer from "./site/activity";
 import notificationReducer from "./site/Notification";
 import { persistStore } from "redux-persist";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
@@ -38,6 +40,8 @@ const reducers = combineReducers({
   nonFriendsLIst: nonFriendsLIst,
   loader: loaderReducer,
   notification: notificationReducer,
+  help: helpReducer,
+  activity: activityReducer,
 });
 
 const rootReducer = (state, action) => {

@@ -134,15 +134,17 @@ const EditPost = (props) => {
 
   const updatePostData = async (e) => {
     e.preventDefault();
-    console.log("postData: ", postData);
-    await updatePost(postData, props.postid);
-    setPostData({ description: "", file: null });
-    setSelectedFile(null);
-    setPrivacyFriendList([]);
-    dispatch(allPhotos());
-    dispatch(allPostPhotos());
-    props.refreshPostList();
-    props.onHide();
+    setIsLoading(true);
+    await updatePost(postData, props.postid).then((res) => {
+      setPostData({ description: "", file: null });
+      setSelectedFile(null);
+      setPrivacyFriendList([]);
+      dispatch(allPhotos());
+      dispatch(allPostPhotos());
+      props.refreshPostList();
+      props.onHide();
+      setIsLoading(false);
+    });
   };
 
   return (

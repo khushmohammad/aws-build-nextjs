@@ -44,7 +44,6 @@ export const getAllFeeds = async (page = 1, limit = 10) => {
 
 export const getFeeds = async (params) => {
   const token = await getToken();
-
   if (params.activePage == "home") {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?pageNumber=${params.page}&limit=${params.limit}`,
@@ -56,7 +55,7 @@ export const getFeeds = async (params) => {
       const postslist = await response?.data?.body?.feeds;
       const PostCount = await response?.data?.body?.postCount?.postCount;
       const postWithUserDetails = await mergeUserBasicDetails(postslist);
-      //console.log(dataWithUserDetails, "newarray");
+
       const res = { postWithUserDetails, PostCount };
       return res;
     } else {
@@ -81,7 +80,7 @@ export const getFeeds = async (params) => {
       return response;
     }
   } else if (params.activePage == "userProfile") {
-    const response = await axios.get(
+    const response = params && await axios.get(
       `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?userId=${params.groupanduserId}&pageNumber=${params.page}&limit=${params.limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -262,15 +261,15 @@ export const getAllLikesByPostId = async (postId) => {
 
       const newarray = await Promise.all(
         allLikessArr &&
-          allLikessArr.map(async (likeData) => {
-            const res =
-              likeData && (await getUserInfoByUserId(likeData.userId));
-            const userData = await res?.data?.body;
+        allLikessArr.map(async (likeData) => {
+          const res =
+            likeData && (await getUserInfoByUserId(likeData.userId));
+          const userData = await res?.data?.body;
 
-            const newdata = await { ...likeData, userDetails: userData };
-            //console.log(newdata, "userData");
-            return newdata;
-          })
+          const newdata = await { ...likeData, userDetails: userData };
+          //console.log(newdata, "userData");
+          return newdata;
+        })
       );
       // console.log(newarray, "newarray");
       return newarray;
@@ -439,19 +438,18 @@ export const pinPostByUser = async (postId) => {
 export const mergeUserBasicDetails = async (userIdArr) => {
   const dataWithUserDetails = await Promise.all(
     userIdArr &&
-      userIdArr.map(async (singleData) => {
-        const res =
-          singleData && (await getUserInfoByUserId(singleData.userId));
-        const userData = await res?.data?.body;
-        const newdata = await {
-          ...singleData,
-          userDetails: {
-            userInfo: userData?.userInfo,
-            profilePictureInfo: userData?.profilePictureInfo,
-          },
-        };
-        return newdata;
-      })
+    userIdArr.map(async (singleData) => {
+      const res = singleData && (await getUserInfoByUserId(singleData.userId));
+      const userData = await res?.data?.body;
+      const newdata = await {
+        ...singleData,
+        userDetails: {
+          userInfo: userData?.userInfo,
+          profilePictureInfo: userData?.profilePictureInfo,
+        },
+      };
+      return newdata;
+    })
   );
   return dataWithUserDetails;
 };
@@ -502,7 +500,7 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
   // console.log(payloadData, "payloadData");
   var data = new FormData();
   data.append("commentOrReplyId", commentId);
-  // data.append("postId", postId);
+  data.append("postId", postId);
   try {
     const res = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/post/deleteCommentByCommentId`,

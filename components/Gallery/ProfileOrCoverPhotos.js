@@ -66,17 +66,18 @@ const ProfilePhotos = ({ imagetype }) => {
                       objectfit="contain"
                     />
                   </Link>
-                  <OverlayTrigger
+                  {/* <OverlayTrigger
                     placement="top"
                     overlay={<Tooltip>Remove</Tooltip>}
+                  > */}
+                  <a
+                    role="button"
+                    onClick={() => removeImage(data?._id, data?.imageType)}
+                    className="image-edit-btn material-symbols-outlined md-16"
                   >
-                    <a
-                      onClick={() => removeImage(data?._id, data?.imageType)}
-                      className="image-edit-btn material-symbols-outlined md-16"
-                    >
-                      drive_file_rename_outline
-                    </a>
-                  </OverlayTrigger>
+                    delete
+                  </a>
+                  {/* </OverlayTrigger> */}
                 </div>
               </div>
             ))}

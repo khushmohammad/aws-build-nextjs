@@ -7,7 +7,7 @@ import user1 from "../../public/assets/images/user/25.png";
 
 const UserFriend = () => {
   const userFriendList = useSelector(
-    (state) => state?.friends?.friendList?.friendsList
+    (state) => state?.friends?.friendList?.list
   );
 
   return (

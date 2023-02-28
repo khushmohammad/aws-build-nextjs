@@ -13,7 +13,7 @@ import icon13 from "../public/assets/images/icon/13.png";
 import { userPostshare } from "../services/posts.service";
 // import { Link } from 'react-router-dom'
 
-const ShareOffcanvas = ({ sharePostId, refreshPostListshare, share }) => {
+const ShareOffcanvas = ({ sharePostId, refreshpostlistshare, share }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -25,7 +25,7 @@ const ShareOffcanvas = ({ sharePostId, refreshPostListshare, share }) => {
     if (res.status == 200) {
       // console.log(res, "res")
 
-      refreshPostListshare();
+      refreshpostlistshare();
       handleClose();
     }
   };

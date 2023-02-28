@@ -1,68 +1,98 @@
 import Image from 'next/image';
 import Link from 'next/link'
 import React, { useEffect } from 'react'
-import { Card } from 'react-bootstrap'
+import { Card, Dropdown } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import user1 from "../../public/assets/images/user/25.png";
 import { getPostTime } from '../../services/time.service';
 import { getNotification } from '../../store/site/Notification';
 import NewNotification from './NewNotification';
 import NotificationMessage from './NotificationMessage';
+import CustomToggle from "../dropdowns";
+
+import { io } from "socket.io-client";
+const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION_FOR_NOTIFICATION);
 
 function NotificationList() {
 
     const notificationlist = useSelector((state) => state?.notification?.list)
     const dispatch = useDispatch()
+
+    const params = { page: 1, limit: 5 }
+
     useEffect(() => {
-        dispatch(getNotification())
+        dispatch(getNotification(params))
     }, [])
 
 
+    useEffect(() => {
+        socket.on("new_notification", (data) => {
+            console.log(data, "data")
+            dispatch(getNotification(params))
+        })
+    }, [socket])
+
 
     return (
-        <Card className="shadow-none m-0">
-            <Card.Header className="d-flex justify-content-between bg-primary">
-                <div className="header-title bg-primary">
-                    <h5 className="mb-0 text-white">
-                        All Notifications
-                    </h5>
-                </div>
-                <small className="badge  bg-light text-dark">{notificationlist && notificationlist?.length}</small>
-            </Card.Header>
-            <Card.Body className="p-0">
+        <Dropdown as="li" className="nav-item d-none d-lg-block">
+            <Dropdown.Toggle
+                href="#"
+                as={CustomToggle}
+                variant="search-toggle d-flex align-items-center"
+            >
+                <i className="material-symbols-outlined">notifications</i>
+                {/* {notificationlist && notificationlist.length} */}
+            </Dropdown.Toggle>
+            <Dropdown.Menu
+                className="sub-drop"
+                style={{ inset: "75px 0px auto auto" }}
+            >
+                <Card className="shadow-none m-0">
+                    <Card.Header className="d-flex justify-content-between bg-primary">
+                        <div className="header-title bg-primary">
+                            <h5 className="mb-0 text-white">
+                                All Notifications
+                            </h5>
+                        </div>
+                        <small className="badge  bg-light text-dark">{notificationlist && notificationlist?.length}</small>
+                    </Card.Header>
+                    <Card.Body className="p-0">
 
-                <NewNotification type="headerNotification" />
-                {
-                    notificationlist && notificationlist.slice(0, 5).map((data, index) => {
-                        return (
-                            <React.Fragment key={index}>
-                                {data &&
-                                    <NotificationLink notification={data} />}
-                            </React.Fragment>
+                        {/* <NewNotification type="headerNotification" /> */}
+                        {
+                            notificationlist && notificationlist.slice(0, 5).map((data, index) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                        {data &&
+                                            <NotificationLink notification={data} />}
+                                    </React.Fragment>
 
 
-                        )
+                                )
 
-                    })
-                }
+                            })
+                        }
 
-                {notificationlist?.length > 4 &&
-                    <div className="text-center iq-sub-card">
-                        <Link
-                            href="/notification"
-                            className=" btn text-primary w-100 d-block"
-                        >
-                            View All
-                        </Link>
-                    </div>}
-                {notificationlist?.length == 0 &&
-                    <div className="text-center iq-sub-card">
-                        <p>
-                            No record found!
-                        </p>
-                    </div>}
-            </Card.Body>
-        </Card >
+
+                        <div className="text-center iq-sub-card">
+                            <Link
+                                href="/notification"
+                                className=" btn text-primary w-100 d-block"
+                            >
+                                View All
+                            </Link>
+                        </div>
+                        {notificationlist?.length == 0 &&
+                            <div className="text-center iq-sub-card">
+                                <p>
+                                    No record found!
+                                </p>
+                            </div>}
+                    </Card.Body>
+                </Card >
+            </Dropdown.Menu>
+        </Dropdown>
+
     )
 }
 

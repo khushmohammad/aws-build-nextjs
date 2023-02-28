@@ -8,8 +8,8 @@ import { getCookie, setCookie } from "cookies-next";
 export default NextAuth({
   providers: [
     FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      clientId: "216619504197241",
+      clientSecret: "cf627045700bf6e900d0150007457f78",
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,

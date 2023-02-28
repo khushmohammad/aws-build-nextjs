@@ -4,6 +4,7 @@ import Link from "next/link";
 import FsLightbox from "fslightbox-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { deleteGaleryImage } from "../../services/profile.service";
 
 const AllPhotos = () => {
   const [imageController, setImageController] = useState({
@@ -21,6 +22,12 @@ const AllPhotos = () => {
       toggler: !imageController.toggler,
       slide: number,
     });
+  };
+
+  const removeImage = async (fileId, imageType) => {
+    console.log("::", fileId, imageType);
+    const res = await deleteGaleryImage(fileId, imageType);
+    console.log("hhhh::", res);
   };
 
   useEffect(() => {
@@ -69,17 +76,13 @@ const AllPhotos = () => {
                       objectfit="contain"
                     />
                   </Link>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={<Tooltip>Edit or Remove</Tooltip>}
+                  <a
+                    role="button"
+                    onClick={() => removeImage(pic?._id, pic?.imageType)}
+                    className="image-edit-btn material-symbols-outlined md-16"
                   >
-                    <Link
-                      href="#"
-                      className="image-edit-btn material-symbols-outlined md-16"
-                    >
-                      drive_file_rename_outline
-                    </Link>
-                  </OverlayTrigger>
+                    delete
+                  </a>
                 </div>
               </div>
             ))}

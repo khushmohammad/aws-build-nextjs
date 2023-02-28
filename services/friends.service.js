@@ -160,7 +160,7 @@ export const getFriendList = async (params) => {
   console.log(params, "params");
 
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriend?limit=${params.limit}&pageNumber=${params.page}`,
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriends?limit=${params.limit}&pageNumber=${params.page}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -206,7 +206,7 @@ export const friendsBirthdayList = async () => {
 
 export const getPendingRequestFriendListApi = async (params) => {
   const token = await getToken();
-  console.log(params,"sdfsdf");
+  console.log(params, "sdfsdf");
   const res = await axios.post(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId?limit=${params.limit}&pageNumber=${params.page}`,
     "",

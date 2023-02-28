@@ -338,7 +338,7 @@ const Header = () => {
                     <a href="#" className="d-flex align-items-center">
                       <input
                         type="checkbox"
-                        class="checkbox"
+                        className="checkbox"
                         id="checkbox"
                         value={theme_scheme_color}
                         name="theme_scheme"
@@ -346,14 +346,14 @@ const Header = () => {
                           setTheme_scheme_color((prevState) => !prevState)
                         }
                       />
-                      <label for="checkbox" class="checkbox-label">
-                        <span class="icon-moon material-symbols-outlined">
+                      <label htmlFor="checkbox" className="checkbox-label">
+                        <span className="icon-moon material-symbols-outlined">
                           dark_mode
                         </span>
-                        <span class="icon-sun material-symbols-outlined">
+                        <span className="icon-sun material-symbols-outlined">
                           light_mode
                         </span>
-                        <span class="ball"></span>
+                        <span className="ball"></span>
                       </label>
                     </a>
                   </Nav.Item>
@@ -387,8 +387,6 @@ const Header = () => {
                         </Card.Header>
                         <Card.Body className="p-0">
                           <FriendRequestList />
-
-                          
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>
@@ -402,21 +400,7 @@ const Header = () => {
                       <span className="mobile-text  ms-3">Friend Request</span>
                     </Link>
                   </Nav.Item>
-                  <Dropdown as="li" className="nav-item d-none d-lg-block">
-                    <Dropdown.Toggle
-                      href="#"
-                      as={CustomToggle}
-                      variant="search-toggle d-flex align-items-center"
-                    >
-                      <i className="material-symbols-outlined">notifications</i>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu
-                      className="sub-drop"
-                      style={{ inset: "75px 0px auto auto" }}
-                    >
-                      <NotificationList />
-                    </Dropdown.Menu>
-                  </Dropdown>
+                  <NotificationList />
                   <Nav.Item as="li" className="d-lg-none">
                     <Link
                       href="/dashboard/app/notification"
@@ -605,7 +589,7 @@ const Header = () => {
 
 const MessageListWithUser = () => {
   const friendsList = useSelector(
-    (state) => state?.friends?.friendList?.friendsList
+    (state) => state?.friends?.friendList?.list
   );
 
   return (

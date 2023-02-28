@@ -3,11 +3,15 @@ import Link from 'next/link'
 import React from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import user1 from '../../public/assets/images/user/25.png'
-import NotificationMessage from '../../components/notification/NotificationMessage'
+import NotificationMessage from './NotificationMessage'
 
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
-function NotificatonCard({ notification, page }) {
+function ActivityLogCard({ notification, page }) {
+
+    const user = useSelector((state) => state?.user?.data?.userInfo);
+
 
     return (
         <div>
@@ -25,8 +29,10 @@ function NotificatonCard({ notification, page }) {
                             <div className="w-100">
                                 <div className="d-flex justify-content-between">
                                     <div className=" ms-3">
-                                        <h6>  {notification?.userDetails?.userInfo?.firstName || ''}{" "}
-                                            {notification?.userDetails?.userInfo?.lastName || ''} {NotificationMessage(notification?.message)}</h6>
+                                        <h6> <b>  </b>
+                                            {/* {NotificationMessage(notification.message)} */}
+                                        </h6>
+                                        <strong><strong>{user?.firstName || ''}{" "} {user?.lastName || ''}</strong></strong>  {notification?.message} <strong>{notification?.userDetails?.userInfo?.firstName || ''}{" "} {notification?.userDetails?.userInfo?.lastName || ''}</strong>
                                         <p className="mb-0">   {notification?.createdAt && moment(notification?.createdAt).fromNow()}</p>
                                     </div>
                                     {page != "headerNotification" ?
@@ -67,4 +73,4 @@ function NotificatonCard({ notification, page }) {
     )
 }
 
-export default NotificatonCard
+export default ActivityLogCard

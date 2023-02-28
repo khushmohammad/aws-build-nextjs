@@ -35,7 +35,7 @@ export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
 
-    const data = await getFeeds(params)
+    const data = params && await getFeeds(params)
     return data;
   }
 );

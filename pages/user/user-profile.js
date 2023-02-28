@@ -432,8 +432,8 @@ const UserProfile = () => {
                                       <h6>Nick Name:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user && user.nickName ? (
-                                        <p className="mb-0">{user.nickName}</p>
+                                      {user && user?.nickName ? (
+                                        <p className="mb-0">{user?.nickName}</p>
                                       ) : (
                                         "---"
                                       )}
@@ -488,9 +488,9 @@ const UserProfile = () => {
                                       <h6>Mobile:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.phoneNumber ? (
+                                      {user?.phoneNumber ? (
                                         <p className="mb-0">
-                                          {user.phoneNumber}
+                                          {user?.phoneNumber}
                                         </p>
                                       ) : (
                                         "---"
@@ -502,7 +502,7 @@ const UserProfile = () => {
                                       <h6>Address:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.address ? (
+                                      {user?.address ? (
                                         <p className="mb-0">
                                           {user.address}
                                           {user.cityInfo.name ? "," : ""}
@@ -534,7 +534,7 @@ const UserProfile = () => {
                                       <h6>Birth Date:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.userInfo.dateOfBirth ? (
+                                      {user?.userInfo?.dateOfBirth ? (
                                         <p className="mb-0">
                                           {moment(
                                             user.userInfo.dateOfBirth
@@ -576,7 +576,7 @@ const UserProfile = () => {
                                       <h6>Gender:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.userInfo.gender ? (
+                                      {user?.userInfo?.gender ? (
                                         <p className="mb-0">
                                           {user.userInfo.gender}
                                           {/* === "Male"
@@ -619,7 +619,7 @@ const UserProfile = () => {
                                       <h6>Relationship Status:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user.maritalStatusInfo &&
+                                      {user?.maritalStatusInfo &&
                                         user.maritalStatusInfo.dropdownValue ? (
                                         <p className="mb-0">
                                           {user.maritalStatusInfo.dropdownValue}
@@ -759,7 +759,7 @@ const UserProfile = () => {
                                   <ul className="suggestions-lists m-0 p-0">
                                     <li className="d-flex mb-4 align-items-center justify-content-between">
                                       <div className="w-100">
-                                        {allHobbies.length > 0 ? (
+                                        {allHobbies?.length > 0 ? (
                                           allHobbies.map((ele) => {
                                             // console.log("array of hobby", ele);
                                             return (
@@ -951,7 +951,7 @@ const UserProfile = () => {
                                       onHide={() => setProfessionalModal(false)}
                                       EditProfessionIndex={professionIndex}
                                     />
-                                    {console.log(ProfessionalDetails, "ProfessionalDetails")}
+
 
 
                                     {!ProfessionalDetails &&
@@ -970,18 +970,6 @@ const UserProfile = () => {
 
                                       return (
                                         <li className="d-flex mb-4 align-items-center justify-content-between" key={index}>
-
-                                          {/* <div className="user-img img-fluid">
-                                              <Image
-                                                loading="lazy"
-                                                src={user01}
-                                                alt="story-img"
-                                                className="rounded-circle avatar-40"
-                                              />
-                                            </div> */}
-
-
-
                                           <div className="w-100">
                                             <div className="d-flex justify-content-between">
                                               <div className="ms-3">
@@ -1001,14 +989,10 @@ const UserProfile = () => {
                                               </div>
                                             </div>
                                           </div>
-
                                         </li>
                                       )
                                     })
-
                                     }
-
-
                                   </ul>
                                   <h4 className="mt-3 mb-3">College/School</h4>
                                   <ul className="suggestions-lists m-0 p-0">
@@ -1031,35 +1015,44 @@ const UserProfile = () => {
                                       heading="Add College/School"
                                       onHide={() => setCollegeModal(false)}
                                     />
-                                    <li className="d-flex mb-4 align-items-center">
-                                      <div className="user-img img-fluid">
-                                        <Image
-                                          loading="lazy"
-                                          src={user01}
-                                          alt="story-img"
-                                          className="rounded-circle avatar-40"
-                                        />
-                                      </div>
-                                      <div className="w-100">
-                                        <div className="d-flex flex-wrap justify-content-between">
-                                          <div className="ms-3">
-                                            <h6>Lorem ipsum</h6>
-                                            <p className="mb-0">USA</p>
-                                          </div>
-                                          <div className="edit-relation">
-                                            <Link
-                                              href="#"
-                                              className="d-flex align-items-center"
-                                            >
-                                              <span className="material-symbols-outlined me-2 md-18">
-                                                edit
-                                              </span>
-                                              Edit
-                                            </Link>
+                                     {!ProfessionalDetails &&
+                                      <li className="d-flex mb-4 align-items-center justify-content-center bg-light">
+
+
+
+                                        <div className="w-100  ">
+                                          <div className="d-flex justify-content-center">
+                                            No Record Found
                                           </div>
                                         </div>
-                                      </div>
-                                    </li>
+                                      </li>}
+                                    {ProfessionalDetails && ProfessionalDetails.map((data, index) => {
+
+                                      return (
+                                        <li className="d-flex mb-4 align-items-center justify-content-between" key={index}>
+                                          <div className="w-100">
+                                            <div className="d-flex justify-content-between">
+                                              <div className="ms-3">
+                                                <h6>{data.company}</h6>
+                                                <p className="mb-0">{data.profession}</p>
+                                              </div>
+                                              <div className="edit-relation">
+                                                <a
+                                                  onClick={() => { setProfessionalModal(true), setprofessionIndex(index) }} role="button"
+                                                  className="d-flex align-items-center"
+                                                >
+                                                  <span className="material-symbols-outlined me-2 md-18">
+                                                    edit
+                                                  </span>
+                                                  Edit
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      )
+                                    })
+                                    }
                                   </ul>
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="about5">

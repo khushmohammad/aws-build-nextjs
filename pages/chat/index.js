@@ -30,10 +30,10 @@ const Chat = () => {
     const [show2, setShow2] = useState('')
     const chatId = router?.query?.chatId
     const user = useSelector((state) => state.user.data);
-    const friendsList = useSelector((state) => state?.friends?.friendList?.friendsList)
+    const friendsList = useSelector((state) => state?.friends?.friendList?.list)
     const [key, setKey] = useState('start')
 
-
+console.log(friendsList,"friendsList")
     // <<<<>>>> socket start
     //const socket = useRef(); \
     // console.log(socket, "socket");

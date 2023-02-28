@@ -1,21 +1,30 @@
 
-function NotificationMessage(key) {
+function NotificationMessage(key, page) {
 
     let text
+    //if (page == 'notification') {
+
     switch (key) {
         case "POST_LIKE":
-            text = "likes your post"
+            text = "likes  post"
             break;
         case 'POST_COMMENT':
-            text = "comment on your post";
+            text = "comment on  post";
             break;
 
         case 'POST_TAGGED':
-            text = "tagged you on their post";
+            text = "tagged  on their post";
+            break;
+        case 'PENDING_FRIEND_REQUEST':
+            text = "new friend request ";
+            break;
+        case 'ACCEPTED_FRIEND_REQUEST':
+            text = "acce ";
             break;
         default:
             text = "Looking forward to the Weekend";
     }
+    // }
     return text
 }
 
