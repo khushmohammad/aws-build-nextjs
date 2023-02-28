@@ -22,6 +22,7 @@
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
     "fslightbox-react": "^1.6.3",
+    "html-react-parser": "^3.0.9",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "13.1.0",

@@ -74,7 +74,14 @@ function NotificationList() {
                         }
 
 
-                        <div className="text-center iq-sub-card">
+                       
+                        {notificationlist?.length == 0 &&
+                            <div className="text-center iq-sub-card">
+                                <p>
+                                    No record found!
+                                </p>
+                            </div>}
+                            <div className="text-center iq-sub-card">
                             <Link
                                 href="/notification"
                                 className=" btn text-primary w-100 d-block"
@@ -82,12 +89,6 @@ function NotificationList() {
                                 View All
                             </Link>
                         </div>
-                        {notificationlist?.length == 0 &&
-                            <div className="text-center iq-sub-card">
-                                <p>
-                                    No record found!
-                                </p>
-                            </div>}
                     </Card.Body>
                 </Card >
             </Dropdown.Menu>

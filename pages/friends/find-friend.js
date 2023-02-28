@@ -62,7 +62,7 @@ const FriendList = () => {
       );
     }
   };
-  console.log(notificationListState, "hjkfbhbkf");
+ 
   return (
     <Default>
       <Head>

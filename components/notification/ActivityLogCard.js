@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import user1 from '../../public/assets/images/user/25.png'
-import NotificationMessage from './NotificationMessage'
+import { ActivityMessage } from './NotificationMessage'
 
 import moment from 'moment'
 import { useSelector } from 'react-redux'
@@ -12,7 +12,7 @@ function ActivityLogCard({ notification, page }) {
 
     const user = useSelector((state) => state?.user?.data?.userInfo);
 
-
+    const receiverName = `${notification?.userDetails?.userInfo?.firstName || ''} ${notification?.userDetails?.userInfo?.lastName || ''}`
     return (
         <div>
             <Card>
@@ -32,8 +32,14 @@ function ActivityLogCard({ notification, page }) {
                                         <h6> <b>  </b>
                                             {/* {NotificationMessage(notification.message)} */}
                                         </h6>
-                                        <strong><strong>{user?.firstName || ''}{" "} {user?.lastName || ''}</strong></strong>  {notification?.message} <strong>{notification?.userDetails?.userInfo?.firstName || ''}{" "} {notification?.userDetails?.userInfo?.lastName || ''}</strong>
-                                        <p className="mb-0">   {notification?.createdAt && moment(notification?.createdAt).fromNow()}</p>
+
+                                        <strong>
+                                            {user?.firstName || ''}{" "} {user?.lastName || ''}
+                                        </strong>
+
+                                        {/* <strong>{notification?.userDetails?.userInfo?.firstName || ''}{" "} {notification?.userDetails?.userInfo?.lastName || ''}</strong> */}
+                                        <span>{" "}{ActivityMessage(notification.message, receiverName)}</span>
+                                        <p className="mb-0"> {" "}  {notification?.createdAt && moment(notification?.createdAt).fromNow()}</p>
                                     </div>
                                     {page != "headerNotification" ?
                                         <div className="d-flex align-items-center">

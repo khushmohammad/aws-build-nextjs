@@ -3,9 +3,9 @@ import Link from 'next/link'
 import React from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import user1 from '../../public/assets/images/user/25.png'
-import NotificationMessage from '../../components/notification/NotificationMessage'
 
 import moment from 'moment'
+import { NotificationMessage } from './NotificationMessage'
 
 function NotificatonCard({ notification, page }) {
 
@@ -25,8 +25,8 @@ function NotificatonCard({ notification, page }) {
                             <div className="w-100">
                                 <div className="d-flex justify-content-between">
                                     <div className=" ms-3">
-                                        <h6>  {notification?.userDetails?.userInfo?.firstName || ''}{" "}
-                                            {notification?.userDetails?.userInfo?.lastName || ''} {NotificationMessage(notification?.message)}</h6>
+                                        <h6> <strong> {notification?.userDetails?.userInfo?.firstName || ''}{" "}
+                                            {notification?.userDetails?.userInfo?.lastName || ''} </strong> {NotificationMessage(notification?.message)}</h6>
                                         <p className="mb-0">   {notification?.createdAt && moment(notification?.createdAt).fromNow()}</p>
                                     </div>
                                     {page != "headerNotification" ?

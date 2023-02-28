@@ -34,7 +34,7 @@ const NonFriendListSlice = createSlice({
 export const getNonFriendsList = createAsyncThunk(
   "Friends/nonFriendsList",
   async (params) => {
-    console.log(params);
+    
     const nonFriendsList = await getNonFriendList(params);
 
     return nonFriendsList;
