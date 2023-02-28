@@ -5,11 +5,12 @@ import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
 
+
 export default NextAuth({
   providers: [
     FacebookProvider({
-      clientId: "216619504197241",
-      clientSecret: "cf627045700bf6e900d0150007457f78",
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
