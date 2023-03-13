@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getUserInfoByUserId } from "./posts.service";
+import { getUserInfoByUserId } from "./user.service";
 
 export const getToken = async () => {
   const token = await axios.get("/api/handler");
@@ -157,10 +157,10 @@ export const getFriendListWithUserData = async (friendsArr) => {
 
 export const getFriendList = async (params) => {
   const token = await getToken();
-  console.log(params, "params");
+
 
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriends?limit=${params.limit}&pageNumber=${params.page}`,
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriends?limit=${params?.limit || 10}&pageNumber=${params?.page || 1}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -206,9 +206,8 @@ export const friendsBirthdayList = async () => {
 
 export const getPendingRequestFriendListApi = async (params) => {
   const token = await getToken();
-  console.log(params, "sdfsdf");
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId?limit=${params.limit}&pageNumber=${params.page}`,
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/friend/pendingRequestByUserId?limit=${params?.limit || 10}&pageNumber=${params?.page || 1}`,
     "",
     {
       headers: {

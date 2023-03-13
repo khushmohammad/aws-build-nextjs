@@ -5,17 +5,32 @@ import { useSelector } from "react-redux";
 import Card from "../../components/Card";
 import Default from "../../layouts/default";
 
-import { privacySettingToggle } from "../../services/basic.services";
+import { privacySettingToggle } from "../../services/basic.service";
 
 const UserPrivacySetting = () => {
   const privacySetting = useSelector((state) => state?.user?.data?.privacy);
-  console.log(privacySetting, "hhnixkjbjhfh");
-  console.log(privacySetting, "hhnixkjbjhfh");
+
   const [selectedOption, setSelectedOption] = useState(privacySetting);
+  const [isSubmitted, setisSubmitted] = useState();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const res = await privacySettingToggle(selectedOption);
+    console.log(res);
+
+    if (res) {
+      console.log(res);
+
+      setisSubmitted({
+        status: true,
+        message: "Your Profile is updated Successfully",
+        className: "success",
+      });
+
+      setTimeout(() => {
+        setisSubmitted("")
+      }, 2000);
+    }
   };
 
   const handleOptionChange = (event) => {
@@ -37,6 +52,14 @@ const UserPrivacySetting = () => {
                 </div>
               </Card.Header>
               <Card.Body>
+                {isSubmitted?.status && (
+                  <div
+                    className={`alert alert-${isSubmitted.className}`}
+                    role="alert"
+                  >
+                    {isSubmitted.message}
+                  </div>
+                )}
                 <form onSubmit={handleSubmit}>
                   <div className="acc-privacy">
                     {/* <div className="data-privacy">
@@ -137,7 +160,7 @@ const UserPrivacySetting = () => {
                   </div> */}
                     <hr />
                     <div className="data-privacy">
-                      <h4 className="mb-2"> Your Profile </h4>
+                      <h4 className="mb-2"> Lock Your Profile </h4>
                       <Form.Check className="me-4">
                         <Form.Check.Input
                           type="radio"

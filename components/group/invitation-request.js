@@ -56,13 +56,13 @@ function GroupInvitation() {
                 </div>
                 <div className="d-flex align-items-center">
                   <button
-                    onClick={() => AcceptOrRejectReq(data?.userId, "1")}
+                    onClick={() => AcceptOrRejectReq(data?._id, "1")}
                     className="me-3 btn btn-primary rounded"
                   >
                     Accept
                   </button>
                   <button
-                    onClick={() => AcceptOrRejectReq(data?.userId, "0")}
+                    onClick={() => AcceptOrRejectReq(data?._id, "0")}
                     className="me-3 btn btn-secondary rounded"
                   >
                     Decline

@@ -1,19 +1,40 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+
+import React, { useState } from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import user1 from '../../public/assets/images/user/25.png'
-
 import moment from 'moment'
+import Image from 'next/image'
+import Link from 'next/link'
 import { NotificationMessage } from './NotificationMessage'
+import { deleteNotificationApi } from '../../services/basic.service'
+import { useDispatch } from 'react-redux'
+import { getNotification } from '../../store/site/Notification'
 
 function NotificatonCard({ notification, page }) {
 
+    const [apiMessage, setApiMessage] = useState("")
+    const [messageDeleted, setMessageDeleted] = useState("")
+    const dispatch = useDispatch()
+
+    const DeleteNotification = async (notificationId) => {
+        console.log("first", notificationId)
+
+        try {
+            const res = await deleteNotificationApi(notificationId)
+            console.log(res, "s")
+            dispatch(getNotification())
+
+        } catch (err) {
+            console.log(err, "err")
+        }
+    }
+    // console.log(notification)
     return (
         <div>
             <Card>
                 <Card.Body>
                     <ul className="notification-list m-0 p-0">
+
                         <li className="d-flex align-items-center justify-content-between">
 
                             <div className="user-img img-fluid">
@@ -44,13 +65,13 @@ function NotificatonCard({ notification, page }) {
                                                         </Dropdown.Toggle>
                                                     </Link>
                                                     <Dropdown.Menu className="dropdown-menu-right">
-                                                        <Dropdown.Item href="#">
+                                                        {/* <Dropdown.Item href="#">
                                                             <i className="ri-eye-fill me-2"></i>View
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item href="#"><i className="ri-delete-bin-6-fill me-2"></i>Delete</Dropdown.Item>
-                                                        <Dropdown.Item href="#"><i className="ri-pencil-fill me-2"></i>Edit</Dropdown.Item>
+                                                        </Dropdown.Item> */}
+                                                        <Dropdown.Item href="#" onClick={() => DeleteNotification(notification._id)}><i className="ri-delete-bin-6-fill me-2"></i>Delete</Dropdown.Item>
+                                                        {/* <Dropdown.Item href="#"><i className="ri-pencil-fill me-2"></i>Edit</Dropdown.Item>
                                                         <Dropdown.Item href="#"><i className="ri-printer-fill me-2"></i>Print</Dropdown.Item>
-                                                        <Dropdown.Item href="#"><i className="ri-file-download-fill me-2"></i>Download</Dropdown.Item>
+                                                        <Dropdown.Item href="#"><i className="ri-file-download-fill me-2"></i>Download</Dropdown.Item> */}
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>

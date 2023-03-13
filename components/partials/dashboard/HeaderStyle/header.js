@@ -13,21 +13,7 @@ import {
 
 //image
 import user1 from "../../../../public/assets/images/user/25.png";
-import user2 from "../../../../public/assets/images/user/02.jpg";
-import user3 from "../../../../public/assets/images/user/03.jpg";
-import user4 from "../../../../public/assets/images/user/04.jpg";
-import user5 from "../../../../public/assets/images/user/25.png";
-import user6 from "../../../../public/assets/images/page-img/19.jpg";
-import user7 from "../../../../public/assets/images/page-img/18.jpg";
-import user8 from "../../../../public/assets/images/page-img/20.jpg";
-import user9 from "../../../../public/assets/images/page-img/21.jpg";
-import user10 from "../../../../public/assets/images/page-img/22.jpg";
-import user11 from "../../../../public/assets/images/page-img/23.jpg";
-import user12 from "../../../../public/assets/images/page-img/24.jpg";
-import user13 from "../../../../public/assets/images/page-img/09.jpg";
-import user14 from "../../../../public/assets/images/page-img/03.jpg";
-import user15 from "../../../../public/assets/images/page-img/02.jpg";
-import user16 from "../../../../public/assets/images/page-img/01.jpg";
+
 
 //Componets
 import { useRouter } from "next/router";
@@ -268,7 +254,7 @@ const Header = () => {
                                 <div
                                   className="d-flex align-items-center border-bottom search-hover py-2 px-3"
                                   onClick={() =>
-                                    router.push(`/friends/${item._id}`)
+                                    router.push(`/user/${item._id}`)
                                   }
                                 >
                                   <div className="flex-shrink-0">
@@ -465,11 +451,7 @@ const Header = () => {
                       <i className="material-symbols-outlined profile-drop-down">
                         expand_more
                       </i>
-                      {/* <div className="caption">
-                        <h6 className="mb-0 line-height">
-                          {LogedInUserName && LogedInUserName}
-                        </h6>
-                      </div> */}
+
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="sub-drop caption-menu">
                       <Card className="shadow-none m-0">
@@ -537,33 +519,7 @@ const Header = () => {
                               <div className="mb-0 h6">Logout</div>
                             </div>
                           </Link>
-                          {/* <div className=" iq-sub-card">
-                            <h5>Chat Settings</h5>
-                          </div>
-                          <div className="d-flex align-items-center iq-sub-card border-0">
-                            <i className="material-symbols-outlined text-success md-14">
-                              circle
-                            </i>
-                            <div className="ms-3">Online</div>
-                          </div>
-                          <div className="d-flex align-items-center iq-sub-card border-0">
-                            <i className="material-symbols-outlined text-warning md-14">
-                              circle
-                            </i>
-                            <div className="ms-3">Away</div>
-                          </div>
-                          <div className="d-flex align-items-center iq-sub-card border-0">
-                            <i className="material-symbols-outlined text-danger md-14">
-                              circle
-                            </i>
-                            <div className="ms-3">Disconnected</div>
-                          </div>
-                          <div className="d-flex align-items-center iq-sub-card border-0">
-                            <i className="material-symbols-outlined text-gray md-14">
-                              circle
-                            </i>
-                            <div className="ms-3">Invisible</div>
-                          </div> */}
+
                         </Card.Body>
                       </Card>
                     </Dropdown.Menu>

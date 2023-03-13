@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, ToggleButton, Modal, Form } from "react-bootstrap";
-import { getToken } from "../../services/user.service";
+
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getUserDetails, updateUserInfo } from "../../store/profile";
 import { useDispatch } from "react-redux";
+import { getToken } from "../../services/defaultAxiosPath";
 
 const HobbyModal = ({ heading, onHide, ...props }) => {
   const dispatch = useDispatch();

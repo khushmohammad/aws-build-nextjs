@@ -33,15 +33,15 @@ const Chat = () => {
     const friendsList = useSelector((state) => state?.friends?.friendList?.list)
     const [key, setKey] = useState('start')
 
-console.log(friendsList,"friendsList")
-    // <<<<>>>> socket start
+
+    // socket start
     //const socket = useRef(); \
     // console.log(socket, "socket");
     const [messages, setMessages] = useState([])
     const [newMessages, setNewMessages] = useState({})
 
     const receiverUserId = chatId
-    const senderUserId = user?.userInfo._id
+    const senderUserId = user?.userInfo?._id
     const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId }
 
     const joinSocket = async () => {
@@ -169,8 +169,10 @@ console.log(friendsList,"friendsList")
                                                         <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="chat-user" className="avatar-60 " onClick={() => setShow1('true')} />
                                                     </div>
                                                     <div className="chat-caption">
-                                                        <h5 className="mb-0">  {user.userInfo.firstName} {user.userInfo.lastName}</h5>
+                                                        <Link href={`user/${user?.userInfo?._id}`} >
+                                                            <h5 className="mb-0">  {user?.userInfo?.firstName} {user?.userInfo?.lastName}</h5></Link>
                                                         {/* <p className="m-0">Web Designer</p> */}
+
                                                     </div>
                                                     <div onClick={ChatSidebarClose} className="ms-auto d-lg-none" role={"button"}>
                                                         <span className="material-symbols-outlined">
@@ -186,7 +188,7 @@ console.log(friendsList,"friendsList")
                                                                 <Image loading="lazy" src={user?.coverPictureInfo?.file?.location || user1} height={100} width={100} alt="avatar" />
                                                             </Link>
                                                             <div className="user-name mt-4">
-                                                                <h4 className="text-center">{user.userInfo.firstName} {user.userInfo.lastName}</h4>
+                                                                <h4 className="text-center">{user?.userInfo?.firstName} {user?.userInfo?.lastName}</h4>
                                                             </div>
                                                             <div className="user-desc">
                                                                 {/* <p className="text-center">Web Designer</p> */}
@@ -219,32 +221,43 @@ console.log(friendsList,"friendsList")
                                                 <h5 >Public Channels</h5>
 
                                                 <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
-                                                    {friendsList && friendsList.map((data, index) => {
-                                                        return (
 
-                                                            <Nav.Item as="li" key={index} onClick={getRoomId}>
-                                                                <Nav.Link eventKey={data._id} >
-                                                                    <div className="d-flex align-items-center">
-                                                                        <div className="avatar mx-2">
-                                                                            <Image loading="lazy" src={data?.profileInfo?.profilePictureInfo
-                                                                                ?.file?.location || user5} alt="chatuserimage" className="avatar-50 " height={100}
-                                                                                width={100} />
-                                                                            <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
-                                                                        </div>
-                                                                        <div className="chat-sidebar-name">
-                                                                            <h6 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h6>
-                                                                            {/* <span>Lorem Ipsum is</span> */}
-                                                                        </div>
-                                                                        <div className="chat-meta float-right text-center mt-2 me-1">
-                                                                            <div className="chat-msg-counter bg-primary text-white">20</div>
-                                                                            <span className="text-nowrap">05 min</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </Nav.Link>
-                                                            </Nav.Item>
+                                                    {
+                                                        !friendsList || friendsList.length < 1 ?
+                                                            <Card>
+                                                                <Card.Body>
+                                                                    No User Found!
 
-                                                        )
-                                                    })}
+                                                                </Card.Body>
+                                                            </Card> :
+                                                            friendsList && friendsList.map((data, index) => {
+                                                                return (
+
+                                                                    <Nav.Item as="li" key={index} onClick={getRoomId}>
+                                                                        <Nav.Link eventKey={data._id} >
+                                                                            <div className="d-flex align-items-center">
+                                                                                <div className="avatar mx-2">
+                                                                                    <Image loading="lazy" src={data?.profileInfo?.profilePictureInfo
+                                                                                        ?.file?.location || user5} alt="chatuserimage" className="avatar-50 " height={100}
+                                                                                        width={100} />
+                                                                                    <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
+                                                                                </div>
+                                                                                <div className="chat-sidebar-name">
+                                                                                    <h6 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h6>
+                                                                                    {/* <span>Lorem Ipsum is</span> */}
+                                                                                </div>
+                                                                                <div className="chat-meta float-right text-center mt-2 me-1">
+                                                                                    <div className="chat-msg-counter bg-primary text-white">20</div>
+                                                                                    <span className="text-nowrap">05 min</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </Nav.Link>
+                                                                    </Nav.Item>
+
+                                                                )
+                                                            })
+
+                                                    }
 
                                                 </Nav>
                                             </div>
@@ -277,7 +290,7 @@ console.log(friendsList,"friendsList")
                                                                                 ?.file?.location || user5} height={100} width={100} alt="avatar" className="avatar-50 " onClick={() => setShow2('true')} />
                                                                             <span className="avatar-status"><i className="material-symbols-outlined text-success  md-14 filled">circle</i></span>
                                                                         </div>
-                                                                        <h5 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h5>
+                                                                        <Link href={`user/${data?._id}`} ><h5 className="mb-0">{data?.firstName}{" "}  {data?.lastName}</h5></Link>
                                                                     </div>
                                                                     <div className={`chat-user-detail-popup scroller ${show2 === 'true' ? 'show' : ''}`}>
                                                                         <div className="user-profile">
@@ -324,12 +337,7 @@ console.log(friendsList,"friendsList")
                                                                         </div>
                                                                     </div>
                                                                     <div className="chat-header-icons d-flex">
-                                                                        {/* <Link href="#" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
-                                                                            <i className="material-symbols-outlined md-18">phone</i>
-                                                                        </Link>
-                                                                        <Link href="#" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
-                                                                            <i className="material-symbols-outlined md-18">videocam</i>
-                                                                        </Link> */}
+
                                                                         <Link href="/" className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center">
                                                                             <span className="material-symbols-outlined">
                                                                                 arrow_back
@@ -408,32 +416,6 @@ const MessageView = ({ data }) => {
 
     const user = useSelector((state) => state.user.data);
 
-    // const [isDeleted, setIsDeleted] = useState('');
-
-    // const deleteMessage = async (messageId) => {
-
-    //     const deleteMesageOBj = { userId: senderId, receiverId: receiverId, messageIds: messageId }
-
-    //     socket.emit("deleteMessage", deleteMesageOBj);
-    //     socket.on("messagesDeleted", (deleteData) => {
-    //         //setIsDeleted({ [deleteData.messageIds[0]]: true });
-
-    //         console.log(deleteData.messageIds[0], "deleteData")
-    //         setIsDeleted({ [deleteData.messageIds[0]]: true })
-
-    //     }
-    //     )
-    // };
-    //  console.log(isDeleted)
-    // useEffect(() => {
-    //     socket.on("messagesDeleted", (deleteData) => {
-    //         setIsDeleted({ [deleteData.messageIds[0]]: true });
-    //     }
-    //     )
-
-    // }, [socket])
-
-
     return (
         <>
             <div className="chat-user">
@@ -479,10 +461,7 @@ const SendMessageInput = ({ sendMsg }) => {
             <div className="chat-footer p-3 bg-white">
 
                 <form className="d-flex align-items-center" onSubmit={handleSubmit(onSubmit)}>
-                    {/* <div className="chat-attagement d-flex">
-        <Link href="#"><i className="far fa-smile pe-3" aria-hidden="true"></i></Link>
-        <Link href="#"><i className="fa fa-paperclip pe-3" aria-hidden="true"></i></Link>
-    </div> */}
+
 
                     <Form.Control {...register("messageInput")} type="text" className="me-3" placeholder="Type your message" />
                     <Button type="submit" variant="primary d-flex align-items-center"><i className="far fa-paper-plane" aria-hidden="true"></i><span className="d-sm-block ms-1">Send</span></Button>

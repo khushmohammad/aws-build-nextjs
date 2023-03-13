@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { getUserInfoByUserId } from '../../services/posts.service'
+import { getUserInfoByUserId } from '../../services/user.service'
+
 import NotificatonCard from './NotificatonCard'
 import { io } from "socket.io-client";
 import { useSelector } from 'react-redux';

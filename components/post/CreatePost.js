@@ -35,6 +35,7 @@ const CreatePost = (props) => {
   const [privacy, setPrivacy] = useState("public");
   const [privacyFriendList, setPrivacyFriendList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleClose = () => {
     setShow(false);
@@ -77,15 +78,30 @@ const CreatePost = (props) => {
   }, [props.groupId]);
 
   useEffect(() => {
-    if (router.pathname === "/friends/[id]") {
-      setPostData({ ...postData, uId: props.userId });
+    if (router.pathname === "/user/[id]") {
+      setPostData({ ...postData, userId: props.userId });
     }
   }, [props.userId]);
+
+  useEffect(() => {
+    checkValidation();
+  }, [postData]);
+
+  const checkValidation = () => {
+    console.log(postData?.description?.length, "postData");
+    if (postData?.description?.length > 1600) {
+      setErrorMessage("Text exceeds 1600 characters");
+      setIsLoading(true);
+    } else {
+      setErrorMessage(null);
+      setIsLoading(false);
+    }
+  };
 
   const submitPost = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    //console.log(":::", postData);
+
     await createPost(postData).then((res) => {
       setPostData({
         description: "",
@@ -247,17 +263,20 @@ const CreatePost = (props) => {
                   type="text"
                   autoFocus
                   value={postData?.description}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setPostData({
                       ...postData,
                       description: e.target.value,
-                    })
-                  }
+                    });
+                  }}
                   className="form-control rounded"
                   placeholder="Write something here..."
                   style={{ border: "none" }}
                 />
               </div>
+              {errorMessage && (
+                <div style={{ color: "red" }}>{errorMessage}</div>
+              )}
             </div>
             <hr />
             {selectedFile?.length > 0 ? (
@@ -464,7 +483,7 @@ const CreatePost = (props) => {
               variant="primary"
               className="d-block w-100 mt-3"
             >
-              {isLoading ? "Posting..." : "Post"}
+              {isLoading ? "Post" : "Post"}
             </Button>
           </Form>
         </Modal.Body>

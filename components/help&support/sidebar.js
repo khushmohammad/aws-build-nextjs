@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 // Import selectors & action from setting store
 import * as SettingSelector from "../../store/setting/selectors";
 
@@ -9,18 +9,45 @@ import { useDispatch, useSelector } from "react-redux";
 import Scrollbar from "smooth-scrollbar";
 import {
   Accordion,
-  Button,
-  Dropdown,
-  OverlayTrigger,
+  useAccordionButton,
+  AccordionContext,
   Tooltip,
+  OverlayTrigger,
 } from "react-bootstrap";
 import Link from "next/link";
-import { helpService } from "../../services/basic.services";
-import CustomToggle from "../dropdowns";
+import { helpService } from "../../services/basic.service";
+
 import SubCategory from "./SubCategory";
 
+function CustomToggle({ children, eventKey, onClick }) {
+  const { activeEventKey } = useContext(AccordionContext);
+
+  const decoratedOnClick = useAccordionButton(eventKey, (active) =>
+    onClick({ state: !active, eventKey: eventKey })
+  );
+
+  const isCurrentEventKey = activeEventKey === eventKey;
+
+  return (
+    <Link
+      href="#"
+      aria-expanded={isCurrentEventKey ? "true" : "false"}
+      className="nav-link"
+      role="button"
+      onClick={(e) => {
+        decoratedOnClick(isCurrentEventKey);
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
+
 const Sidebar = () => {
-  const [subCategory, setSubCategory] = useState(null);
+  const [subCat, setSubCat] = useState(null);
+  const [activeMenu, setActiveMenu] = useState({ state: false, eventKey: "" });
+
+  // sidebar responsive
   const minisidebar = () => {
     document.getElementsByTagName("ASIDE")[0].classList.add("sidebar-mini");
   };
@@ -76,12 +103,14 @@ const Sidebar = () => {
       }
     });
   });
+  // sidebar responsive
 
   const helpCategories = useSelector((state) => state?.help?.helpCategory);
 
-  const getSubCategory = async (helpId) => {
+  const getSubCategory = async (helpId = null) => {
     const res = await helpService(helpId);
-    setSubCategory({ subCats: res, parentId: helpId });
+
+    setSubCat(res.helpChildInfo);
   };
 
   return (
@@ -122,21 +151,24 @@ const Sidebar = () => {
                     </span>
                   </Link>
                 </li>
+
                 {helpCategories &&
-                  helpCategories.length !== 0 &&
-                  helpCategories.map((category, index) => (
-                    <li
+                  helpCategories.helpChildInfo.length !== 0 &&
+                  helpCategories.helpChildInfo.map((category, index) => (
+                    <Accordion.Item
+                      as="li"
+                      eventKey="help-menu"
+                      bsPrefix="nav-item"
                       key={index}
-                      className={`${
-                        location.pathname === "/" ? "active" : ""
-                      } nav-item `}
                     >
-                      <Link
-                        className={`${
-                          location.pathname === "/" ? "active" : ""
-                        } nav-link `}
-                        aria-current="page"
-                        href={`/help&supports/${category?._id}`}
+                      <CustomToggle
+                        eventKey={category._id}
+                        onClick={(activeKey) => {
+                          if (activeKey.state == true) {
+                            getSubCategory(category._id);
+                          }
+                          setActiveMenu(activeKey);
+                        }}
                       >
                         <OverlayTrigger
                           placement="right"
@@ -154,21 +186,37 @@ const Sidebar = () => {
                             textOverflow: "ellipsis",
                           }}
                         >
-                          <a
-                            className=""
-                            onClick={() => getSubCategory(category?._id)}
-                          >
-                            {category?.title}
-                            {subCategory && (
-                              <SubCategory
-                                helpid={category?._id}
-                                subcat={subCategory}
-                              />
-                            )}
-                          </a>
+                          {category?.title}
                         </span>
-                      </Link>
-                    </li>
+                        <i className="right-icon">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </i>
+                      </CustomToggle>
+
+                      <>
+                        {subCat &&
+                          activeMenu.state == true &&
+                          activeMenu.eventKey == category._id && (
+                            <SubCategory
+                              parentId={category?._id}
+                              subcat={subCat}
+                            />
+                          )}
+                      </>
+                    </Accordion.Item>
                   ))}
               </Accordion>
               <div>

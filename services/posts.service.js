@@ -1,232 +1,46 @@
-import axios from "axios";
-// import { getToken } from "./user.service";
+import { apiBaseURL } from "./defaultAxiosPath";
+import { getToken } from "./defaultAxiosPath";
+import { getUserInfoByUserId, mergeUserBasicDetails } from "./user.service";
 
-export const getToken = async () => {
-  // return await axios.get("/api/get-token");
-  const token = await axios.get("/api/handler");
-  return token.data.token;
-};
 
-export const getAllFeeds = async (page = 1, limit = 10) => {
-  const token = await getToken();
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?pageNumber=${page}&limit=${limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-
-      //await response?.data?.body?.allBody?.totalDocs
-
-      const newarray = await Promise.all(
-        postslist.map(async (postData) => {
-          const res = await getUserInfoByUserId(postData.userId);
-          const userData = await res?.data?.body;
-          //console.log(userData);
-          const newdata = await { ...postData, postCreatedBy: userData };
-          return newdata;
-        })
-      );
-      //console.log(newarray, "newarray");
-      return { newarray, PostCount };
-    }
-  } catch (err) {
-    const status = err.response.status;
-    const message = err.response.data;
-
-    return { message, status };
-  }
-};
 
 export const getFeeds = async (params) => {
   const token = await getToken();
-  if (params.activePage == "home") {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllFeeds?pageNumber=${params.page}&limit=${params.limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const postWithUserDetails = await mergeUserBasicDetails(postslist);
 
-      const res = { postWithUserDetails, PostCount };
-      return res;
-    } else {
-      return response;
+  let arr = [
+    { page: "home", apiPath: `posts/getUserPost/getAllFeeds?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
+    { page: "myProfile", apiPath: `posts/getUserPost/getAllUserPosts?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
+    { page: "userProfile", apiPath: `posts/getUserPost/getAllUserPosts?userId=${params.groupanduserId}&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
+    { page: "group", apiPath: `posts/getUserPost/getAllUserPosts?groupId=${params.groupanduserId}&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
+    { page: "savedPost", apiPath: `posts/userPost/getAllSavedPosts?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
+  ];
+  let obj = arr.find(o => o.page === params.activePage);
+  // console.log(obj)
+  const response = await apiBaseURL.get(
+    obj.apiPath,
+    {
+      headers: { Authorization: `Bearer ${token}` },
     }
-  } else if (params.activePage == "myProfile") {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?pageNumber=${params.page}&limit=${params.limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const postWithUserDetails = await mergeUserBasicDetails(postslist);
-
-      const res = { postWithUserDetails, PostCount };
-      return res;
-    } else {
-      return response;
-    }
-  } else if (params.activePage == "userProfile") {
-    const response = params && await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?userId=${params.groupanduserId}&pageNumber=${params.page}&limit=${params.limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const postWithUserDetails = await mergeUserBasicDetails(postslist);
-
-      const res = { postWithUserDetails, PostCount };
-      return res;
-    } else {
-      return response;
-    }
-  } else if (params.activePage == "group") {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?group=${params.groupanduserId}&pageNumber=${params.page}&limit=${params.limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    console.log(response, "response");
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const postWithUserDetails = await mergeUserBasicDetails(postslist);
-      const res = { postWithUserDetails, PostCount };
-      return res;
-    } else {
-      return response;
-    }
-  } else if (params.activePage == "savedPost") {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/getAllSavedPosts?pageNumber=${params.page}&limit=${params.limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const postWithUserDetails = await mergeUserBasicDetails(postslist);
-      const res = { postWithUserDetails, PostCount };
-      return res;
-    } else {
-      return response;
-    }
+  );
+  if (response.status == 200) {
+    const postslist = await response?.data?.body?.feeds;
+    const PostCount = await response?.data?.body?.postCount?.postCount;
+    const postWithUserDetails = await mergeUserBasicDetails(postslist);
+    const res = { postWithUserDetails, PostCount };
+    return res;
   } else {
     throw new Error(404);
   }
-};
-export const getAllPostsByUserId = async (
-  page = 1,
-  limit = 10,
-  userId = "",
-  pageName = ""
-) => {
-  const token = await getToken();
 
-  // const page = pageName
-
-  // console.log(token);
-  //console.log(userId,"userId");
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?${pageName}=${userId}&pageNumber=${page}&limit=${limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      // await response?.data?.body?.allBody?.totalDocs
-      const newarray = await Promise.all(
-        postslist.map(async (postData) => {
-          const res = await getUserInfoByUserId(postData.userId);
-          const userData = await res?.data?.body;
-          const newdata = await { ...postData, postCreatedBy: userData };
-          return newdata;
-        })
-      );
-      return { newarray, PostCount };
-    }
-  } catch (err) {
-    // try {
-    //   const response = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getAllPostsByUserId?page=${page}&limit=${limit}`,
-    //     {
-    //       headers: { Authorization: `Bearer ${token}` },
-    //     }
-    //   );
-    //   return response;
-    // }
-    console.log(err);
-    const status = err.response.status;
-    const message = err.response.data;
-
-    return { message, status };
-  }
-};
-export const getPostsByTokenUserId = async (page = 1, limit = 10) => {
-  const token = await getToken();
-
-  console.log(token);
-
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getAllUserPosts?pageNumber=${page}&limit=${limit}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (response.status == 200) {
-      const postslist = await response?.data?.body?.feeds;
-      const PostCount = await response?.data?.body?.postCount?.postCount;
-      const newarray = await Promise.all(
-        postslist.map(async (postData) => {
-          const res = await getUserInfoByUserId(postData.userId);
-          const userData = await res?.data?.body;
-          const newdata = await { ...postData, postCreatedBy: userData };
-          return newdata;
-        })
-      );
-
-      return { newarray, PostCount };
-    }
-  } catch (err) {
-    const status = err.response.status;
-    const message = err.response.data;
-
-    return { message, status };
-  }
 };
 
+// getPostsByPostId
 export const getPostsByPostId = async (PostId) => {
   const token = await getToken();
 
-  // console.log(token);
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/getPostByPostId/${PostId}`,
+    const response = await apiBaseURL.get(
+      `posts/getUserPost/getPostByPostId/${PostId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -235,7 +49,6 @@ export const getPostsByPostId = async (PostId) => {
       const postdata = await response?.data?.body?.feeds[0];
       const res = await getUserInfoByUserId(postdata.userId);
       const userData = await res?.data?.body;
-      //console.log(userData);
       const newdata = await { ...postdata, userDetails: userData };
       return newdata;
     } else {
@@ -248,8 +61,8 @@ export const getPostsByPostId = async (PostId) => {
 export const getAllLikesByPostId = async (postId) => {
   const token = await getToken();
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${postId}`,
+    const response = await apiBaseURL.get(
+      `posts/userPost/post/getMediaByPostId/${postId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -279,23 +92,7 @@ export const getAllLikesByPostId = async (postId) => {
   }
 };
 
-export const getUserInfoByUserId = async (userId = "") => {
-  const token = await getToken();
 
-  // console.log(token);
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfile/${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    // console.log(response);
-    return response;
-  } catch (err) {
-    return err;
-  }
-};
 
 export const deletePostByPostId = async (postId) => {
   const token = await getToken();
@@ -303,8 +100,8 @@ export const deletePostByPostId = async (postId) => {
   // alert(postId)
 
   try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/DeletePostByPostId/${postId}`,
+    const response = await apiBaseURL.delete(
+      `posts/userPost/post/DeletePostByPostId/${postId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -319,8 +116,8 @@ export const editPostByPostId = async (postId) => {
   const token = await getToken();
 
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts//getUserPost/getPostByPostId/${postId}`,
+    const response = await apiBaseURL.get(
+      `posts//getUserPost/getPostByPostId/${postId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -333,9 +130,9 @@ export const editPostByPostId = async (postId) => {
 
 export const createPost = async (postData) => {
   const token = await getToken();
-  await axios
+  await apiBaseURL
     .post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/createPost`,
+      `posts/userPost/createPost`,
       postData,
 
       {
@@ -352,8 +149,8 @@ export const createPost = async (postData) => {
 export const updatePost = async (postData) => {
   const token = await getToken();
   try {
-    const res = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/UpdateByPostId`,
+    const res = await apiBaseURL.patch(
+      `posts/userPost/post/UpdateByPostId`,
       postData,
       {
         headers: {
@@ -374,8 +171,8 @@ export const likePostByUser = async (postId, reactionId) => {
   const likeData = { postId: postId, reactionEmoji: reactionId };
 
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/ToggleLike`,
+    const response = await apiBaseURL.post(
+      `posts/userPost/post/ToggleLike`,
       likeData,
       {
         "Content-Type": "multipart/form-data",
@@ -392,8 +189,8 @@ export const pinPostByUser = async (postId) => {
   const token = await getToken();
 
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/posts/togglePinPost/${postId}`,
+    const response = await apiBaseURL.post(
+      `posts/userPost/posts/togglePinPost/${postId}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -405,54 +202,8 @@ export const pinPostByUser = async (postId) => {
   }
 };
 
-// export const getAllCommentsByPostId = async (postId) => {
-//   const token = await getToken();
-//   try {
-//     const response = await axios.get(
-//       `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getMediaByPostId/${postId}`,
-//       {
-//         headers: { Authorization: `Bearer ${token}` },
-//       }
-//     );
-//     if (response.status == 200) {
-//       const allCommentssArr = await response?.data?.body?.allBody?.comments;
 
-//       const newarray = await Promise.all(
-//         allCommentssArr &&
-//         allCommentssArr.map(async (commentsData) => {
-//           const res =
-//             commentsData && (await getUserInfoByUserId(commentsData.userId));
-//           const userData = await res?.data?.body;
-//           const newdata = await { ...commentsData, userDetails: userData };
-//           return newdata;
-//         })
-//       );
 
-//       return newarray;
-//     }
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-export const mergeUserBasicDetails = async (userIdArr) => {
-  const dataWithUserDetails = await Promise.all(
-    userIdArr &&
-    userIdArr.map(async (singleData) => {
-      const res = singleData && (await getUserInfoByUserId(singleData.userId));
-      const userData = await res?.data?.body;
-      const newdata = await {
-        ...singleData,
-        userDetails: {
-          userInfo: userData?.userInfo,
-          profilePictureInfo: userData?.profilePictureInfo,
-        },
-      };
-      return newdata;
-    })
-  );
-  return dataWithUserDetails;
-};
 
 export const postCommentByPostId = async (
   postId,
@@ -469,8 +220,8 @@ export const postCommentByPostId = async (
   };
 
   try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/post/postCommentbyPostId`,
+    const res = await apiBaseURL.post(
+      `posts/userComment/post/postCommentbyPostId`,
       payloadData,
       {
         headers: {
@@ -478,12 +229,7 @@ export const postCommentByPostId = async (
         },
       }
     );
-    // if (res.status === 200) {
-    //   const dataWithUserDetails = await mergeUserBasicDetails([res?.data?.body])
-    //   return dataWithUserDetails
-    // } else {
-    //   return res
-    // }
+
 
     return res;
   } catch (err) {
@@ -502,8 +248,8 @@ export const postCommentDeletebyPostId = async (postId, commentId) => {
   data.append("commentOrReplyId", commentId);
   data.append("postId", postId);
   try {
-    const res = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/post/deleteCommentByCommentId`,
+    const res = await apiBaseURL.delete(
+      `posts/userComment/post/deleteCommentByCommentId`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -521,8 +267,8 @@ export const getAllPostPhoto = async () => {
   const token = await getToken();
 
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/getUserPost/postMedia?pageNumber=1&limit=10`,
+    const res = await apiBaseURL.get(
+      `posts/getUserPost/postMedia?pageNumber=1&limit=10`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -537,8 +283,8 @@ export const userPostshare = async (postId) => {
   const token = await getToken();
 
   try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/share/${postId}`,
+    const res = await apiBaseURL.post(
+      `posts/userPost/share/${postId}`,
       "",
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -559,8 +305,8 @@ export const getCommentbyPostId = async (
 ) => {
   const token = await getToken();
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userComment/all/${postId}?pageNumber=${pageNumber}&limit=${limit}&level=${level}&parentId=${parentId}`,
+    const res = await apiBaseURL.get(
+      `posts/userComment/all/${postId}?pageNumber=${pageNumber}&limit=${limit}&level=${level}&parentId=${parentId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -597,8 +343,8 @@ export const savePostApi = async (postId) => {
   const token = await getToken();
 
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/savedPost/${postId}`,
+    const response = await apiBaseURL.post(
+      `posts/userPost/savedPost/${postId}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -620,8 +366,8 @@ export const getSavePostListApi = async (page = 1, limit = 10) => {
   // console.log(token);
   //console.log(userId,"userId");
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/getAllSavedPosts?pageNumber=${page}&limit=${limit}`,
+    const response = await apiBaseURL.get(
+      `posts/userPost/getAllSavedPosts?pageNumber=${page}&limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -642,15 +388,7 @@ export const getSavePostListApi = async (page = 1, limit = 10) => {
       return { newarray, PostCount };
     }
   } catch (err) {
-    // try {
-    //   const response = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_API_PATH}/posts/userPost/post/getAllPostsByUserId?page=${page}&limit=${limit}`,
-    //     {
-    //       headers: { Authorization: `Bearer ${token}` },
-    //     }
-    //   );
-    //   return response;
-    // }
+
     console.log(err);
     const status = err.response.status;
     const message = err.response.data;

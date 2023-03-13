@@ -48,7 +48,7 @@ const ShareOffcanvas = ({ sharePostId, refreshpostlistshare, share }) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div className="d-flex flex-wrap align-items-center">
-            <div className="text-center me-3 mb-3" onClick={sharePost}>
+            <div className="text-center me-3 mb-3" role="button" onClick={sharePost}>
               <span className="material-symbols-outlined">
                 google_plus_reshare
               </span>

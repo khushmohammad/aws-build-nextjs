@@ -143,3 +143,22 @@ export const searchMemberByFullName = async (input = "") => {
     console.log(error);
   }
 };
+
+export const getIcSocialMediaInfo = async (formData) => {
+  const token = await getToken();
+
+
+  const socialMediaForm = { socialMedia: formData };
+  
+  
+  const res = await axios.patch(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/integratingCoach/socialMedia`,
+    socialMediaForm,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};

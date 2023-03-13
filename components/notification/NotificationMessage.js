@@ -2,7 +2,7 @@ import parse from 'html-react-parser';
 
 export const NotificationMessage = (key) => {
 
-    let text
+    let text =""
 
 
     switch (key) {
@@ -32,7 +32,7 @@ export const NotificationMessage = (key) => {
 
 export const ActivityMessage = (key, receiverName) => {
 
-    let text
+    let text =""
 
 
     switch (key) {

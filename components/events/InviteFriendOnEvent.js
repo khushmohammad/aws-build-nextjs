@@ -15,14 +15,16 @@ const InviteFriendOnEvent = (props) => {
   const dispatch = useDispatch();
   const [filterList, setFilterList] = useState(null);
 
-  const friends = useSelector((state) => state?.friends?.friendList);
+ 
+  const friendsList = useSelector((state) => state?.friends?.friendList?.list);
+
   const inviteeList = useSelector((state) => state?.events?.eventInviteeList);
 
   useEffect(() => {
     dispatch(getAllFriendList());
 
     let res = [];
-    res = friends?.friendsList?.filter((el) => {
+    res = friendsList?.filter((el) => {
       return !inviteeList?.body?.find((element) => {
         return element?.userId === el?._id;
       });
@@ -45,7 +47,7 @@ const InviteFriendOnEvent = (props) => {
   const closeModel = () => {
     props.onHide();
     let res = [];
-    res = friends?.friendList?.filter((el) => {
+    res = friendsList?.filter((el) => {
       return !inviteeList?.body?.find((element) => {
         return element?._id === el?._id;
       });

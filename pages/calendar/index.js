@@ -110,7 +110,7 @@ const CalendarPage = () => {
     alert(clickInfo.event.title);
     console.log(clickInfo.event.id);
     if (birthdayData.some((el) => el.id === clickInfo.event.id)) {
-      router.push(`/friends/${clickInfo.event.id}`);
+      router.push(`/user/${clickInfo.event.id}`);
     } else {
       router.push(`/events/${clickInfo.event.id}`);
     }

@@ -1,11 +1,5 @@
-import axios from "axios";
-// import { getToken } from "./user.service";
-
-export const getToken = async () => {
-    // return await axios.get("/api/get-token");
-    const token = await axios.get("/api/handler");
-    return token.data.token;
-};
+import { apiBaseURL } from "./defaultAxiosPath";
+import { getToken } from "./defaultAxiosPath";
 
 
 
@@ -14,8 +8,8 @@ export const getMesasgesByreceiverId = async (receiverUserId) => {
     const token = await getToken();
 
     try {
-        const res = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_PATH}/chats/messages/${receiverUserId}?pageNumber=1&limit=30`,
+        const res = await apiBaseURL.get(
+            `chats/messages/${receiverUserId}?pageNumber=1&limit=30`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }

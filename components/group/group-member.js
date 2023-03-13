@@ -9,20 +9,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { groupMemberList } from "../../store/groups";
 import { useState } from "react";
 import { getUserInfoById } from "../../store/profile";
+import { getUserDetailsByUserId } from "../../services/user.service";
+import { leaveGroupService } from "../../services/groups.service";
 
 const GroupMemeber = (props) => {
   const [page, setPage] = useState(1);
   let [memberId, setMemberId] = useState([]);
+  const [userDetail, setUserDetail] = useState(null);
   const dispatch = useDispatch();
   let limit = 4;
 
   const members = useSelector((state) => state?.groups?.groupMember);
 
-  const userDetail = useSelector((state) => state?.user?.userProfileDetail);
+  // const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
   const groupPrivilege = useSelector(
     (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
   );
+
+  const memberList = () => {
+    if (props.groupid !== undefined) {
+      dispatch(
+        groupMemberList({
+          limit: limit,
+          pageNumber: page,
+          groupId: props.groupid,
+        })
+      );
+    }
+  };
 
   useEffect(() => {
     memberList();
@@ -37,21 +52,14 @@ const GroupMemeber = (props) => {
     window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, []);
 
-  useEffect(() => {
-    if (memberId && memberId.length !== 0) dispatch(getUserInfoById(memberId));
-  }, [members, memberId]);
-
-  const memberList = () => {
-    if (props.groupid !== undefined) {
-      dispatch(
-        groupMemberList({
-          limit: limit,
-          pageNumber: page,
-          groupId: props.groupid,
-        })
-      );
-    }
+  const getMemberDetails = async () => {
+    const res = await getUserDetailsByUserId(memberId);
+    setUserDetail(res);
   };
+
+  useEffect(() => {
+    if (memberId && memberId.length !== 0) getMemberDetails();
+  }, [members, memberId]);
 
   const handleScroll = () => {
     let userScrollHeight = window.innerHeight + window.scrollY;
@@ -62,7 +70,14 @@ const GroupMemeber = (props) => {
     }
   };
 
-  const removeMember = async () => {};
+  const removeMember = async (userID) => {
+    let data = {
+      memberRemoveByAdmin: true,
+      memberId: userID,
+    };
+    const res = await leaveGroupService(props.groupid, data);
+    console.log(res);
+  };
 
   return (
     <Modal {...props} size="lg" style={{ top: "8%" }}>
@@ -113,7 +128,7 @@ const GroupMemeber = (props) => {
                           <div className="d-flex align-items-center mt-2 mt-md-0">
                             <div className="confirm-click-btn">
                               <Button
-                                href={`/friends/${member?.memberId}`}
+                                href={`/user/${member?.memberId}`}
                                 className="me-3 btn btn-primary rounded confirm-btn"
                               >
                                 Visit Profile
@@ -121,7 +136,7 @@ const GroupMemeber = (props) => {
                             </div>
                             {groupPrivilege && (
                               <Button
-                                onClick={removeMember}
+                                onClick={() => removeMember(member?.memberId)}
                                 className="btn btn-secondary rounded"
                                 data-extra-toggle="delete"
                                 data-closest-elem=".item"

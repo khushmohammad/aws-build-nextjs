@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import user1 from "../../public/assets/images/user/25.png";
 import { AcceptAndRejectfriendRequest } from '../../services/friends.service';
@@ -37,8 +38,14 @@ function FriendRequestList() {
 
     return (
         <div>
-            {apiError && apiError}
+            {apiError &&
+                <Card>
+                    <Card.Body>
+                        {apiError}
 
+                    </Card.Body>
+                </Card>
+            }
             {friendRequestList &&
                 friendRequestList.slice(0, 5).map((data, index) => {
                     return (

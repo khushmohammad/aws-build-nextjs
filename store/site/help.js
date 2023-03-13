@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { helpService } from "../../services/basic.services";
+import { helpService } from "../../services/basic.service";
 
 const initialState = {
   helpCategory: null,

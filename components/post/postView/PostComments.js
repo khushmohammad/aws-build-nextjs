@@ -7,10 +7,10 @@ import user2 from "../../../public/assets/images/user/25.png";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  getCommentbyPostId,
-  mergeUserBasicDetails,
+  getCommentbyPostId,  
   postCommentByPostId,
 } from "../../../services/posts.service";
+import { mergeUserBasicDetails } from "../../../services/user.service";
 
 const schema = yup
   .object({

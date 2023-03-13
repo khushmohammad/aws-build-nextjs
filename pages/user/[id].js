@@ -495,7 +495,7 @@ const FriendProfile = () => {
                   <Card className="">
                     <Card.Body className="bg-light text-dark   rounded">
                       <div className="d-flex justify-content-center align-items-center">
-                        <span class="material-symbols-outlined fs-1">
+                        <span className="material-symbols-outlined fs-1">
                           lock_person
                         </span>
                         <h4 className="ps-3 ">

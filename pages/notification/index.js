@@ -19,7 +19,7 @@ const Notification = () => {
    const dispatch = useDispatch()
    const notificationlist = useSelector((state) => state?.notification?.list)
    const [page, setPage] = useState(1);
-   const [limit, setLimit] = useState(5);
+   const [limit, setLimit] = useState(10);
    const [notificationListState, setNotificationListState] = useState([])
 
    useEffect(() => {
@@ -53,7 +53,7 @@ const Notification = () => {
 
    useEffect(() => {
       socket.on("new_notification", (data) => {
-        // console.log(data, "data")
+         // console.log(data, "data")
          dispatch(getNotification(params))
       })
    }, [socket])

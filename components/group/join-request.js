@@ -21,7 +21,7 @@ const GroupJoinRequest = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    groupJoinRequestLists(props.groupid);
+    if (props.groupid !== undefined) groupJoinRequestLists(props.groupid);
 
     joinRequestList?.map((request) => {
       if (memberId?.includes(request.memberId) === false) {

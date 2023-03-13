@@ -36,7 +36,7 @@ const friendSlice = createSlice({
       })
       .addCase(getAllFriendList.fulfilled, (state, action) => {
         state.friendList.status = "succeeded";
-        state.friendList.list = action.payload?.data?.body.friendsList;
+        state.friendList.list = action.payload?.data?.body?.friendsList || [];
       })
       .addCase(getAllFriendList.rejected, (state, action) => {
         state.friendList.status = "failed";
@@ -48,7 +48,7 @@ const friendSlice = createSlice({
 export const getAllFriendList = createAsyncThunk(
   "friends/allFriendList",
   async (params) => {
-    const data = params && (await getFriendList(params));
+    const data = await getFriendList(params);
     return data;
   }
 );
@@ -64,7 +64,7 @@ export const getAllBirthdays = createAsyncThunk(
 export const getPendingRequestFriendList = createAsyncThunk(
   "friends/pendingRequest",
   async (params) => {
-    const data = params && (await getPendingRequestFriendListApi(params));
+    const data = await getPendingRequestFriendListApi(params);
     return data;
   }
 );

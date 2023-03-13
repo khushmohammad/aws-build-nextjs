@@ -27,10 +27,6 @@ const SentRequest = () => {
     (state) => state?.friends?.PendingRequest?.list
   );
 
-  console.log(isSentRequest, "isSentRequest");
-
-  //console.log(pendingRequests, "pendingRequests");
-
   const dispatch = useDispatch();
 
   const [isRequested, setIsRequested] = useState([]);
@@ -56,8 +52,8 @@ const SentRequest = () => {
       pendingRequestslist?.length == 0
         ? ""
         : Array.isArray(pendingRequestslist)
-        ? setIsSentRequest((prev) => [...prev, ...pendingRequestslist])
-        : "";
+          ? setIsSentRequest((prev) => [...prev, ...pendingRequestslist])
+          : "";
     }
   }, [pendingRequestslist]);
   const LoadMore = () => {

@@ -33,10 +33,7 @@ import { getStateData, getCityData } from "../../services/profile.service";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AsyncSelect from "react-select/async";
-import {
-  countriesList,
-  getMaritalStatus,
-} from "../../services/basic.services";
+import { countriesList, getMaritalStatus } from "../../services/basic.service";
 import _ from "lodash";
 import { loaderStatus } from "../../store/site/Loader";
 
@@ -153,10 +150,9 @@ const UserProfileEdit = () => {
 
   // console.log(patchForData,"patchForData");
   const onSubmit = async () => {
-
     const res = await updateUserData(patchForData);
     if (res.status == 200) {
-      router.push("/user/user-profile");      
+      router.push("/user/user-profile");
     }
   };
 
@@ -256,8 +252,8 @@ const UserProfileEdit = () => {
                                     alt="profile-pic"
                                     height={150}
                                     width={150}
-                                  // blurDataURL={profileImage}
-                                  // placeholder="blur"
+                                    // blurDataURL={profileImage}
+                                    // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -291,8 +287,8 @@ const UserProfileEdit = () => {
                                     style={{
                                       width: "100%",
                                     }}
-                                  // blurDataURL={profileImage}
-                                  // placeholder="blur"
+                                    // blurDataURL={profileImage}
+                                    // placeholder="blur"
                                   />
                                   <div
                                     className="p-image d-flex justify-content-center align-items-center"
@@ -472,9 +468,9 @@ const UserProfileEdit = () => {
                               </Form.Label>
                               <fieldset
                                 className="form-group"
-                              // value={user.userInfo.gender}
-                              // checked={user.userInfo.gender}
-                              // onChange={onChange}
+                                // value={user.userInfo.gender}
+                                // checked={user.userInfo.gender}
+                                // onChange={onChange}
                               >
                                 <div>
                                   <div className="form-check custom-radio form-check-inline">
@@ -654,7 +650,7 @@ const UserProfileEdit = () => {
                                             },
                                           });
                                       }}
-                                    // defaultInputValue={{ value: 101, label: "sdjfl" }}
+                                      // defaultInputValue={{ value: 101, label: "sdjfl" }}
                                     />
                                   )}
                                 />
@@ -730,7 +726,7 @@ const UserProfileEdit = () => {
                                         city: e?.value?.toString(),
                                       });
                                   }}
-                                // defaultInputValue={{ value: 101, label: "sdjfl" }}
+                                  // defaultInputValue={{ value: 101, label: "sdjfl" }}
                                 />
                               </div>
 
@@ -809,8 +805,9 @@ const UserProfileEdit = () => {
                           <div className="p-4 pt-0">
                             <Button
                               type="submit"
-                              className={`btn btn-primary me-2 ${patchForData == "" ? "disabled" : ""
-                                } `}
+                              className={`btn btn-primary me-2 ${
+                                patchForData == "" ? "disabled" : ""
+                              } `}
                             >
                               Submit
                             </Button>

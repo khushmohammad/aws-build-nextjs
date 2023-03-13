@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllFeeds, getAllPostsByUserId, getFeeds, getPostsByTokenUserId, getSavePostListApi } from "../../services/posts.service";
+import {   getFeeds, getSavePostListApi } from "../../services/posts.service";
 
 const initialState = {
   allFeeds: { postList: [], postcount: 0 },
@@ -35,7 +35,7 @@ export const getAllFeedsList = createAsyncThunk(
   "post/getAllFeeds",
   async (params) => {
 
-    const data = params && await getFeeds(params)
+    const data =  await getFeeds(params)
     return data;
   }
 );

@@ -1,73 +1,86 @@
-import React, { useEffect } from 'react'
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap'
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useEffect } from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { updateUserData } from '../../services/user.service';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserDetails } from '../../store/profile';
-const schema = yup.object({
-  profession: yup.string().required(),
-  company: yup.string().required()
+import DatePicker from "react-datepicker";
+import { updateUserData } from "../../services/user.service";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails } from "../../store/profile";
+import moment from "moment";
 
-}).required();
-
-const CollegeModal = ({ show, heading, onHide, EditProfessionIndex }) => {
-
+const schema = yup
+  .object({
+    degree: yup.string().required(),
+    schoolName: yup.string().required(),
+    startYear: yup.string().required(),
+    endYear: yup.string().required(),
+  })
+  .required();
+const CollegeModal = ({ show, heading, onHide, EditSchoolDetailsIndex }) => {
   const user = useSelector((state) => state?.user?.data);
-
-  const ProfessionalDetails = user?.professionalDetails || [];
-
-  const dispatch = useDispatch()
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
-    resolver: yupResolver(schema)
+  const schoolDetails = user?.schoolDetails || [];
+  const dispatch = useDispatch();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
-
   useEffect(() => {
-    if (ProfessionalDetails) {
 
-      setValue("profession", ProfessionalDetails[EditProfessionIndex]?.profession)
-      setValue("company", ProfessionalDetails[EditProfessionIndex]?.company)
+    if (schoolDetails && schoolDetails) {
+      // console.log(new Date(schoolDetails[EditSchoolDetailsIndex]?.startYear).toISOString().substring(0, 10))
+      setValue("degree", schoolDetails[EditSchoolDetailsIndex]?.degree);
+      setValue("schoolName", schoolDetails[EditSchoolDetailsIndex]?.schoolName);
+      schoolDetails[EditSchoolDetailsIndex]?.startYear &&
+        setValue(
+          "startYear", moment(schoolDetails[EditSchoolDetailsIndex]?.startYear).toDate(),
+
+
+        );
+      schoolDetails[EditSchoolDetailsIndex]?.endYear &&
+        setValue(
+          "endYear", moment(schoolDetails[EditSchoolDetailsIndex]?.endYear).toDate()
+
+        );
     }
-  }, [EditProfessionIndex]);
-
-
-
-
+  }, [EditSchoolDetailsIndex]);
   const onSubmit = async (data) => {
-    if (EditProfessionIndex !== "") {
-
-      const EditProfessionObj = ProfessionalDetails.map((element, index) => {
-        if (index == EditProfessionIndex) {
-          element = data
+    if (EditSchoolDetailsIndex !== "") {
+      const EditProfessionObj = schoolDetails.map((element, index) => {
+        if (index == EditSchoolDetailsIndex) {
+          element = data;
         }
-        return element
+        return element;
       });
-
-      const professionalDetailsObj = EditProfessionObj && { professionalDetails: EditProfessionObj }
-      const res = await updateUserData(professionalDetailsObj);
+      const schoolDetailsObj = EditProfessionObj && {
+        schoolDetails: EditProfessionObj,
+      };
+      const res = await updateUserData(schoolDetailsObj);
       if (res.status == 200) {
-        dispatch(getUserDetails())
-        reset()
-        onHide()
+        dispatch(getUserDetails());
+        reset();
+        onHide();
+      }
+    } else {
+      const schoolDetailsObj = schoolDetails && {
+        schoolDetails: [...schoolDetails, data],
+      };
+      const res = await updateUserData(schoolDetailsObj);
+      if (res.status == 200) {
+        dispatch(getUserDetails());
+        reset();
+        onHide();
       }
     }
-    else {
-
-      const professionalDetailsObj = ProfessionalDetails && { professionalDetails: [...ProfessionalDetails, data] }
-      const res = await updateUserData(professionalDetailsObj);
-      if (res.status == 200) {
-        dispatch(getUserDetails())
-        reset()
-        onHide()
-      }
-    }
-
-  }
-
+  };
   return (
     <>
-
       <Modal
         show={show}
         size="lg"
@@ -79,35 +92,106 @@ const CollegeModal = ({ show, heading, onHide, EditProfessionIndex }) => {
             {heading}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <Modal.Body
+        // style={{ maxHeight: "300px", overflowY: "auto", overflow: "hidden" }}
+        >
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Row>
               <Col sm={6}>
                 <Form.Group>
-                  <Form.Label>Professional Skill</Form.Label>
-                  <Form.Control  {...register("profession")} type="text" placeholder="Enter skill name" />
-                  <p className='text-danger' I>{errors.profession?.message}</p>
+                  <Form.Label>degree </Form.Label>
+                  <Form.Control
+                    {...register("degree")}
+                    type="text"
+                    placeholder="Enter degree name"
+                  />
+                  <p className="text-danger" I>
+                    {errors.degree?.message}
+                  </p>
                 </Form.Group>
               </Col>
               <Col sm={6}>
                 <Form.Group>
-                  <Form.Label>Company/Org. Name</Form.Label>
-                  <Form.Control {...register("company")} type="text" placeholder="Enter company/org. name" />
-                  <p className='text-danger'>{errors.company?.message}</p>
+                  <Form.Label>Org. Name</Form.Label>
+                  <Form.Control
+                    {...register("schoolName")}
+                    type="text"
+                    placeholder="Enter org. name"
+                  />
+                  <p className="text-danger">{errors.schoolName?.message}</p>
+                </Form.Group>
+              </Col>
+              <Col sm={6}>
+                <Form.Group>
+                  <Form.Label>startYear</Form.Label>
+                  {/* <Form.Control
+                    {...register("startYear")}
+                    type="date"
+                    placeholder="Enter startYear"
+                  /> */}
 
+                  <Controller
+                    name="startYear"
+                    control={control}
+                    render={({ field: { name, value, onChange, onBlur } }) => (
+                      <DatePicker
+                        className="form-control"
+                        selected={value}
+                        preventOpenOnFocus={true}
+                        dateFormat="dd-MMM-yyyy"
+                        placeholderText="dd-MMM-yyyy"
+                        onBlur={onBlur}
+                        onChange={(date) => {
+                          onChange(date);
+                          onBlur();
+                        }}
+                      />
+                    )}
+                  />
+                  <p className="text-danger">{errors.startYear?.message}</p>
+                </Form.Group>
+              </Col>
+              <Col sm={6}>
+                <Form.Group>
+                  <Form.Label>endYear</Form.Label>
+                  {/* <Form.Control
+                    {...register("endYear")}
+                    type="date"
+                    placeholder="Enter endYear"
+                  /> */}
+
+                  <Controller
+                    name="endYear"
+                    control={control}
+                    render={({ field: { name, value, onChange, onBlur } }) => (
+                      <DatePicker
+                        className="form-control"
+                        selected={value}
+                        preventOpenOnFocus={true}
+                        dateFormat="dd-MMM-yyyy"
+                        placeholderText="dd-MMM-yyyy"
+                        onBlur={onBlur}
+                        onChange={(date) => {
+                          onChange(date);
+                          onBlur();
+                        }}
+                      />
+                    )}
+                  />
+                  <p className="text-danger">{errors.endYear?.message}</p>
                 </Form.Group>
               </Col>
             </Row>
             <Modal.Footer>
-              <Button onClick={onHide} variant="outline-primary">Close</Button>
-              <Button type='submit'  >Save</Button>
+              <Button onClick={() => { onHide() }} variant="outline-primary">
+                Close
+              </Button>
+              <Button type="submit">Save</Button>
             </Modal.Footer>
           </Form>
         </Modal.Body>
-
       </Modal>
     </>
-  )
-}
-
-export default CollegeModal
+  );
+};
+export default CollegeModal;

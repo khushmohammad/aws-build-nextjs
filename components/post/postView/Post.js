@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../Card";
-import { Dropdown } from "react-bootstrap";
 import Image from "next/image";
 import loader from "../../../public/assets/images/page-img/page-load-loader.gif";
-import {
-  deletePostByPostId,
-  getAllPostsByUserId,
-  getFeeds,
-  pinPostByUser,
-} from "../../../services/posts.service";
 import { useRouter } from "next/router";
 import PostMediaGrid from "./PostMediaGrid";
 import PostContentSection from "./PostContentSection";
@@ -16,12 +9,11 @@ import PostFooter from "./PostFooter";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllFeedsList } from "../../../store/post/allFeeds";
 import user2 from "../../../public/assets/images/user/25.png";
-import { getPostTime } from "../../../services/time.service";
 import CreatePost from "../CreatePost";
-import { getGroupFeeds } from "../../../store/groups";
 import PostThreeDotmenu from "./PostThreeDotmenu";
 import MediaComponent from "./MediaComponent";
 import moment from "moment";
+import Link from "next/link";
 
 const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [page, setPage] = useState(1);
@@ -34,6 +26,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const error = useSelector((state) => state?.allFeed?.error);
 
 
+
   const GetPostNet = async (pagenum = page, limitnum = limit) => {
 
     const groupanduserId = userId && userId ? userId : groupId;
@@ -44,6 +37,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       limit: limitnum,
       groupanduserId: groupanduserId && groupanduserId,
     }
+
+
     if (activePage == "PostDetail") {
       setposts([]);
       setposts(postDetailObj);
@@ -53,7 +48,6 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       );
     }
 
-    // await getFeeds(params)
 
   };
 
@@ -119,11 +113,14 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
               fileInfo,
               isPin,
               is_SelfPost,
-              share
+              share,
+
             } = data;
 
             const userDetails = data && data?.userDetails;
             const userprofilePicture = data && data?.userDetails;
+
+            // console.log(posts, "posts")
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
@@ -148,11 +145,18 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                         <div className="w-100">
                           <div className="d-flex justify-content-between">
                             <div>
-                              <h5 className="mb-0 d-inline-block fw-bold">
-                                {" "}
-                                {userDetails &&
-                                  `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
-                              </h5>
+
+                              <Link href={`user/${userDetails?.userInfo?._id}`} >
+                                <h5 className="mb-0 d-inline-flex fw-bold">
+                                  {/* shivam{" "}
+                                <span className="material-symbols-outlined">
+                                  play_arrow
+                                </span> */}
+                                  {" "}
+                                  {userDetails &&
+                                    `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
+                                </h5>
+                              </Link>
 
                               {isPin == true && is_SelfPost ? (
                                 <span className="material-symbols-outlined">

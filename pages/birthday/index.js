@@ -139,7 +139,7 @@ const Birthday = () => {
                           </div>
                         </div>
                         <button
-                          onClick={() => router.push(`/friends/${friend._id}`)}
+                          onClick={() => router.push(`/user/${friend._id}`)}
                           className="btn btn-primary"
                         >
                           Wish
@@ -210,7 +210,7 @@ const Birthday = () => {
                                     </div>
                                     <button
                                       onClick={() =>
-                                        router.push(`/friends/${elem?._id}`)
+                                        router.push(`/user/${elem?._id}`)
                                       }
                                       className="btn btn-primary"
                                     >
@@ -284,7 +284,7 @@ const Birthday = () => {
                                   </div>
                                   <button
                                     onClick={() =>
-                                      router.push(`/friends/${elem._id}`)
+                                      router.push(`/user/${elem._id}`)
                                     }
                                     className="btn btn-primary"
                                   >

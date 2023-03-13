@@ -148,39 +148,38 @@ export const registerIcUser = async (formData) => {
 
   const questionData = [
     {
-      questionId: "63c65d3db797ea669df05fe9",
+      questionId: "63c792600dd4160649b52eb6",
       answer: formData.question1,
     },
     {
-      questionId: "63c65d3db797ea669df05fe6",
+      questionId: "63c7927c0dd4160649b52eb7",
       answer: formData.question2,
     },
     {
-      questionId: "63c65d3db797ea669df05fe5",
+      questionId: "63c7929b0dd4160649b52eb8",
       answer: formData.question3,
     },
   ];
-  const questionDataStr = JSON.stringify(questionData);
+
   const termcon = formData.checked;
   const ForData = {
-    quesAns: questionDataStr,
-    acceptTermsAndConditions: termcon,
-    file: [formData.document1[0], formData.document2[0], formData.document3[0]],
+    quesAns: questionData,
+    acceptTermsAndConditionsForIc: termcon,
+    images: [formData.document1, formData.document2, formData.document3],
   };
 
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/newIc/create`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/integratingCoach`,
       ForData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          //"Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    console.log(response, "response");
     if (response.status === 200) {
       return true;
     }
@@ -268,7 +267,6 @@ export const groupJoinedList = async () => {
       }
     );
 
-    console.log("joined Group list::", res.data);
     return res.data.body;
   } catch (error) {
     console.log(error);
@@ -311,6 +309,22 @@ export const groupPrivilegesService = async (groupid) => {
   try {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupInfo/groupPrivileges/${groupid}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const leaveGroupService = async (groupId, data) => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groupMembers/leave/${groupId}`,
+      data,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

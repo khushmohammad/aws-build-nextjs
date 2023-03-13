@@ -42,7 +42,7 @@ const FriendCard = ({ userData }) => {
 
                 <div className="d-flex align-items-center justify-content-between" >
                     <div className="d-flex align-items-center">
-                        <Link href={`/friends/${userData._id}`}>
+                        <Link href={`/user/${userData._id}`}>
                             <Image
                                 loading="lazy"
                                 src={

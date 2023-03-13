@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getActivityLogsApi } from "../../services/basic.services";
+import { getActivityLogsApi } from "../../services/basic.service";
 
 const initialState = {
     status: "loading",

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { useDispatch } from "react-redux";
 import { deletePostByPostId, pinPostByUser, savePostApi } from "../../../services/posts.service";
-import { getAllFeedsList } from "../../../store/post/allFeeds";
 import ConfirmBox from "../../modals/ConfirmBox";
 import EditPost from "../EditPost";
 

@@ -115,7 +115,7 @@ const FriendList = () => {
                                       </div>
                                       <div className="user-data-block">
                                         <h4>
-                                          <Link href={`${userData?._id}`}>
+                                          <Link href={`/user/${userData?._id}`}>
                                             {userData?.firstName}{" "}
                                             {userData?.lastName}
                                           </Link>

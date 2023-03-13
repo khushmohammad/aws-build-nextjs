@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import user2 from "../../../public/assets/images/user/25.png";
 import {
   getCommentbyPostId,
-  mergeUserBasicDetails,
+  
   postCommentByPostId,
   postCommentDeletebyPostId,
 } from "../../../services/posts.service";
@@ -12,6 +12,8 @@ import ConfirmModelReturn from "../../modals/ConfirmModelReturn";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { mergeUserBasicDetails } from "../../../services/user.service";
+
 const schema = yup
   .object({
     commentInputText: yup.string().required("Please write comment !"),

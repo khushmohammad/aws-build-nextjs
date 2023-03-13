@@ -229,7 +229,7 @@ const EventDetail = () => {
                             <span>
                               Event by{" "}
                               <Link
-                                href={`/friends/${eventDetail?.eventInfo?.eventCreator}`}
+                                href={`/user/${eventDetail?.eventInfo?.eventCreator}`}
                               >
                                 {userDetail?.userInfo?.firstName}{" "}
                                 {userDetail?.userInfo?.lastName}
@@ -312,7 +312,7 @@ const EventDetail = () => {
                             satisfactory services to our customers.
                           </p> */}
                           <Link
-                            href={`/friends/${eventDetail?.eventInfo?.eventCreator}`}
+                            href={`/user/${eventDetail?.eventInfo?.eventCreator}`}
                             className="btn btn-primary w-100"
                           >
                             Visit Profile

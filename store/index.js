@@ -19,6 +19,7 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
 import thunk from "redux-thunk";
 import storage from "redux-persist/lib/storage";
+import systemResource from "./system-resource";
 
 const persistConfig = {
   key: "root",
@@ -42,6 +43,7 @@ const reducers = combineReducers({
   notification: notificationReducer,
   help: helpReducer,
   activity: activityReducer,
+  systemResource: systemResource,
 });
 
 const rootReducer = (state, action) => {

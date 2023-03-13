@@ -1,6 +1,6 @@
 import Auth from "../../layouts/auth";
 
-import { resendEmail } from "../../services/basic.services";
+import { resendEmail } from "../../services/basic.service";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
@@ -77,7 +77,7 @@ const RegistrationStatus = () => {
 
         <Link className="btn btn-primary mt-4 mb-4" href="/">
           <span className="d-flex align-items-center">
-            <span class="material-symbols-outlined m-1">login</span>
+            <span className="material-symbols-outlined m-1">login</span>
             Back to Login
           </span>
         </Link>

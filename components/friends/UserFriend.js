@@ -26,7 +26,7 @@ const UserFriend = () => {
         <ul className="profile-img-gallary p-0 m-0 list-unstyled">
           {userFriendList&&userFriendList.map((data, index) => (
             <li key={index}>
-              <Link href={`/friends/${data?._id}`}>
+              <Link href={`/user/${data?._id}`}>
                 <Image
                   loading="lazy"
                   src={

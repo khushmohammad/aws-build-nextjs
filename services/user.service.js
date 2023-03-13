@@ -1,30 +1,27 @@
-import axios from "axios";
+import { apiBaseURL } from "./defaultAxiosPath";
+import { getToken } from "./defaultAxiosPath";
 
-export const getToken = async () => {
-  const token = await axios.get("/api/handler");
-  return token.data.token;
-};
-
-export const getUserData = async () => {
+export const getUserInfoByUserId = async (userId = "") => {
   const token = await getToken();
 
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfile`,
-    {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return res.data.body;
+  // console.log(token);
+  try {
+    const response = await apiBaseURL.get(`profiles/myProfile/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    // console.log(response);
+    return response;
+  } catch (err) {
+    return err;
+  }
 };
 
 export const updateUserData = async (data) => {
   const token = await getToken();
-  console.log(data)
+  console.log(data);
 
-  const res = await axios.patch(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update`,
+  const res = await apiBaseURL.patch(
+    `/profiles/myProfileUpdates/update`,
     data,
     {
       headers: {
@@ -37,8 +34,8 @@ export const updateUserData = async (data) => {
 
 export const updateProfileAndCoverPic = async (imageType, image) => {
   const token = await getToken();
-  const res = await axios.patch(
-    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update/images?imageName=${imageType}`,
+  const res = await apiBaseURL.patch(
+    `/profiles/myProfileUpdates/update/images?imageName=${imageType}`,
     { photo: image },
     {
       headers: {
@@ -52,8 +49,8 @@ export const updateProfileAndCoverPic = async (imageType, image) => {
 export const getUserDetailsByUserId = async (data) => {
   const token = await getToken();
   try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/profiles/userProfile/byUserIds`,
+    const res = await apiBaseURL.post(
+      `/profiles/userProfile/byUserIds`,
       { userId: data },
       {
         headers: {
@@ -66,3 +63,23 @@ export const getUserDetailsByUserId = async (data) => {
     console.log(error);
   }
 };
+
+export const mergeUserBasicDetails = async (userIdArr) => {
+  const dataWithUserDetails = await Promise.all(
+    userIdArr &&
+    userIdArr.map(async (singleData) => {
+      const res = singleData && (await getUserInfoByUserId(singleData.userId));
+      const userData = await res?.data?.body;
+      const newdata = await {
+        ...singleData,
+        userDetails: {
+          userInfo: userData?.userInfo,
+          profilePictureInfo: userData?.profilePictureInfo,
+        },
+      };
+      return newdata;
+    })
+  );
+  return dataWithUserDetails;
+};
+

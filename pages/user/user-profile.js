@@ -35,6 +35,7 @@ import UserFriend from "../../components/friends/UserFriend";
 import Gallery from "../../components/Gallery";
 import { allPhotos } from "../../store/profile";
 import { allPostPhotos } from "../../store/post";
+import { getSystemResources } from "../../store/system-resource";
 
 const UserProfile = () => {
   const [profilePicModalShow, setProfilePicModalShow] = useState(false);
@@ -44,14 +45,20 @@ const UserProfile = () => {
   const [relationModal, setRelationModal] = useState(false);
   const [familyModal, setFamilyModal] = useState(false);
   const [professionalModal, setProfessionalModal] = useState(false);
+
   const [languageModal, setLanguageModal] = useState(false);
   const [collegeModal, setCollegeModal] = useState(false);
-  const postsLength = useSelector((state) => state?.allFeed?.allFeeds?.postcount);
+  const postsLength = useSelector(
+    (state) => state?.allFeed?.allFeeds?.postcount
+  );
 
   const user = useSelector((state) => state?.user?.data);
   const allHobbies = user?.hobbies;
   const ProfessionalDetails = user?.professionalDetails;
-  const [professionIndex, setprofessionIndex] = useState("")
+  const SchoolDetails = user?.schoolDetails;
+
+  const [professionIndex, setprofessionIndex] = useState("");
+  const [schoolDetailsIndex, setschoolDetailsIndex] = useState("");
   const handleShowHobby = () => setShowHobby(false);
 
   const dispatch = useDispatch();
@@ -71,6 +78,23 @@ const UserProfile = () => {
 
   const photos = useSelector((state) => state?.user?.photos);
   const postMedia = useSelector((state) => state?.post?.photos);
+
+  const socialSiteHandler = useSelector(
+    (state) => state?.systemResource?.socialMediaHandler
+  );
+
+  const userInfo = useSelector((state) => state?.user?.data);
+
+  useEffect(() => {
+    dispatch(
+      getSystemResources({
+        action: { action: "read" },
+        data: { actionData: { title: "SocialMediaHandler" } },
+      })
+    );
+  }, []);
+
+  console.log("|||", socialSiteHandler);
 
   const imageOnSlide = (number) => {
     setImageController({
@@ -182,93 +206,53 @@ const UserProfile = () => {
                       <div className="profile-detail">
                         {user && (
                           <h3>
-                            {user.userInfo.firstName} {user.userInfo.lastName}
+                            {user?.userInfo?.firstName} {user?.userInfo?.lastName}
                           </h3>
                         )}
                       </div>
                     </div>
                     <div className="profile-info p-3 d-flex align-items-center justify-content-between position-relative">
-                      <div className="social-links">
-                        <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
-                          <li className="text-center pe-3">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img3}
-                                className="img-fluid rounded"
-                                alt="facebook"
-                              />
-                            </Link>
-                          </li>
-                          <li className="text-center pe-3">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img4}
-                                className="img-fluid rounded"
-                                alt="Twitter"
-                              />
-                            </Link>
-                          </li>
-                          <li className="text-center pe-3">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img5}
-                                className="img-fluid rounded"
-                                alt="Instagram"
-                              />
-                            </Link>
-                          </li>
-                          <li className="text-center pe-3">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img6}
-                                className="img-fluid rounded"
-                                alt="Google plus"
-                              />
-                            </Link>
-                          </li>
-                          <li className="text-center pe-3">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img7}
-                                className="img-fluid rounded"
-                                alt="You tube"
-                              />
-                            </Link>
-                          </li>
-                          <li className="text-center md-pe-3 pe-0">
-                            <Link href="#">
-                              <Image
-                                loading="lazy"
-                                src={img8}
-                                className="img-fluid rounded"
-                                alt="linkedin"
-                              />
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
+                      {userInfo?.userInfo?.roleInfo?.dropdownValue ===
+                      "Integrating Coach" ? (
+                        <div className="social-links">
+                          <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
+                            {socialSiteHandler?.map((elem, index) => (
+                              <li className="text-center pe-3">
+                                <Link href="#">
+                                  <img
+                                    loading="lazy"
+                                    src={
+                                      elem.fileInfo.file
+                                        ? elem.fileInfo.file.location
+                                        : null
+                                    }
+                                    className="img-fluid rounded"
+                                    alt={elem.name.toLowerCase()}
+                                    height={32}
+                                    width={32}
+                                  />
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
                       <div className="social-info">
                         <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
                           <li className="text-center ps-3">
                             <h6>Posts</h6>
                             <p className="mb-0">
-
                               {postsLength && postsLength > 0 ? postsLength : 0}
                             </p>
                           </li>
-                          <li className="text-center ps-3">
+                          {/* <li className="text-center ps-3">
                             <h6>Followers</h6>
                             <p className="mb-0">206</p>
-                          </li>
-                          <li className="text-center ps-3">
+                          </li> */}
+                          {/* <li className="text-center ps-3">
                             <h6>Following</h6>
                             <p className="mb-0">100</p>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </div>
@@ -620,7 +604,7 @@ const UserProfile = () => {
                                     </div>
                                     <div className="col-9">
                                       {user?.maritalStatusInfo &&
-                                        user.maritalStatusInfo.dropdownValue ? (
+                                      user.maritalStatusInfo.dropdownValue ? (
                                         <p className="mb-0">
                                           {user.maritalStatusInfo.dropdownValue}
                                         </p>
@@ -934,7 +918,10 @@ const UserProfile = () => {
                                     <li
                                       className="d-flex mb-4 align-items-center"
                                       role="button"
-                                      onClick={() => { setProfessionalModal(true), setprofessionIndex("") }}
+                                      onClick={() => {
+                                        setProfessionalModal(true),
+                                          setprofessionIndex("");
+                                      }}
                                     >
                                       <div className="user-img img-fluid">
                                         <span className="material-symbols-outlined md-18">
@@ -952,47 +939,55 @@ const UserProfile = () => {
                                       EditProfessionIndex={professionIndex}
                                     />
 
-
-
-                                    {!ProfessionalDetails &&
+                                    {!ProfessionalDetails && (
                                       <li className="d-flex mb-4 align-items-center justify-content-center bg-light">
-
-
-
                                         <div className="w-100  ">
                                           <div className="d-flex justify-content-center">
                                             No Record Found
                                           </div>
                                         </div>
-                                      </li>}
+                                      </li>
+                                    )}
 
-                                    {ProfessionalDetails && ProfessionalDetails.map((data, index) => {
-
-                                      return (
-                                        <li className="d-flex mb-4 align-items-center justify-content-between" key={index}>
-                                          <div className="w-100">
-                                            <div className="d-flex justify-content-between">
-                                              <div className="ms-3">
-                                                <h6>{data.company}</h6>
-                                                <p className="mb-0">{data.profession}</p>
-                                              </div>
-                                              <div className="edit-relation">
-                                                <a
-                                                  onClick={() => { setProfessionalModal(true), setprofessionIndex(index) }} role="button"
-                                                  className="d-flex align-items-center"
-                                                >
-                                                  <span className="material-symbols-outlined me-2 md-18">
-                                                    edit
-                                                  </span>
-                                                  Edit
-                                                </a>
+                                    {ProfessionalDetails &&
+                                      ProfessionalDetails.map((data, index) => {
+                                        return (
+                                          <li
+                                            className="d-flex mb-4 align-items-center justify-content-between"
+                                            key={index}
+                                          >
+                                            <div className="w-100">
+                                              <div className="d-flex justify-content-between">
+                                                <div className="ms-3">
+                                                  <h6>{data.company}</h6>
+                                                  <p className="mb-0">
+                                                    {data.profession}
+                                                  </p>
+                                                </div>
+                                                <div className="edit-relation">
+                                                  <a
+                                                    onClick={() => {
+                                                      setProfessionalModal(
+                                                        true
+                                                      ),
+                                                        setprofessionIndex(
+                                                          index
+                                                        );
+                                                    }}
+                                                    role="button"
+                                                    className="d-flex align-items-center"
+                                                  >
+                                                    <span className="material-symbols-outlined me-2 md-18">
+                                                      edit
+                                                    </span>
+                                                    Edit
+                                                  </a>
+                                                </div>
                                               </div>
                                             </div>
-                                          </div>
-                                        </li>
-                                      )
-                                    })
-                                    }
+                                          </li>
+                                        );
+                                      })}
                                   </ul>
                                   <h4 className="mt-3 mb-3">College/School</h4>
                                   <ul className="suggestions-lists m-0 p-0">
@@ -1014,45 +1009,67 @@ const UserProfile = () => {
                                       show={collegeModal}
                                       heading="Add College/School"
                                       onHide={() => setCollegeModal(false)}
+                                      EditSchoolDetailsIndex={
+                                        schoolDetailsIndex
+                                      }
                                     />
-                                     {!ProfessionalDetails &&
+                                    {!SchoolDetails && (
                                       <li className="d-flex mb-4 align-items-center justify-content-center bg-light">
-
-
-
                                         <div className="w-100  ">
                                           <div className="d-flex justify-content-center">
                                             No Record Found
                                           </div>
                                         </div>
-                                      </li>}
-                                    {ProfessionalDetails && ProfessionalDetails.map((data, index) => {
-
-                                      return (
-                                        <li className="d-flex mb-4 align-items-center justify-content-between" key={index}>
-                                          <div className="w-100">
-                                            <div className="d-flex justify-content-between">
-                                              <div className="ms-3">
-                                                <h6>{data.company}</h6>
-                                                <p className="mb-0">{data.profession}</p>
-                                              </div>
-                                              <div className="edit-relation">
-                                                <a
-                                                  onClick={() => { setProfessionalModal(true), setprofessionIndex(index) }} role="button"
-                                                  className="d-flex align-items-center"
-                                                >
-                                                  <span className="material-symbols-outlined me-2 md-18">
-                                                    edit
-                                                  </span>
-                                                  Edit
-                                                </a>
+                                      </li>
+                                    )}
+                                    {SchoolDetails &&
+                                      SchoolDetails.map((data, index) => {
+                                        // { schoolName: string; degree: string; startYear: Date; endYear: Date }
+                                        return (
+                                          <li
+                                            className="d-flex mb-4 align-items-center justify-content-between"
+                                            key={index}
+                                          >
+                                            <div className="w-100">
+                                              <div className="d-flex justify-content-between">
+                                                <div className="ms-3">
+                                                  <h6>{data.schoolName}</h6>
+                                                  <p className="mb-0">
+                                                    {data.degree}
+                                                  </p>
+                                                  <p className="mb-0">
+                                                    {new Date(
+                                                      data.startYear
+                                                    ).toDateString()}
+                                                  </p>
+                                                  <p className="mb-0">
+                                                    {new Date(
+                                                      data.endYear
+                                                    ).toDateString()}
+                                                  </p>
+                                                </div>
+                                                <div className="edit-relation">
+                                                  <a
+                                                    onClick={() => {
+                                                      setCollegeModal(true),
+                                                        setschoolDetailsIndex(
+                                                          index
+                                                        );
+                                                    }}
+                                                    role="button"
+                                                    className="d-flex align-items-center"
+                                                  >
+                                                    <span className="material-symbols-outlined me-2 md-18">
+                                                      edit
+                                                    </span>
+                                                    Edit
+                                                  </a>
+                                                </div>
                                               </div>
                                             </div>
-                                          </div>
-                                        </li>
-                                      )
-                                    })
-                                    }
+                                          </li>
+                                        );
+                                      })}
                                   </ul>
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="about5">

@@ -29,10 +29,8 @@ const ModalPop = (props) => {
     }
   }, [props.friendlist]);
 
-  // console.log("posps: ", props.friendlist);
-  // console.log("hhh:::", list);
-  console.log("userIdArr:::", userIdArr);
-  console.log("userInfo:::", userInfo);
+
+  
 
   useEffect(() => {
     props.getfriends(userIdArr);

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
-  getUserData,
   getUserDetailsByUserId,
+  getUserInfoByUserId,
   updateProfileAndCoverPic,
   updateUserData,
 } from "../../services/user.service";
@@ -27,7 +27,7 @@ const ProfileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getUserDetails.fulfilled, (state, action) => {
-        state.data = action.payload;
+        state.data = action?.payload?.data?.body || [];
       })
       .addCase(getAllUsers.pending, (state, action) => {
         state.status = "loading";
@@ -64,7 +64,7 @@ const ProfileSlice = createSlice({
 });
 
 export const getUserDetails = createAsyncThunk("user/userdetails", async () => {
-  const data = await getUserData();
+  const data = await getUserInfoByUserId();
   return data;
 });
 

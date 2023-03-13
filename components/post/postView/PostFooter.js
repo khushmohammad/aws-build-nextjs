@@ -30,7 +30,7 @@ import Commentapi from "./Commentapi";
 function PostFooter({ currentPostId, refreshpostlist, share }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([]);
   const [apiError, setApiError] = useState("");
-  const loginUserId = useSelector((state) => state?.user?.data?.userInfo._id);
+  const loginUserId = useSelector((state) => state?.user?.data?.userInfo?._id);
 
   function GetReactionIcon(props) {
     const reaction =
@@ -251,7 +251,7 @@ function PostFooter({ currentPostId, refreshpostlist, share }) {
                                     minWidth: "200px",
                                   }}
                                 >
-                                  {/* <Link href={`/friends/${data?.userDetails._id}`}> */}
+                                  {/* <Link href={`/user/${data?.userDetails._id}`}> */}
                                   <GetReactionIcon
                                     reactionByUser={
                                       data.reactionEmoji && data.reactionEmoji

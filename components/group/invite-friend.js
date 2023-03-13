@@ -19,7 +19,9 @@ const InviteFriend = (props) => {
     dispatch(getAllFriendList());
   }, []);
 
-  const friends = useSelector((state) => state?.friends?.friendList);
+
+  const friendsList = useSelector((state) => state?.friends?.friendList?.list);
+
 
   const inviteAFriend = async (memberId, groupId) => {
     const res = await inviteFriend(memberId, groupId);
@@ -53,7 +55,7 @@ const InviteFriend = (props) => {
               <Card>
                 <Card.Body>
                   <ul className="request-list list-inline m-0 p-0">
-                    {friends?.friendsList?.map((friend, index) => (
+                    {friendsList?.map((friend, index) => (
                       <li
                         key={index}
                         className="d-flex align-items-center justify-content-between flex-wrap"
@@ -110,7 +112,7 @@ const InviteFriend = (props) => {
                       </Link>
                     </li> */}
                   </ul>
-                  {friends && friends?.friendsList.length === 0 && (
+                  {friendsList && friendsList?.length === 0 && (
                     <div className="card-body text-center">
                       <h5 className="card-title">No Friend Found!</h5>
                     </div>

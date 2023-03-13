@@ -83,7 +83,54 @@ const IcRegistrationForm = () => {
   } = useSelector((state) => state?.user?.data);
 
   const onSubmit = async (data, e) => {
-    const res = await registerIcUser(data);
+    const getBase64 = (file) => {
+      return new Promise((resolve) => {
+        let fileInfo;
+        let baseURL = "";
+        // Make new FileReader
+        let reader = new FileReader();
+
+        // Convert the file to base64 text
+        reader.readAsDataURL(file);
+
+        // on reader load somthing...
+        reader.onload = () => {
+          // Make a fileInfo Object
+
+          baseURL = reader.result;
+
+          resolve(baseURL);
+        };
+        
+      });
+    };
+
+    const reqData = {
+      ...data,
+      document1: await getBase64(data.document1[0])
+        .then((result) => {
+          return result;
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
+      document2: await getBase64(data.document2[0])
+        .then((result) => {
+          return result;
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
+      document3: await getBase64(data.document3[0])
+        .then((result) => {
+          return result;
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
+    };
+
+    const res = await registerIcUser(reqData);
 
     if (res) {
       setisSubmitted({

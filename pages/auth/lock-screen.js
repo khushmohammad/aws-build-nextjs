@@ -37,14 +37,13 @@ const schema = yup
 
 const LockScreen = ({ countries }) => {
   const { data: session } = useSession();
-  console.log("session: ", session);
+  // console.log("session: ", session);
   const router = useRouter();
 
   const [name, setName] = useState([]);
-  const [ShowPage, setShowPage] = useState(null);
+  const [ShowPage, setShowPage] = useState(false);
   const [ApiError, setApiError] = useState();
-  const [isEmailExist, setIsEmailExist] = useState();
-  const [isAccountActivated, setIsAccountActivated] = useState();
+  const [verificationMessage, setVerificationMessage] = useState(null);
   const [isAcceptTerms, setIsAcceptTerms] = useState(false);
 
   //form validate and config
@@ -61,6 +60,8 @@ const LockScreen = ({ countries }) => {
 
   //check valid user
   const checkEmailRegistered = async () => {
+    let isEmailExist = "";
+    let isAccountActivated = "";
     await axios
       .get(
         `${process.env.NEXT_PUBLIC_API_PATH}/users/userInfo/${
@@ -68,7 +69,8 @@ const LockScreen = ({ countries }) => {
         }`
       )
       .then((res) => {
-        setIsEmailExist(res.data.body.isEmailPresent);
+        console.log("resss", res);
+        isEmailExist = res.data.body.isEmailPresent;
       })
       .catch((err) => console.log(err));
 
@@ -80,23 +82,28 @@ const LockScreen = ({ countries }) => {
           isSocialMediaLogin: true,
         })
         .then((res) => {
+          console.log("login res: ", res);
           router.push("/");
         })
         .catch((err) => {
-          setIsAccountActivated(err.response.data.errors.isAccountVerified);
+          console.log("login err", err);
+          isAccountActivated = err.response.data.errors.isAccountVerified;
+          setVerificationMessage(err.response.data.message);
+
+          if (!isAccountActivated) {
+            signOut();
+            router.push("/auth/verifyEmail/_._");
+          }
         });
-    } else {
-      if (isAccountActivated) {
-        setShowPage(true);
-        setName(session && session.user.name.split(" "));
-      }
-      router.push("/auth/verifyEmail/_._");
-      signOut();
     }
+    console.log("isEmailEsxist:", isEmailExist);
+    console.log("isAccountActivated:", isAccountActivated);
+    console.log("verificationMessage:", verificationMessage);
   };
 
   useEffect(() => {
-    checkEmailRegistered();
+    session && checkEmailRegistered();
+    session && setName(session && session.user.name.split(" "));
   }, [session]);
 
   const onSubmit = (data) => {
@@ -122,141 +129,139 @@ const LockScreen = ({ countries }) => {
   };
   return (
     <>
-      {ShowPage && ShowPage ? (
-        <Auth>
-          <div className="sign-in-from">
-            <h4 className="mt-3 mb-0">Hi ! {session && session.user.name} </h4>
-            <Form className="mt-4" onSubmit={handleSubmit(onSubmit)} noValidate>
-              <Form.Floating className="mb-3">
-                <Controller
-                  name="dateOfBirth"
-                  control={control}
-                  render={({ field: { name, value, onChange, onBlur } }) => (
-                    <DatePicker
-                      selected={value}
-                      preventOpenOnFocus={true}
-                      dateFormat="dd-MMM-yyyy"
-                      placeholderText="dd-MMM-yyyy"
-                      onBlur={onBlur}
-                      onChange={(date) => {
-                        onChange(date);
-                        onBlur();
-                      }}
-                      className="form-control"
-                    />
-                  )}
-                />
-                {errors.dateOfBirth && (
-                  <div className="text-danger">
-                    {errors.dateOfBirth.message}
-                  </div>
-                )}
-              </Form.Floating>
-              <Form.Group className="mb-4">
-                <Controller
-                  control={control}
-                  name="gender"
-                  render={({ field: { onChange, value } }) => (
-                    <fieldset
-                      className="form-group"
-                      value={value}
-                      onChange={onChange}
-                    >
-                      <label className="form-label">Gender</label>
-                      <div>
-                        <div className="form-check custom-radio form-check-inline">
-                          <input
-                            type="radio"
-                            id="male"
-                            name="gender"
-                            value="Male"
-                            className="form-check-input"
-                          />
-                          <label className="form-check-label" htmlFor="male">
-                            Male
-                          </label>
-                        </div>
-                        <div className="form-check custom-radio form-check-inline">
-                          <input
-                            type="radio"
-                            id="female"
-                            name="gender"
-                            value="Female"
-                            className="form-check-input"
-                          />
-                          <label className="form-check-label" htmlFor="female">
-                            Female
-                          </label>
-                        </div>
-                        <div className="form-check custom-radio form-check-inline">
-                          <input
-                            type="radio"
-                            id="other"
-                            name="gender"
-                            value="Other"
-                            className="form-check-input"
-                          />
-                          <label className="form-check-label" htmlFor="other">
-                            Other
-                          </label>
-                        </div>
-                      </div>
-                    </fieldset>
-                  )}
-                />
-              </Form.Group>
-              <Form.Floating className="mb-3">
-                <select
-                  className="form-select"
-                  id="country"
-                  aria-label="Country"
-                  {...register("country")}
-                >
-                  <option defaultValue hidden>
-                    Country
-                  </option>
-                  {countries?.map((country) => (
-                    <option key={country._id} value={country._id}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-                <label htmlFor="country">Country</label>
-              </Form.Floating>
-
-              <div className="d-inline-block w-100">
-                <div className="form-check d-inline-block mt-2 pt-1">
-                  <input
-                    {...register("acceptTermsAndConditions")}
-                    name="acceptTermsAndConditions"
-                    type="checkbox"
-                    className="form-check-input"
-                    id="customCheck11"
-                    value={isAcceptTerms}
-                    onChange={() => setIsAcceptTerms((prevState) => !prevState)}
+      <Auth>
+        <div className="sign-in-from">
+          <h4 className="mt-3 mb-0">
+            Hello <strong>{session && session.user.name} </strong>
+          </h4>
+          <Form className="mt-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Form.Floating className="mb-3">
+              <Controller
+                name="dateOfBirth"
+                control={control}
+                render={({ field: { name, value, onChange, onBlur } }) => (
+                  <DatePicker
+                    selected={value}
+                    preventOpenOnFocus={true}
+                    dateFormat="dd-MMM-yyyy"
+                    placeholderText="dd-MMM-yyyy"
+                    onBlur={onBlur}
+                    onChange={(date) => {
+                      onChange(date);
+                      onBlur();
+                    }}
+                    className="form-control"
                   />
-                  <label className="form-check-label" htmlFor="customCheck11">
-                    I accept all{" "}
-                    <Link href="/auth/terms-conditions">
-                      terms and conditions
-                    </Link>
-                  </label>
-                </div>
-              </div>
+                )}
+              />
+              {errors.dateOfBirth && (
+                <div className="text-danger">{errors.dateOfBirth.message}</div>
+              )}
+            </Form.Floating>
+            <Form.Group className="mb-4">
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field: { onChange, value } }) => (
+                  <fieldset
+                    className="form-group"
+                    value={value}
+                    onChange={onChange}
+                  >
+                    <label className="form-label">Gender</label>
+                    <div>
+                      <div className="form-check custom-radio form-check-inline">
+                        <input
+                          type="radio"
+                          id="male"
+                          name="gender"
+                          value="Male"
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="male">
+                          Male
+                        </label>
+                      </div>
+                      <div className="form-check custom-radio form-check-inline">
+                        <input
+                          type="radio"
+                          id="female"
+                          name="gender"
+                          value="Female"
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="female">
+                          Female
+                        </label>
+                      </div>
+                      <div className="form-check custom-radio form-check-inline">
+                        <input
+                          type="radio"
+                          id="other"
+                          name="gender"
+                          value="Other"
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="other">
+                          Other
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                )}
+              />
+            </Form.Group>
+            <Form.Floating className="mb-3">
+              <select
+                className="form-select"
+                id="country"
+                aria-label="Country"
+                {...register("country")}
+              >
+                <option defaultValue hidden>
+                  Country
+                </option>
+                {countries?.map((country) => (
+                  <option key={country._id} value={country._id}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="country">Country</label>
+            </Form.Floating>
 
-              <div className="d-inline-block w-100">
-                <button
-                  type="submit"
-                  className="btn btn-primary float-end"
-                  disabled={!isAcceptTerms}
-                >
-                  Continue
-                </button>
+            <div className="d-inline-block w-100">
+              <div className="form-check d-inline-block mt-2 pt-1">
+                <input
+                  {...register("acceptTermsAndConditions")}
+                  name="acceptTermsAndConditions"
+                  type="checkbox"
+                  className="form-check-input"
+                  id="customCheck11"
+                  value={isAcceptTerms}
+                  onChange={() => setIsAcceptTerms((prevState) => !prevState)}
+                />
+                <label className="form-check-label" htmlFor="customCheck11">
+                  I accept all{" "}
+                  <Link href="/auth/terms-conditions">
+                    terms and conditions
+                  </Link>
+                </label>
               </div>
-            </Form>
-          </div>
-        </Auth>
-      ) : null}
+            </div>
+
+            <div className="d-inline-block w-100">
+              <button
+                type="submit"
+                className="btn btn-primary float-end"
+                disabled={!isAcceptTerms}
+              >
+                Continue
+              </button>
+            </div>
+          </Form>
+        </div>
+      </Auth>
     </>
   );
 };

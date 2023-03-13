@@ -7,7 +7,7 @@ import user1 from "../../public/assets/images/user/25.png";
 import { getPostTime } from '../../services/time.service';
 import { getNotification } from '../../store/site/Notification';
 import NewNotification from './NewNotification';
-import NotificationMessage from './NotificationMessage';
+import {NotificationMessage} from './NotificationMessage';
 import CustomToggle from "../dropdowns";
 
 import { io } from "socket.io-client";
@@ -116,7 +116,7 @@ const NotificationLink = ({ notification }) => {
                 </div>
                 <div className="ms-3 w-100">
                     <h6 className="mb-0 ">{notification?.userDetails?.userInfo?.firstName || ''}{" "}
-                        {notification?.userDetails?.userInfo?.lastName || ''} {NotificationMessage(notification.message)}</h6>
+                        {notification?.userDetails?.userInfo?.lastName || ''} {notification && NotificationMessage(notification?.message)}</h6>
                     <div className="d-flex justify-content-between align-items-center">
                         {/* <p className="mb-0">95 MB</p> */}
                         <small className="float-right font-size-12">

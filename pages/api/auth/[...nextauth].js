@@ -5,7 +5,6 @@ import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
 
-
 export default NextAuth({
   providers: [
     FacebookProvider({
