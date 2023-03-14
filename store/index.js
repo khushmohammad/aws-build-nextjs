@@ -12,6 +12,7 @@ import friendsRequests from "./friends/friendsRequests";
 import nonFriendsLIst from "./friends/nonFriendsList";
 import loaderReducer from "./site/Loader";
 import helpReducer from "./site/help";
+import resourceReducer from "./site/resource";
 import activityReducer from "./site/activity";
 import notificationReducer from "./site/Notification";
 import { persistStore } from "redux-persist";
@@ -42,6 +43,7 @@ const reducers = combineReducers({
   loader: loaderReducer,
   notification: notificationReducer,
   help: helpReducer,
+  resource: resourceReducer,
   activity: activityReducer,
   systemResource: systemResource,
 });

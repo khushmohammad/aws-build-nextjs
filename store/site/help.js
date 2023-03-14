@@ -15,7 +15,7 @@ const HelpSlice = createSlice({
   },
 });
 
-export const getHelp = createAsyncThunk("help/getHelp", async (helpId) => {
+export const getHelp = createAsyncThunk("Help", async (helpId) => {
   const data = await helpService(helpId);
   return data;
 });

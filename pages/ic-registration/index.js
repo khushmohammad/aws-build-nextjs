@@ -101,7 +101,6 @@ const IcRegistrationForm = () => {
 
           resolve(baseURL);
         };
-        
       });
     };
 

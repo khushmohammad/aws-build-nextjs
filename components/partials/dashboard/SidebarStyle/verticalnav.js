@@ -1030,7 +1030,23 @@ const VerticalNav = React.memo(() => {
           </Link>
         </Nav.Item>
         <Help />
-
+        <Nav.Item as="li">
+          <Link
+            className={`${
+              location.pathname === "/activity" ? "active" : ""
+            } nav-link `}
+            aria-current="page"
+            href="/resource"
+          >
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip>Resource</Tooltip>}
+            >
+              <i className="icon material-symbols-outlined">build_circle</i>
+            </OverlayTrigger>
+            <span className="item-name">Resources</span>
+          </Link>
+        </Nav.Item>
         {/* <Nav.Item as="li">
           <Link
             className={`${

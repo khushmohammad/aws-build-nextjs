@@ -98,6 +98,21 @@ export const helpService = async (helpId) => {
   }
 };
 
+export const resourceService = async (resourceId) => {
+  const token = await getToken();
+  try {
+    const res = await apiBaseURL.get(
+      `admins/resource/getResouce/${resourceId}`,
+      {
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const privacySettingToggle = async (getPrivacy) => {
   const token = await getToken();
 

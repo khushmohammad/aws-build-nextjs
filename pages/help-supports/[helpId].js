@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Help from "../../layouts/helpLayout";
 import { helpService } from "../../services/basic.service";
+import parse from "html-react-parser";
 
 const helpDetails = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const helpDetails = () => {
             <div class="card-header">Level {subCategory.level}</div>
             <div class="card-body">
               <h5 class="card-title">{subCategory.title}</h5>
-              <p class="card-text">{subCategory.description}</p>
+              <div class="card-text">{parse(subCategory.description)}</div>
             </div>
           </div>
         ) : (

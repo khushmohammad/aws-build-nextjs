@@ -11,7 +11,7 @@ const siteNotification = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getNotification.fulfilled, (state, action) => {
-                console.log(action, "sdfd")
+           //     console.log(action, "sdfd")
                 state.list = action.payload;
             })
     }
