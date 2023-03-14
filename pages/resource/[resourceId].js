@@ -1,31 +1,34 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { resourceService } from "../../services/basic.service";
 
 import Resource from "../../layouts/resourceLayout";
 
 const resourceDetails = () => {
   const router = useRouter();
 
-  const resourceId = router.query;
-  const data = router.query;
+  const { resourceId } = router.query;
 
-  const [info, setInfo] = useState(null);
+  const [catInfo, setCatInfo] = useState(null);
+
+  const getData = async (id) => {
+    const response = await resourceService(id);
+    setCatInfo(response);
+  };
 
   useEffect(() => {
-    if (data) {
-      setInfo(data);
-    }
+    getData(resourceId);
   }, [resourceId]);
 
   return (
     <>
       <Resource>
-        {info !== null ? (
+        {catInfo !== null ? (
           <div class="card">
-            <div class="card-header">{info.name}</div>
+            <div class="card-header">{catInfo.name}</div>
             <div class="card-body">
-              <h5 class="card-title">{info.description}</h5>
-              <p class="card-text">{info.content}</p>
+              <h5 class="card-title">{catInfo.description}</h5>
+              <p class="card-text">{catInfo.content}</p>
             </div>
           </div>
         ) : (

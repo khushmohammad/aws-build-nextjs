@@ -18,7 +18,7 @@ const SubCategory = (props) => {
                     className={`${
                       location.pathname === "/resource" ? "active" : ""
                     } nav-link`}
-                    href={{ pathname: `/resource/${sub._id}`, query: sub }}
+                    href={`/resource/${sub._id}`}
                   >
                     <i className="icon">
                       <svg
