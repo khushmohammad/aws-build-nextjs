@@ -334,3 +334,17 @@ export const leaveGroupService = async (groupId, data) => {
     console.log(error);
   }
 };
+
+export const memberInvitedListService = async (groupid) => {
+  const token = await getToken();
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/invitation/invitedMembers/${groupid}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    console.log(res.data);
+    return res.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -34,11 +34,13 @@ import Post from "../../components/post/postView/Post";
 import InviteFriend from "../../components/group/invite-friend";
 import GroupJoinRequest from "../../components/group/join-request";
 import { groupActionService } from "../../services/groups.service";
+import ConfirmBox from "../../components/modals/ConfirmBox";
 
 const GroupDetail = () => {
   const [showGroupMember, setShowGroupMember] = useState(false);
   const [showInviteFriends, setShowInviteFriends] = useState(false);
   const [showJoinRequest, setShowJoinRequest] = useState(false);
+  const [show, setShow] = useState(false);
   const [follow, setFollow] = useState(false);
 
   const groupData = useSelector((state) => state?.groups?.groupInfo);
@@ -63,22 +65,6 @@ const GroupDetail = () => {
       dispatch(groupPrivileges(groupId));
     }
   }, [groupId]);
-
-  const deleteGroup = async () => {
-    const res = await groupActionService(groupId, {
-      action: "Delete",
-      // actionData: {
-      //   reason: "Test reason",
-      //   pauseTime: new Date(),
-      // },
-    });
-
-    if (res?.success) {
-      dispatch(getAllGroupsList(1));
-      dispatch(allJoinedGroupList());
-      router.push("/groups/all-groups");
-    }
-  };
 
   const followAndUnfollowGroup = async () => {
     const res = await groupActionService(groupId, {
@@ -106,6 +92,12 @@ const GroupDetail = () => {
         groupid={groupId}
         show={showJoinRequest}
         onHide={() => setShowJoinRequest(false)}
+      />
+      <ConfirmBox
+        show={show}
+        groupid={groupId}
+        Message="Are you sure, you want to delete this group?"
+        onHide={() => setShow(false)}
       />
       <Default>
         <ProfileHeader img={header} groupid={groupId} />
@@ -230,7 +222,7 @@ const GroupDetail = () => {
                           className=" dropdown-menu-right"
                           aria-labelledby="post-option"
                         >
-                          <Dropdown.Item onClick={deleteGroup}>
+                          <Dropdown.Item onClick={() => setShow(true)}>
                             Delete Group
                           </Dropdown.Item>
                           <Dropdown.Item onClick={followAndUnfollowGroup}>

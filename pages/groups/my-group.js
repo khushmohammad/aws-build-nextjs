@@ -166,7 +166,7 @@ const MyGroup = () => {
                   </Card.Body>
                 </Card>
               ))}
-            {groups?.length === 0 || groups === undefined ? (
+            {myGroup?.length === 0 || myGroup === undefined ? (
               <Card className="mb-0">
                 <div className="card-body text-center">
                   <h5 className="card-title">

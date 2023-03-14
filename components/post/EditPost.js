@@ -184,7 +184,7 @@ const EditPost = (props) => {
                 />
               </div>
               <div className="post-text ms-3 w-100">
-                <input
+                {/* <input
                   name="description"
                   type="text"
                   value={postData?.description || ""}
@@ -197,7 +197,24 @@ const EditPost = (props) => {
                   className="form-control rounded"
                   placeholder="Write something here..."
                   style={{ border: "none" }}
-                />
+                /> */}
+                <div
+                  contentEditable="true"
+                  onInput={(e) => {
+                    setPostData({
+                      ...postData,
+                      description: e.target.innerText,
+                    });
+                  }}
+                >
+                  {postData?.description === "" ? (
+                    <span style={{ color: "#848484" }}>
+                      Write something here...
+                    </span>
+                  ) : (
+                    <span>{postData?.description}</span>
+                  )}
+                </div>
               </div>
             </div>
             <hr />

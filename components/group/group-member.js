@@ -21,6 +21,8 @@ const GroupMemeber = (props) => {
 
   const members = useSelector((state) => state?.groups?.groupMember);
 
+  const userID = useSelector((state) => state?.user?.data?.userInfo?._id);
+
   // const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
   const groupPrivilege = useSelector(
@@ -128,13 +130,17 @@ const GroupMemeber = (props) => {
                           <div className="d-flex align-items-center mt-2 mt-md-0">
                             <div className="confirm-click-btn">
                               <Button
-                                href={`/user/${member?.memberId}`}
+                                href={
+                                  userID === member?.memberId
+                                    ? `/user/user-profile`
+                                    : `/friends/${member?.memberId}`
+                                }
                                 className="me-3 btn btn-primary rounded confirm-btn"
                               >
                                 Visit Profile
                               </Button>
                             </div>
-                            {groupPrivilege && (
+                            {groupPrivilege && userID !== member?.memberId && (
                               <Button
                                 onClick={() => removeMember(member?.memberId)}
                                 className="btn btn-secondary rounded"

@@ -258,7 +258,7 @@ const CreatePost = (props) => {
                 />
               </div>
               <div className="post-text ms-3 w-100">
-                <input
+                {/* <input
                   name="description"
                   type="text"
                   autoFocus
@@ -272,8 +272,24 @@ const CreatePost = (props) => {
                   className="form-control rounded"
                   placeholder="Write something here..."
                   style={{ border: "none" }}
-                />
+                /> */}
+                <div
+                  contentEditable="true"
+                  onInput={(e) => {
+                    setPostData({
+                      ...postData,
+                      description: e.target.innerText,
+                    });
+                  }}
+                >
+                  {postData?.description === "" && (
+                    <span style={{ color: "#848484" }}>
+                      Write something here...
+                    </span>
+                  )}
+                </div>
               </div>
+
               {errorMessage && (
                 <div style={{ color: "red" }}>{errorMessage}</div>
               )}

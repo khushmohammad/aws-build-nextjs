@@ -45,9 +45,6 @@ const GroupSlice = createSlice({
       .addCase(getGroupByID.fulfilled, (state, action) => {
         state.groupInfo = action.payload;
       })
-      .addCase(inviteFriendsOnGroup.fulfilled, (state, action) => {
-        state.invitedFriend = action.payload;
-      })
       .addCase(getGroupPrivacyKeys.fulfilled, (state, action) => {
         state.groupPrivacy = action.payload;
       })
@@ -79,14 +76,6 @@ export const getAllGroupsList = createAsyncThunk(
   "groups/allGroups",
   async (page) => {
     const data = await getAllGroups(page);
-    return data;
-  }
-);
-
-export const inviteFriendsOnGroup = createAsyncThunk(
-  "grouips/inviteFriend",
-  async ({ memberId, groupId }) => {
-    const data = await inviteFriend(memberId, groupId);
     return data;
   }
 );

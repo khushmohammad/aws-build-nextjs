@@ -17,7 +17,9 @@ const resourceDetails = () => {
   };
 
   useEffect(() => {
-    getData(resourceId);
+    if (resourceId !== undefined) {
+      getData(resourceId);
+    }
   }, [resourceId]);
 
   return (

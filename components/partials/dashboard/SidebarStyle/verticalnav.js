@@ -753,39 +753,42 @@ const VerticalNav = React.memo(() => {
                   <span className="item-name">All Groups</span>
                 </Link>
               </Nav.Item>
-              <Nav.Item as="li">
-                <Link
-                  className={`${
-                    location.pathname === "/my-group" ? "active" : ""
-                  } nav-link`}
-                  href="/groups/my-group"
-                >
-                  <i className="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="10"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <g>
-                        <circle
-                          cx="12"
-                          cy="12"
-                          r="8"
-                          fill="currentColor"
-                        ></circle>
-                      </g>
-                    </svg>
-                  </i>
-                  <OverlayTrigger
-                    placement="right"
-                    overlay={<Tooltip>My Groups</Tooltip>}
+              {userInfo?.userInfo?.roleInfo?.dropdownValue ==
+                "Integrating Coach" && (
+                <Nav.Item as="li">
+                  <Link
+                    className={`${
+                      location.pathname === "/my-group" ? "active" : ""
+                    } nav-link`}
+                    href="/groups/my-group"
                   >
-                    <i className="sidenav-mini-icon"> MG </i>
-                  </OverlayTrigger>
-                  <span className="item-name">My Groups</span>
-                </Link>
-              </Nav.Item>
+                    <i className="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="8"
+                            fill="currentColor"
+                          ></circle>
+                        </g>
+                      </svg>
+                    </i>
+                    <OverlayTrigger
+                      placement="right"
+                      overlay={<Tooltip>My Groups</Tooltip>}
+                    >
+                      <i className="sidenav-mini-icon"> MG </i>
+                    </OverlayTrigger>
+                    <span className="item-name">My Groups</span>
+                  </Link>
+                </Nav.Item>
+              )}
               <Nav.Item as="li">
                 <Link
                   className={`${

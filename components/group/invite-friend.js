@@ -8,20 +8,29 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllFriendList } from "../../store/friends";
-import { inviteFriendsOnGroup } from "../../store/groups";
-import { inviteFriend } from "../../services/groups.service";
+import {
+  inviteFriend,
+  memberInvitedListService,
+} from "../../services/groups.service";
 
 const InviteFriend = (props) => {
   const [isInvited, setIsInvited] = useState([]);
+  const [invitedMember, setInvitedMember] = useState(null);
   const dispatch = useDispatch();
 
+  const invitedFriend = async () => {
+    const res = await memberInvitedListService(props.groupid);
+    setInvitedMember(res);
+  };
+
   useEffect(() => {
-    dispatch(getAllFriendList());
+    if (props.groupid) {
+      dispatch(getAllFriendList());
+      invitedFriend();
+    }
   }, []);
 
-
   const friendsList = useSelector((state) => state?.friends?.friendList?.list);
-
 
   const inviteAFriend = async (memberId, groupId) => {
     const res = await inviteFriend(memberId, groupId);

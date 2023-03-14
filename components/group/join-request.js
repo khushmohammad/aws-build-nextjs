@@ -12,6 +12,7 @@ import { groupJoinAcceptAndDeclineService } from "../../services/groups.service"
 
 const GroupJoinRequest = (props) => {
   const [memberId, setMemberId] = useState([]);
+  const [apiError, setApiError] = useState(null);
 
   const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
