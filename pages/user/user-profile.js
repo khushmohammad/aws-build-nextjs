@@ -187,7 +187,9 @@ const UserProfile = () => {
                       >
                         <Image
                           loading="lazy"
-                          src={user?.profilePictureInfo?.file?.location || img2}
+                          src={
+                            user?.profilePictureInfo?.file?.location || user01
+                          }
                           alt="profile-img1"
                           className="avatar-130 img-fluid"
                           width={100}
@@ -206,7 +208,8 @@ const UserProfile = () => {
                       <div className="profile-detail">
                         {user && (
                           <h3>
-                            {user?.userInfo?.firstName} {user?.userInfo?.lastName}
+                            {user?.userInfo?.firstName}{" "}
+                            {user?.userInfo?.lastName}
                           </h3>
                         )}
                       </div>
@@ -642,9 +645,9 @@ const UserProfile = () => {
                                       <h6>Country:</h6>
                                     </div>
                                     <div className="col-9">
-                                      {user && user.userInfo.countryInfo ? (
+                                      {user && user?.userInfo?.countryInfo ? (
                                         <p className="mb-0">
-                                          {user.userInfo.countryInfo.name}
+                                          {user?.userInfo?.countryInfo?.name}
                                         </p>
                                       ) : (
                                         "---"

@@ -67,19 +67,19 @@ export const getUserDetailsByUserId = async (data) => {
 export const mergeUserBasicDetails = async (userIdArr) => {
   const dataWithUserDetails = await Promise.all(
     userIdArr &&
-    userIdArr.map(async (singleData) => {
-      const res = singleData && (await getUserInfoByUserId(singleData.userId));
-      const userData = await res?.data?.body;
-      const newdata = await {
-        ...singleData,
-        userDetails: {
-          userInfo: userData?.userInfo,
-          profilePictureInfo: userData?.profilePictureInfo,
-        },
-      };
-      return newdata;
-    })
+      userIdArr.map(async (singleData) => {
+        const res =
+          singleData && (await getUserInfoByUserId(singleData.userId));
+        const userData = await res?.data?.body;
+        const newdata = await {
+          ...singleData,
+          userDetails: {
+            userInfo: userData?.userInfo,
+            profilePictureInfo: userData?.profilePictureInfo,
+          },
+        };
+        return newdata;
+      })
   );
   return dataWithUserDetails;
 };
-

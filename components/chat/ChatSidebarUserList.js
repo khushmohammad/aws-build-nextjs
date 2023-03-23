@@ -11,6 +11,8 @@ const ChatSidebarUserList = () => {
   return (
     <>
       <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
+        <h5>Friends</h5>
+
         {!friendsList || friendsList.length < 1 ? (
           <NoFoundCard message={"No User Found!"} />
         ) : (
@@ -24,12 +26,15 @@ const ChatSidebarUserList = () => {
                     data?.profileInfo?.profilePictureInfo?.file?.location
                   }
                   name={data?.firstName + " " + data?.lastName}
+                  
                 />
               </React.Fragment>
             );
           })
         )}
-        {/* {!joinedGroupList || joinedGroupList.length < 1 ? (
+        <h5>Groups</h5>
+
+        {!joinedGroupList || joinedGroupList.length < 1 ? (
           <NoFoundCard message={"No User Found!"} />
         ) : (
           joinedGroupList &&
@@ -37,14 +42,15 @@ const ChatSidebarUserList = () => {
             return (
               <React.Fragment key={index}>
                 <UserList
-                  id={data._id}
+                  id={data?.groupId}
                   profileImage={data?.groupInfo?.groupImage?.file?.location}
                   name={data?.groupInfo?.groupName}
+                  
                 />
               </React.Fragment>
             );
           })
-        )} */}
+        )}
       </Nav>
     </>
   );
@@ -54,7 +60,7 @@ const UserList = (props) => {
   const { id, profileImage, name } = props;
   return (
     <Nav.Item as="li">
-      <Nav.Link eventKey={id}>
+      <Nav.Link eventKey={`${id}`}>
         <div className="d-flex align-items-center">
           <div className="avatar mx-2">
             <Image

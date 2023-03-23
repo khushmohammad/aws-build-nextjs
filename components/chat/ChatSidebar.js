@@ -121,7 +121,6 @@ const ChatSidebarComponent = (props) => {
         </div>
       </div>
       <div className="chat-sidebar-channel scroller mt-4 ps-3">
-        <h5>Public Channels</h5>
 
         <ChatSidebarUserList />
       </div>

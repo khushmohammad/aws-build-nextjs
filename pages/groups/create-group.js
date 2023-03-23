@@ -57,7 +57,7 @@ const CreateGroup = () => {
     const payload = {
       groupName: trimmedGroupName,
       privacyTypeId: data.privacyType,
-      file: selectedFile,
+      image: selectedFile,
     };
 
     createGroup(payload)
@@ -164,7 +164,7 @@ const CreateGroup = () => {
                   </div>
                 )}
               </Form.Floating>
-              {selectedFile[0] ? (
+              {selectedFile ? (
                 <div
                   style={{
                     width: "15%",
@@ -174,7 +174,7 @@ const CreateGroup = () => {
                 >
                   <img
                     loading="lazy"
-                    src={selectedFile[0].base64}
+                    src={selectedFile}
                     alt="icon"
                     width={100}
                     height={100}
@@ -190,7 +190,9 @@ const CreateGroup = () => {
                       borderRadius: "50%",
                     }}
                   >
-                    close
+                    <span role="button" className="material-symbols-outlined">
+                      close
+                    </span>
                   </div>
                 </div>
               ) : null}
@@ -207,15 +209,10 @@ const CreateGroup = () => {
                   </div>
                   <div style={{ position: "absolute", top: 0, opacity: 0 }}>
                     <FileBase64
-                      multiple={true}
+                      multiple={false}
                       onDone={(files) => {
-                        console.log("files onDone: ", files);
-                        setSelectedFile(files[0].file);
-                        const reqFiles = [];
-                        for (var i = 0; i < files.length; i++) {
-                          reqFiles.push(files[i].file);
-                          // console.log("reqFile: ", reqFiles);
-                        }
+                        console.log("files onDone: ", files.base64);
+                        setSelectedFile(files.base64);
                       }}
                     />
                   </div>

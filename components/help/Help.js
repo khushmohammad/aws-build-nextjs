@@ -1,13 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { getHelpApi } from "../../services/help.service";
 
 function Help() {
-  // const GetHelp = () => {
-  //     console.log("first")
-  //     getHelpApi()
-  // }
+ 
 
   return (
     <>

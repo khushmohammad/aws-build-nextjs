@@ -14,6 +14,7 @@ import loaderReducer from "./site/Loader";
 import helpReducer from "./site/help";
 import resourceReducer from "./site/resource";
 import activityReducer from "./site/activity";
+import subscriptionReducer from "./subscription";
 import notificationReducer from "./site/Notification";
 import { persistStore } from "redux-persist";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
@@ -46,6 +47,7 @@ const reducers = combineReducers({
   resource: resourceReducer,
   activity: activityReducer,
   systemResource: systemResource,
+  subscription: subscriptionReducer,
 });
 
 const rootReducer = (state, action) => {

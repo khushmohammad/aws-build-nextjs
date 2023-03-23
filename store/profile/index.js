@@ -47,13 +47,6 @@ const ProfileSlice = createSlice({
       .addCase(getUserByUserId.fulfilled, (state, action) => {
         state.userInfo = action.payload;
       })
-      .addCase(updateProfileAndCoverPicture.fulfilled, (state, action) => {
-        if (imageType === "coverImage") {
-          state.cover_picture = action.payload;
-        } else {
-          state.profile_picture = action.payload;
-        }
-      })
       .addCase(getUserInfoById.fulfilled, (state, action) => {
         state.userProfileDetail = action.payload;
       })
@@ -67,14 +60,6 @@ export const getUserDetails = createAsyncThunk("user/userdetails", async () => {
   const data = await getUserInfoByUserId();
   return data;
 });
-
-export const updateProfileAndCoverPicture = createAsyncThunk(
-  "user/profileAndCoverPic",
-  async (imageType, image) => {
-    const data = await updateProfileAndCoverPic(imageType, image);
-    return data;
-  }
-);
 
 export const updateUserInfo = createAsyncThunk(
   "user/updateUser",

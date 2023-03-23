@@ -7,38 +7,50 @@ import user from "../../public/assets/images/user.png";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getAllFriendList } from "../../store/friends";
-import {
-  inviteFriend,
-  memberInvitedListService,
-} from "../../services/groups.service";
+import { inviteMemberList } from "../../store/groups";
+import { inviteFriend } from "../../services/groups.service";
 
 const InviteFriend = (props) => {
-  const [isInvited, setIsInvited] = useState([]);
-  const [invitedMember, setInvitedMember] = useState(null);
+  const [page, setPage] = useState(1);
+  const [FriendList, setFriendList] = useState([]);
   const dispatch = useDispatch();
-
-  const invitedFriend = async () => {
-    const res = await memberInvitedListService(props.groupid);
-    setInvitedMember(res);
-  };
+  const { inviteMember } = useSelector((state) => state?.groups);
 
   useEffect(() => {
     if (props.groupid) {
-      dispatch(getAllFriendList());
-      invitedFriend();
+      dispatch(
+        inviteMemberList({
+          groupId: props.groupid,
+          pageNumber: page,
+          inviteKey: "All",
+        })
+      );
     }
   }, []);
 
-  const friendsList = useSelector((state) => state?.friends?.friendList?.list);
+  useEffect(() => {
+    if (page && page == 1) {
+      inviteMember?.length == 0
+        ? setFriendList("")
+        : setFriendList(inviteMember);
+    } else {
+      inviteMember?.length == 0
+        ? ""
+        : Array.isArray(inviteMember)
+        ? setFriendList((prev) => [...prev, ...inviteMember])
+        : "";
+    }
+  }, [inviteMember]);
 
   const inviteAFriend = async (memberId, groupId) => {
     const res = await inviteFriend(memberId, groupId);
-    if (res?.data?.success) {
-      setIsInvited((prev) =>
-        Boolean(!prev[memberId])
-          ? { ...prev, [memberId]: true }
-          : { ...prev, [memberId]: false }
+    if (res?.success) {
+      dispatch(
+        inviteMemberList({
+          groupId: props.groupid,
+          pageNumber: 1,
+          inviteKey: "All",
+        })
       );
     }
   };
@@ -64,64 +76,65 @@ const InviteFriend = (props) => {
               <Card>
                 <Card.Body>
                   <ul className="request-list list-inline m-0 p-0">
-                    {friendsList?.map((friend, index) => (
-                      <li
-                        key={index}
-                        className="d-flex align-items-center justify-content-between flex-wrap"
-                      >
-                        <div className="user-img img-fluid flex-shrink-0">
-                          <Image
-                            src={
-                              friend?.profileInfo?.profilePictureInfo?.file
-                                ?.location || user
-                            }
-                            alt="user-img"
-                            className="rounded-circle avatar-40"
-                            width={100}
-                            height={100}
-                          />
-                        </div>
-                        <div className="flex-grow-1 ms-3">
-                          <h6>
-                            {friend?.firstName} {friend?.lastName}
-                          </h6>
-                          {/* <p className="mb-0">40 friends</p> */}
-                        </div>
-                        <div className="d-flex align-items-center mt-2 mt-md-0">
-                          {isInvited[friend?._id] ? (
+                    {FriendList &&
+                      FriendList.length !== 0 &&
+                      FriendList?.map((data, index) => (
+                        <li
+                          key={index}
+                          className="d-flex align-items-center justify-content-between flex-wrap"
+                        >
+                          <div className="user-img img-fluid flex-shrink-0">
+                            <Image
+                              src={
+                                data?.userInfo?.profilePictureInfo?.file
+                                  ?.location || user
+                              }
+                              alt="user-img"
+                              className="rounded-circle avatar-40"
+                              width={100}
+                              height={100}
+                            />
+                          </div>
+                          <div className="flex-grow-1 ms-3">
+                            <h6>
+                              {data?.userInfo?.firstName}{" "}
+                              {data?.userInfo?.lastName}
+                            </h6>
+                            {/* <p className="mb-0">40 friends</p> */}
+                          </div>
+                          <div className="d-flex align-items-center mt-2 mt-md-0">
                             <div className="confirm-click-btn">
                               <Button
-                                // onClick={() =>
-                                //   inviteAFriend(friend?._id, props.groupId)
-                                // }
-                                className="me-3 btn btn-soft-primary rounded confirm-btn"
-                              >
-                                Invited
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="confirm-click-btn">
-                              <Button
+                                disabled={
+                                  data?.userInfo?.isMemberAlreadyInvited
+                                }
                                 onClick={() =>
-                                  inviteAFriend(friend?._id, props.groupid)
+                                  inviteAFriend(
+                                    data?.userInfo?._id,
+                                    props.groupid
+                                  )
                                 }
                                 className="me-3 btn btn-primary rounded confirm-btn"
                               >
-                                Invite
+                                {data?.userInfo?.isMemberAlreadyInvited
+                                  ? "Invited"
+                                  : "Invite"}
                               </Button>
                             </div>
-                          )}
-                        </div>
-                      </li>
-                    ))}
+                          </div>
+                        </li>
+                      ))}
 
-                    {/* <li className="d-block text-center mb-0 pb-0">
-                      <Link href="#" className="me-3 btn btn-primary">
-                        View More Request
-                      </Link>
-                    </li> */}
+                    <li className="d-block text-center mb-0 pb-0">
+                      <Button
+                        onClick={() => setPage((prev) => prev + 1)}
+                        className="me-3 btn btn-primary"
+                      >
+                        View More
+                      </Button>
+                    </li>
                   </ul>
-                  {friendsList && friendsList?.length === 0 && (
+                  {FriendList && FriendList?.length === 0 && (
                     <div className="card-body text-center">
                       <h5 className="card-title">No Friend Found!</h5>
                     </div>

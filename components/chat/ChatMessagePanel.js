@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Dropdown, Row, Tab } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import user5 from "../../public/assets/images/user/25.png";
@@ -8,9 +8,13 @@ import CustomToggle from "./../dropdowns";
 import MessageView from "./MessageView";
 
 import { io } from "socket.io-client";
-import { getMesasgesByreceiverId } from "../../services/chat.socket";
+import {
+  checkUserTypeForChat,
+  getMesasgesByreceiverId,
+} from "../../services/chat.socket";
 import { useRouter } from "next/router";
 import SendMessageInput from "./SendMessageInput";
+import { CONSTANTS } from "../../public/constant/constants";
 
 const socket = io.connect(process.env.NEXT_PUBLIC_SOCKET_CONNECTION);
 
@@ -19,26 +23,58 @@ const ChatMessagePanel = (props) => {
   const [show2, setShow2] = useState("");
   const router = useRouter();
 
-  const chatId = router?.query?.chatId;
+  const queryParam = router?.query?.chatId;
+
+  const chatId = (queryParam && queryParam.split("-")[0]) || null;
+
   const user = useSelector((state) => state.user.data);
   const joinedGroupList = useSelector((state) => state?.groups?.joinedGroup);
 
   // socket start
-  //const socket = useRef(); \
-  // console.log(socket, "socket");
+
   const [messages, setMessages] = useState([]);
   const [newMessages, setNewMessages] = useState({});
+  // state for scrolling
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [loading, setLoading] = useState("loading");
 
-  const receiverUserId = chatId;
-  const senderUserId = user?.userInfo?._id;
-  const JoinRoom = { senderId: senderUserId, receiverId: receiverUserId };
+  const senderUserId = user?.userInfo?._id || null;
+
+  const [objParams, setObjParams] = useState();
+
+  const checkType = async () => {
+    try {
+      const res = chatId && (await checkUserTypeForChat(chatId));
+
+      const type = res?.data?.body?.chatType;
+
+      type &&
+        setObjParams({
+          receiverId: type == CONSTANTS.MEMBER ? chatId || "" : "",
+          groupId: type == CONSTANTS.GROUP ? chatId || "" : "",
+          helpId: type == CONSTANTS.HELP ? chatId || "" : "",
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    checkType();
+  }, [chatId || ""]);
+
+  const JoinRoom = {
+    senderId: senderUserId,
+    ...objParams,
+  };
 
   const joinSocket = async () => {
     const res = await socket.emit("joinSocket", JoinRoom);
+
     if (res.connected == true) {
-      receiverUserId && getCurrentMessages(receiverUserId);
+      getCurrentMessages();
       socket.on("getMessage", (data) => {
-        //  console.log(data, "data");
         const newMsg = {
           _id: data.messageId,
           message: data.message,
@@ -50,32 +86,32 @@ const ChatMessagePanel = (props) => {
     }
   };
   useEffect(() => {
-    joinSocket();
-  }, [chatId || ""]);
-  useEffect(() => {
     chatId && joinSocket();
-  }, []);
+  }, [objParams]);
 
   const getCurrentMessages = async () => {
-    const result = await getMesasgesByreceiverId(receiverUserId);
-
-    if (result && result?.status === 200) {
-      // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
-      result?.data?.body?.data?.length != undefined
-        ? setMessages(result?.data?.body?.data)
-        : setMessages("");
+    try {
+      const result = await getMesasgesByreceiverId(objParams, page, limit);
+      if (result && result?.status === 200) {
+        // result?.data?.body != "" && setMessages(prev => [...prev, result?.data?.body?.data])
+        result?.data?.body?.data?.length != undefined
+          ? setMessages(result?.data?.body?.data)
+          : setMessages("");
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
   const sendMessage = async (NewMessage) => {
     const SendMesageToUserOBj = {
       senderId: senderUserId,
-      receiverId: receiverUserId,
+      ...objParams,
       message: NewMessage,
     };
-    // console.log(NewMessage, SendMesageToUserOBj, "SendMesageToUserOBj");
-    socket.emit("sendMessage", SendMesageToUserOBj);
-    socket.on("getMessage", (data) => {
+
+    socket.emit(CONSTANTS.SENDMESSAGE, SendMesageToUserOBj);
+    socket.on(CONSTANTS.GETMESSAGE, (data) => {
       const newMsg = {
         _id: data.messageId,
         message: data.message,
@@ -91,14 +127,14 @@ const ChatMessagePanel = (props) => {
     messages && setMessages([...messages, newMessages]);
   }, [newMessages]);
 
-  // <<<<>>>> Delete Message with socket
+  // Delete Message with socket
 
   const [isDeleted, setIsDeleted] = useState("");
 
   const deleteMessage = async (messageId) => {
     const deleteMesageOBj = {
       userId: senderUserId,
-      receiverId: receiverUserId,
+      ...objParams,
       messageIds: messageId,
     };
     socket.emit("deleteMessage", deleteMesageOBj);
@@ -116,21 +152,56 @@ const ChatMessagePanel = (props) => {
     hideMessage();
   }, [socket]);
 
-  //console.log(newMessages, "newMessages");
+  // Message Scrolling
 
-  let scrollToView = document.getElementById("box");
+  const divRef = useRef(null);
 
   useEffect(() => {
-    scrollToView != null ? scrollToView?.scrollIntoView() : "";
-  }, [messages || newMessages]);
-  // close Socket
+    const div = divRef.current;
+    if (div) {
+      div.addEventListener("scroll", handleScroll);
+      return () => div.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    page !== 1 && getOldMessageOnScroll();
+  }, [page]);
+
+  const handleScroll = async () => {
+    if (divRef.current.scrollTop === 0) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const getOldMessageOnScroll = async () => {
+    setLoading("Loading");
+    try {
+      const result =
+        objParams && (await getMesasgesByreceiverId(objParams, page, limit));
+      if (result && result?.status === 200) {
+        result?.data?.body?.data?.length == 0
+          ? ""
+          : Array.isArray(result?.data?.body?.data)
+          ? setMessages([...result?.data?.body?.data, ...messages])
+          : "";
+        setLoading("");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
       {friendsList &&
         friendsList.map((data, index) => {
           return (
-            <Tab.Pane eventKey={data._id} className={`fade show`} key={index}>
+            <Tab.Pane
+              eventKey={`${data._id}`}
+              className={`fade show`}
+              key={index}
+            >
               <div className="chat-head">
                 <div className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                   <div className="d-flex align-items-center">
@@ -314,53 +385,14 @@ const ChatMessagePanel = (props) => {
                   </div>
                 </div>
               </div>
-              <div className="chat-content scroller">
-                {messages &&
-                  messages.length !== 0 &&
-                  messages.map((message, index) => {
-                    return (
-                      <React.Fragment key={index}>
-                        {isDeleted[message._id] === true ? (
-                          ""
-                        ) : (
-                          <div
-                            className={`chat ${
-                              message.senderId === senderUserId
-                                ? "d-flex other-user "
-                                : "chat-left"
-                            } align-items-center my-3`}
-                          >
-                            <MessageView data={message} />
-
-                            <Dropdown
-                              className="d-flex justify-content-center align-items-center"
-                              as="span"
-                            >
-                              <Dropdown.Toggle
-                                as={CustomToggle}
-                                variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                              >
-                                more_vert
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu className="dropdown-menu-right">
-                                <Dropdown.Item
-                                  className="d-flex align-items-center"
-                                  href="#"
-                                  onClick={() => deleteMessage(message._id)}
-                                >
-                                  <i className="material-symbols-outlined md-18 me-1">
-                                    delete
-                                  </i>
-                                  Delete{" "}
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
-                          </div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                <div id="box" />
+              <div className="chat-content scroller " ref={divRef}>
+                {loading}
+                <ChatContent
+                  messages={messages}
+                  isDeleted={isDeleted}
+                  deleteMessage={deleteMessage}
+                  senderUserId={senderUserId}
+                />
               </div>
               <SendMessageInput sendMsg={(e) => sendMessage(e)} />
             </Tab.Pane>
@@ -372,7 +404,11 @@ const ChatMessagePanel = (props) => {
         {joinedGroupList &&
           joinedGroupList.map((data, index) => {
             return (
-              <Tab.Pane eventKey={data._id} className={`fade show`} key={index}>
+              <Tab.Pane
+                eventKey={`${data?.groupId}`}
+                className={`fade show`}
+                key={index}
+              >
                 <div className="chat-head">
                   <div className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                     <div className="d-flex align-items-center">
@@ -555,59 +591,78 @@ const ChatMessagePanel = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className="chat-content scroller">
-                  {messages &&
-                    messages.length !== 0 &&
-                    messages.map((message, index) => {
-                      return (
-                        <React.Fragment key={index}>
-                          {isDeleted[message._id] === true ? (
-                            ""
-                          ) : (
-                            <div
-                              className={`chat ${
-                                message.senderId === senderUserId
-                                  ? "d-flex other-user "
-                                  : "chat-left"
-                              } align-items-center my-3`}
-                            >
-                              <MessageView data={message} />
-
-                              <Dropdown
-                                className="d-flex justify-content-center align-items-center"
-                                as="span"
-                              >
-                                <Dropdown.Toggle
-                                  as={CustomToggle}
-                                  variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                                >
-                                  more_vert
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className="dropdown-menu-right">
-                                  <Dropdown.Item
-                                    className="d-flex align-items-center"
-                                    href="#"
-                                    onClick={() => deleteMessage(message._id)}
-                                  >
-                                    <i className="material-symbols-outlined md-18 me-1">
-                                      delete
-                                    </i>
-                                    Delete{" "}
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  <div id="box" />
+                <div className="chat-content scroller" ref={divRef}>
+                  <ChatContent
+                    messages={messages}
+                    isDeleted={isDeleted}
+                    deleteMessage={deleteMessage}
+                    senderUserId={senderUserId}
+                  />
                 </div>
                 <SendMessageInput sendMsg={(e) => sendMessage(e)} />
               </Tab.Pane>
             );
           })}
       </>
+    </>
+  );
+};
+
+const ChatContent = (props) => {
+  const ref = React.createRef();
+
+  useEffect(() => {
+    ref.current.scrollIntoViewIfNeeded();
+  }, []);
+
+  return (
+    <>
+      {props.messages &&
+        props.messages.length !== 0 &&
+        props.messages.map((message, index) => {
+          return (
+            <React.Fragment key={index}>
+              {props.isDeleted[message._id] === true ? (
+                ""
+              ) : (
+                <div
+                  className={`chat ${
+                    message.senderId === props.senderUserId
+                      ? "d-flex other-user "
+                      : "chat-left"
+                  } align-items-center my-3`}
+                >
+                  <MessageView data={message} />
+
+                  <Dropdown
+                    className="d-flex justify-content-center align-items-center"
+                    as="span"
+                  >
+                    <Dropdown.Toggle
+                      as={CustomToggle}
+                      variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                    >
+                      more_vert
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="dropdown-menu-right">
+                      <Dropdown.Item
+                        className="d-flex align-items-center"
+                        href="#"
+                        onClick={() => props.deleteMessage(message._id)}
+                      >
+                        <i className="material-symbols-outlined md-18 me-1">
+                          delete
+                        </i>
+                        Delete{" "}
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
+      <div id="box" ref={ref} />
     </>
   );
 };

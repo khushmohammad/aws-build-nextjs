@@ -18,6 +18,7 @@ import { allPostPhotos, getPostDetails } from "../../store/post";
 import { useRouter } from "next/router";
 import ModalPop from "../popupModal/ModalPop";
 import { allPhotos } from "../../store/profile";
+import { Loading } from "../Loader/Loading.js";
 
 const EditPost = (props) => {
   const [modalShowFriendList, setModalShowFriendList] = useState(false);
@@ -135,7 +136,8 @@ const EditPost = (props) => {
   const updatePostData = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await updatePost(postData, props.postid).then((res) => {
+    const res = await updatePost(postData, props.postid);
+    if (res?.success) {
       setPostData({ description: "", file: null });
       setSelectedFile(null);
       setPrivacyFriendList([]);
@@ -144,7 +146,7 @@ const EditPost = (props) => {
       props.refreshPostList();
       props.onHide();
       setIsLoading(false);
-    });
+    }
   };
 
   return (
@@ -184,7 +186,7 @@ const EditPost = (props) => {
                 />
               </div>
               <div className="post-text ms-3 w-100">
-                {/* <input
+                <input
                   name="description"
                   type="text"
                   value={postData?.description || ""}
@@ -197,8 +199,8 @@ const EditPost = (props) => {
                   className="form-control rounded"
                   placeholder="Write something here..."
                   style={{ border: "none" }}
-                /> */}
-                <div
+                />
+                {/* <div
                   contentEditable="true"
                   onInput={(e) => {
                     setPostData({
@@ -214,7 +216,7 @@ const EditPost = (props) => {
                   ) : (
                     <span>{postData?.description}</span>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
             <hr />
@@ -466,7 +468,13 @@ const EditPost = (props) => {
               variant="primary"
               className="d-block w-100 mt-3"
             >
-              {isLoading ? "Updating..." : "Update"}
+              {isLoading ? (
+                <>
+                  ""Updating..." <Loading />{" "}
+                </>
+              ) : (
+                "Update"
+              )}
             </Button>
           </Form>
         </Modal.Body>

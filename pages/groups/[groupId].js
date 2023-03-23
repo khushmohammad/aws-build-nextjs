@@ -28,6 +28,7 @@ import {
   getGroupByID,
   groupInvitationList,
   groupJoinRequestLists,
+  groupMemberList,
   groupPrivileges,
 } from "../../store/groups";
 import Post from "../../components/post/postView/Post";
@@ -42,6 +43,8 @@ const GroupDetail = () => {
   const [showJoinRequest, setShowJoinRequest] = useState(false);
   const [show, setShow] = useState(false);
   const [follow, setFollow] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const groupData = useSelector((state) => state?.groups?.groupInfo);
 
@@ -51,6 +54,10 @@ const GroupDetail = () => {
 
   const groupPrivilege = useSelector(
     (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
+  );
+
+  const joinRequestList = useSelector(
+    (state) => state?.groups?.joinRequestList
   );
 
   const dispatch = useDispatch();
@@ -63,17 +70,36 @@ const GroupDetail = () => {
       dispatch(groupInvitationList());
       dispatch(groupJoinRequestLists(groupId));
       dispatch(groupPrivileges(groupId));
+      dispatch(
+        groupMemberList({
+          limit: 1,
+          pageNumber: 1,
+          groupId: groupId,
+        })
+      );
     }
   }, [groupId]);
 
   const followAndUnfollowGroup = async () => {
     const res = await groupActionService(groupId, {
       action: "FollowAndUnFollow",
+      actionData: {},
     });
-    console.log(res);
     if (res?.success) {
       setFollow((prev) => !prev);
     }
+  };
+
+  const deleteGroup = () => {
+    setIsLeaving(false);
+    setMessage("Are you sure, you want to delete this group?");
+    setShow(true);
+  };
+
+  const leaveGroup = () => {
+    setIsLeaving(true);
+    setMessage("Are you sure, you want to leave this group?");
+    setShow(true);
   };
 
   return (
@@ -95,8 +121,9 @@ const GroupDetail = () => {
       />
       <ConfirmBox
         show={show}
+        memberid={isLeaving ? userInfo?.userInfo?._id : null}
         groupid={groupId}
-        Message="Are you sure, you want to delete this group?"
+        Message={message}
         onHide={() => setShow(false)}
       />
       <Default>
@@ -128,8 +155,7 @@ const GroupDetail = () => {
                           className="btn-link"
                           onClick={() => setShowGroupMember(true)}
                         >
-                          {(memberCount && memberCount?.memberCount?.members) ||
-                            0}{" "}
+                          {(memberCount && memberCount?.memberCount) || 0}{" "}
                           members
                         </Link>
                       </p>
@@ -222,11 +248,14 @@ const GroupDetail = () => {
                           className=" dropdown-menu-right"
                           aria-labelledby="post-option"
                         >
-                          <Dropdown.Item onClick={() => setShow(true)}>
+                          <Dropdown.Item onClick={deleteGroup}>
                             Delete Group
                           </Dropdown.Item>
                           <Dropdown.Item onClick={followAndUnfollowGroup}>
                             {follow ? "Follow" : "Unfollow"} Group
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={leaveGroup}>
+                            Leave Group
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
@@ -270,7 +299,7 @@ const GroupDetail = () => {
                           <h6 className="mb-0">Your Feed</h6>
                         </li>
                       </Link>
-                      <Link href="/groups/all-groups">
+                      <Link href="/groups/discover-groups">
                         <li className="mb-3 d-flex align-items-center">
                           <div className="avatar-40 rounded-circle bg-gray d-flex align-items-center justify-content-center me-3">
                             <i className="material-symbols-outlined">explore</i>
@@ -290,7 +319,15 @@ const GroupDetail = () => {
                               add_circle
                             </span>
                           </div>
-                          <h6 className="mb-0">Member Requests</h6>
+                          <h6 className="mb-0">
+                            Member Requests{" "}
+                            {joinRequestList &&
+                              joinRequestList.length !== 0 && (
+                                <span className="request-badge mx-2">
+                                  {joinRequestList?.length}
+                                </span>
+                              )}
+                          </h6>
                         </li>
                       )}
                       {userInfo?.userInfo?.roleInfo?.dropdownValue ===

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import Card from "../../components/Card";
 import Link from "next/link";
 import ProfileHeader from "../../components/profile-header";
@@ -27,6 +27,7 @@ import {
   groupActionService,
   joinGroupService,
 } from "../../services/groups.service";
+import GroupCard from "../../components/group/group-card";
 
 const Groups = () => {
   const [isJoined, setIsJoined] = useState([]);
@@ -59,19 +60,19 @@ const Groups = () => {
   const joinGroup = async (groupId) => {
     const res = await joinGroupService(groupId);
     if (res?.success === true) {
-      setIsJoined((prev) =>
-        Boolean(!prev[groupId])
-          ? { ...prev, [groupId]: true }
-          : { ...prev, [groupId]: false }
-      );
-      setJoinedGroup([...joinedGroup, groupId]);
+      // setIsJoined((prev) =>
+      //   Boolean(!prev[groupId])
+      //     ? { ...prev, [groupId]: true }
+      //     : { ...prev, [groupId]: false }
+      // );
+      // setJoinedGroup([...joinedGroup, groupId]);
       dispatch(getAllGroupsList(1));
     }
   };
 
   useEffect(() => {
     joinGroup();
-    window.addEventListener("scroll", handleScroll); // attaching scroll event listener
+    // window.addEventListener("scroll", handleScroll); // attaching scroll event listener
   }, [page]);
 
   const handleScroll = async () => {
@@ -86,29 +87,31 @@ const Groups = () => {
   const followAndUnfollowGroup = async (groupid) => {
     const res = await groupActionService(groupid, {
       action: "FollowAndUnFollow",
+      actionData: {},
     });
-    console.log(res);
-    if (res?.success === true) {
-      setIsFollow((prev) =>
-        Boolean(!prev[groupid])
-          ? { ...prev, [groupid]: true }
-          : { ...prev, [groupid]: false }
-      );
+    if (res?.success) {
+      dispatch(getAllGroupsList(1));
     }
   };
 
-  useEffect(() => {
-    dispatch(allJoinRequestSent(joinedGroup));
-  }, [joinedGroup]);
+  // useEffect(() => {
+  //   dispatch(allJoinRequestSent(joinedGroup));
+  // }, [joinedGroup]);
 
   return (
     <Default>
       <Head>
-        <title>All Groups</title>
+        <title>Discover Groups</title>
       </Head>
       <ProfileHeader img={img7} title="Groups" />
       <div id="content-page" className="content-page">
         <Container>
+          {/* <div className="d-grid gap-3 d-grid-template-1fr-19">
+            <GroupCard
+              groups={groupList}
+              message="No groups to join!"
+            />
+          </div> */}
           <div className="d-grid gap-3 d-grid-template-1fr-19">
             {groupList &&
               groupList?.length !== 0 &&
@@ -145,103 +148,39 @@ const Groups = () => {
                       <ul className="d-flex align-items-center justify-content-between list-inline m-0 p-0">
                         <li className="pe-3 ps-3">
                           <p className="mb-0">Post</p>
-                          <h6>200</h6>
+                          <h6>{group?.totalPosts}</h6>
                         </li>
                         <li className="pe-3 ps-3">
                           <p className="mb-0">Member</p>
-                          <h6>100</h6>
-                        </li>
-                        <li className="pe-3 ps-3">
-                          <p className="mb-0">Visit</p>
-                          <h6>32</h6>
+                          <h6>{group?.groupMembers}</h6>
                         </li>
                       </ul>
                     </div>
-                    <div className="group-member mb-3">
-                      <div className="iq-media-group">
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user05}
-                            alt=""
-                          />
-                        </Link>
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user06}
-                            alt=""
-                          />
-                        </Link>
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user07}
-                            alt=""
-                          />
-                        </Link>
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user08}
-                            alt=""
-                          />
-                        </Link>
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user09}
-                            alt=""
-                          />
-                        </Link>
-                        <Link href="#" className="iq-media">
-                          <Image
-                            className="img-fluid avatar-40 rounded-circle"
-                            src={user10}
-                            alt=""
-                          />
-                        </Link>
-                      </div>
-                    </div>
+
                     <div className="row">
                       <div className="col-6">
-                        {isJoined[group?._id] ? (
-                          <button
-                            disabled
-                            type="submit"
-                            className="btn btn-soft-primary d-block w-100"
-                            // onClick={() => joinGroup(group._id)}
-                          >
-                            Requested
-                          </button>
-                        ) : (
-                          <button
-                            type="submit"
-                            className="btn btn-primary d-block w-100"
-                            onClick={() => joinGroup(group._id)}
-                          >
-                            Join
-                          </button>
-                        )}
+                        <Button
+                          className={
+                            group?.isGroupRequest
+                              ? "btn btn-soft-primary d-block w-100"
+                              : "btn btn-primary d-block w-100"
+                          }
+                          onClick={() => joinGroup(group._id)}
+                        >
+                          {group?.isGroupRequest ? "Requested" : "Join"}
+                        </Button>
                       </div>
                       <div className="col-6">
-                        {isFollow[group?._id] ? (
-                          <button
-                            type="submit"
-                            className="btn btn-soft-primary d-block w-100"
-                            onClick={() => followAndUnfollowGroup(group._id)}
-                          >
-                            Unfollow
-                          </button>
-                        ) : (
-                          <button
-                            type="submit"
-                            className="btn btn-primary d-block w-100"
-                            onClick={() => followAndUnfollowGroup(group._id)}
-                          >
-                            Follow
-                          </button>
-                        )}
+                        <Button
+                          className={
+                            group?.isGroupFollower
+                              ? "btn btn-soft-primary d-block w-100"
+                              : "btn btn-primary d-block w-100"
+                          }
+                          onClick={() => followAndUnfollowGroup(group._id)}
+                        >
+                          {group?.isGroupFollower ? "Unfollow" : "Follow"}
+                        </Button>
                       </div>
                     </div>
                   </Card.Body>
@@ -253,6 +192,9 @@ const Groups = () => {
               <div className="card-body text-center">
                 <h5 className="card-title">No groups to join!</h5>
               </div>
+              {/* <Link href="/groups/create-group" className="btn btn-primary">
+                Create Group
+              </Link> */}
             </Card>
           ) : null}
         </Container>

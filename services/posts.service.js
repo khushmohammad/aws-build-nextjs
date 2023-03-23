@@ -2,26 +2,46 @@ import { apiBaseURL } from "./defaultAxiosPath";
 import { getToken } from "./defaultAxiosPath";
 import { getUserInfoByUserId, mergeUserBasicDetails } from "./user.service";
 
-
-
 export const getFeeds = async (params) => {
   const token = await getToken();
 
   let arr = [
-    { page: "home", apiPath: `posts/getUserPost/getAllFeeds?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
-    { page: "myProfile", apiPath: `posts/getUserPost/getAllUserPosts?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
-    { page: "userProfile", apiPath: `posts/getUserPost/getAllUserPosts?userId=${params.groupanduserId}&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
-    { page: "group", apiPath: `posts/getUserPost/getAllUserPosts?groupId=${params.groupanduserId}&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
-    { page: "savedPost", apiPath: `posts/userPost/getAllSavedPosts?pageNumber=${params?.page || 1}&limit=${params?.limit || 10}` },
-  ];
-  let obj = arr.find(o => o.page === params.activePage);
-  // console.log(obj)
-  const response = await apiBaseURL.get(
-    obj.apiPath,
     {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+      page: "home",
+      apiPath: `posts/getUserPost/getAllFeeds?pageNumber=${
+        params?.page || 1
+      }&limit=${params?.limit || 10}`,
+    },
+    {
+      page: "myProfile",
+      apiPath: `posts/getUserPost/getAllUserPosts?pageNumber=${
+        params?.page || 1
+      }&limit=${params?.limit || 10}`,
+    },
+    {
+      page: "userProfile",
+      apiPath: `posts/getUserPost/getAllUserPosts?userId=${
+        params.groupanduserId
+      }&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}`,
+    },
+    {
+      page: "group",
+      apiPath: `posts/getUserPost/getAllUserPosts?groupId=${
+        params.groupanduserId
+      }&pageNumber=${params?.page || 1}&limit=${params?.limit || 10}`,
+    },
+    {
+      page: "savedPost",
+      apiPath: `posts/userPost/getAllSavedPosts?pageNumber=${
+        params?.page || 1
+      }&limit=${params?.limit || 10}`,
+    },
+  ];
+  let obj = arr.find((o) => o.page === params.activePage);
+  
+  const response = await apiBaseURL.get(obj.apiPath, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (response.status == 200) {
     const postslist = await response?.data?.body?.feeds;
     const PostCount = await response?.data?.body?.postCount?.postCount;
@@ -31,7 +51,6 @@ export const getFeeds = async (params) => {
   } else {
     throw new Error(404);
   }
-
 };
 
 // getPostsByPostId
@@ -70,29 +89,29 @@ export const getAllLikesByPostId = async (postId) => {
     if (response.status == 200) {
       const allLikessArr = await response?.data?.body?.allBody?.postLikes;
 
-      // console.log(allLikessArr, "allLikessArr");
+      
+      
 
       const newarray = await Promise.all(
         allLikessArr &&
-        allLikessArr.map(async (likeData) => {
-          const res =
-            likeData && (await getUserInfoByUserId(likeData.userId));
-          const userData = await res?.data?.body;
+          allLikessArr.map(async (likeData) => {
+            const res =
+              likeData && (await getUserInfoByUserId(likeData.userId));
+            const userData = await res?.data?.body;
 
-          const newdata = await { ...likeData, userDetails: userData };
-          //console.log(newdata, "userData");
-          return newdata;
-        })
+            const newdata = await { ...likeData, userDetails: userData };
+            
+            
+            return newdata;
+          })
       );
-      // console.log(newarray, "newarray");
+      
       return newarray;
     }
   } catch (err) {
     return err;
   }
 };
-
-
 
 export const deletePostByPostId = async (postId) => {
   const token = await getToken();
@@ -130,20 +149,17 @@ export const editPostByPostId = async (postId) => {
 
 export const createPost = async (postData) => {
   const token = await getToken();
-  await apiBaseURL
-    .post(
-      `posts/userPost/createPost`,
-      postData,
-
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-    .then((res) => console.log(res))
-    .catch((err) => console.log(err));
+  try {
+    const res = await apiBaseURL.post(`posts/userPost/createPost`, postData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const updatePost = async (postData) => {
@@ -202,9 +218,6 @@ export const pinPostByUser = async (postId) => {
   }
 };
 
-
-
-
 export const postCommentByPostId = async (
   postId,
   commentData,
@@ -230,7 +243,6 @@ export const postCommentByPostId = async (
       }
     );
 
-
     return res;
   } catch (err) {
     return err?.response;
@@ -239,11 +251,7 @@ export const postCommentByPostId = async (
 
 export const postCommentDeletebyPostId = async (postId, commentId) => {
   const token = await getToken();
-  // const payloadData = {
-  //   commentId: postId,
-  //   postId: commentId
-  // }
-  // console.log(payloadData, "payloadData");
+  
   var data = new FormData();
   data.append("commentOrReplyId", commentId);
   data.append("postId", postId);
@@ -283,13 +291,9 @@ export const userPostshare = async (postId) => {
   const token = await getToken();
 
   try {
-    const res = await apiBaseURL.post(
-      `posts/userPost/share/${postId}`,
-      "",
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const res = await apiBaseURL.post(`posts/userPost/share/${postId}`, "", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return res;
   } catch (err) {
     console.log(err);
@@ -314,11 +318,11 @@ export const getCommentbyPostId = async (
 
     if (res.status == 200) {
       const allCommentList = await res?.data?.body;
-      // console.log(allCommentList, "allCommentList.length");
+      
       if (allCommentList == undefined || allCommentList.length == 0) {
         return [];
       }
-      // console.log(allCommentList, "allLikessArr");
+     
       const dataWithUserDetails = await mergeUserBasicDetails(
         allCommentList.comments
       );
@@ -351,7 +355,7 @@ export const savePostApi = async (postId) => {
       }
     );
 
-    console.log(response, "response");
+   
     return response;
   } catch (err) {
     console.log(err);
@@ -361,10 +365,7 @@ export const savePostApi = async (postId) => {
 export const getSavePostListApi = async (page = 1, limit = 10) => {
   const token = await getToken();
 
-  // const page = pageName
-
-  // console.log(token);
-  //console.log(userId,"userId");
+  
   try {
     const response = await apiBaseURL.get(
       `posts/userPost/getAllSavedPosts?pageNumber=${page}&limit=${limit}`,
@@ -388,7 +389,6 @@ export const getSavePostListApi = async (page = 1, limit = 10) => {
       return { newarray, PostCount };
     }
   } catch (err) {
-
     console.log(err);
     const status = err.response.status;
     const message = err.response.data;

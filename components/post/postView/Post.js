@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Card from "../../Card";
+
 import Image from "next/image";
 import loader from "../../../public/assets/images/page-img/page-load-loader.gif";
 import { useRouter } from "next/router";
@@ -14,6 +14,8 @@ import PostThreeDotmenu from "./PostThreeDotmenu";
 import MediaComponent from "./MediaComponent";
 import moment from "moment";
 import Link from "next/link";
+import { Spinner, Card } from "react-bootstrap";
+import { SpinnerLoader } from "../../Loader/Loading";
 
 const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [page, setPage] = useState(1);
@@ -25,10 +27,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const loading = useSelector((state) => state?.allFeed?.status);
   const error = useSelector((state) => state?.allFeed?.error);
 
-
-
   const GetPostNet = async (pagenum = page, limitnum = limit) => {
-
     const groupanduserId = userId && userId ? userId : groupId;
 
     const params = {
@@ -36,19 +35,14 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       page: pagenum,
       limit: limitnum,
       groupanduserId: groupanduserId && groupanduserId,
-    }
-
+    };
 
     if (activePage == "PostDetail") {
       setposts([]);
       setposts(postDetailObj);
     } else {
-      dispatch(
-        getAllFeedsList(params)
-      );
+      dispatch(getAllFeedsList(params));
     }
-
-
   };
 
   useEffect(() => {
@@ -58,8 +52,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-          ? setposts((prev) => [...prev, ...StorePosts])
-          : "";
+        ? setposts((prev) => [...prev, ...StorePosts])
+        : "";
     }
   }, [StorePosts]);
 
@@ -94,13 +88,15 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
   return (
     <div>
-      {activePage != "PostDetail" && activePage != 'savedPost' ? (
+      {activePage != "PostDetail" && activePage != "savedPost" ? (
         <CreatePost
           refreshpostlist={() => onClickRefreshPostList()}
           groupId={groupId}
           userId={userId}
         />
-      ) : ""}
+      ) : (
+        ""
+      )}
       <div style={{ position: "relative", marginBottom: "7rem" }}>
         {posts &&
           Array.isArray(posts) &&
@@ -114,7 +110,6 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
               isPin,
               is_SelfPost,
               share,
-
             } = data;
 
             const userDetails = data && data?.userDetails;
@@ -124,7 +119,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
-                {data && data?.isDeleted === false ?
+                {data && data?.isDeleted === false ? (
                   <Card.Body>
                     <div className="user-post-data">
                       <div className="d-flex justify-content-between">
@@ -145,16 +140,18 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                         <div className="w-100">
                           <div className="d-flex justify-content-between">
                             <div>
-
-                              <Link href={`user/${userDetails?.userInfo?._id}`} >
-                                <h5 className="mb-0 d-inline-flex fw-bold">
+                              <Link href={`user/${userDetails?.userInfo?._id}`}>
+                                <h5 className="mb-0 d-inline-flex">
                                   {/* shivam{" "}
                                 <span className="material-symbols-outlined">
                                   play_arrow
-                                </span> */}
-                                  {" "}
+                                </span> */}{" "}
                                   {userDetails &&
-                                    `${userDetails?.userInfo?.firstName || ""}   ${userDetails?.userInfo?.lastName || ""} `}
+                                    `${
+                                      userDetails?.userInfo?.firstName || ""
+                                    }   ${
+                                      userDetails?.userInfo?.lastName || ""
+                                    } `}
                                 </h5>
                               </Link>
 
@@ -174,10 +171,13 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                               {_id && (
                                 <PostThreeDotmenu
                                   postLength={posts.length}
-                                  refreshpostlist={() => onClickRefreshPostList()}
+                                  refreshpostlist={() =>
+                                    onClickRefreshPostList()
+                                  }
                                   PostId={_id}
                                   isPin={isPin}
                                   is_SelfPost={is_SelfPost}
+                                  activePage={activePage}
                                 />
                               )}
                             </div>
@@ -207,20 +207,23 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                       />
                     )}
                   </Card.Body>
-                  :
+                ) : (
                   <Card.Body>
-                    <h4 className="justify-content-center  d-flex align-items-center" style={{ height: "18vh" }}>
+                    <h4
+                      className="justify-content-center  d-flex align-items-center"
+                      style={{ height: "18vh" }}
+                    >
                       Sorry, this content isn't available at this time
                     </h4>
                   </Card.Body>
-                }
+                )}
               </Card>
             );
           })}
 
         {activePage != "PostDetail" && loading && loading == "loading" ? (
           <div
-            className="card card-block card-stretch card-height"
+            className=""
             style={{
               marginBottom: "-6rem",
               height: "90px",
@@ -232,11 +235,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
           >
             <Card.Body>
               <div className="col-sm-12 text-center">
-                <Image
-                  src={loader}
-                  alt="loader"
-                  style={{ height: "100px", width: "100px" }}
-                />
+               <SpinnerLoader/>
               </div>
             </Card.Body>
           </div>
@@ -249,7 +248,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
             loading != "loading" &&
             StorePosts.length == 0 && (
               <div
-                className="card card-block card-stretch card-height"
+                className=""
                 style={{
                   marginBottom: "-6rem",
                   height: "90px",
@@ -268,28 +267,25 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                 </Card.Body>
               </div>
             )}
-          {activePage == "PostDetail" &&
-            posts.length == 0 && (
-              <div
-                className="card card-block card-stretch card-height"
-                style={{
-                  marginBottom: "-6rem",
-                  height: "90px",
-                  width: "100%",
-                  position: "absolute",
-                  bottom: "0px",
-                  justifyContent: "center",
-                }}
-              >
-                <Card.Body>
-                  <div className="col-sm-12 text-center">
-                    <p className="p-3  text-alert text-center">
-                      No posts found!
-                    </p>
-                  </div>
-                </Card.Body>
-              </div>
-            )}
+          {activePage == "PostDetail" && posts.length == 0 && (
+            <div
+              className="card card-block card-stretch card-height"
+              style={{
+                marginBottom: "-6rem",
+                height: "90px",
+                width: "100%",
+                position: "absolute",
+                bottom: "0px",
+                justifyContent: "center",
+              }}
+            >
+              <Card.Body>
+                <div className="col-sm-12 text-center">
+                  <p className="p-3  text-alert text-center">No posts found!</p>
+                </div>
+              </Card.Body>
+            </div>
+          )}
         </div>
       </div>
     </div>

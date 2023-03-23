@@ -51,6 +51,7 @@ const UserProfileEdit = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const userProfileData = useSelector((state) => state?.user?.data);
+
   const [profilePicModalShow, setProfilePicModalShow] = useState(false);
   const [coverPicModalShow, setCoverPicModalShow] = useState(false);
   const [relationStatus, setRelationStatus] = useState([]);
@@ -148,9 +149,12 @@ const UserProfileEdit = () => {
     }
   };
 
+  console.log(":::::", patchForData);
+
   // console.log(patchForData,"patchForData");
   const onSubmit = async () => {
     const res = await updateUserData(patchForData);
+    console.log(res, "<<res>></res>");
     if (res.status == 200) {
       router.push("/user/user-profile");
     }
@@ -174,7 +178,10 @@ const UserProfileEdit = () => {
     getCityStateList("state", "");
     getCityStateList("city", "");
     setPatchForData("");
+    setPatchForData({ ...patchForData });
   }, []);
+
+  console.log("isreadytohelp:", patchForData);
 
   //console.log(userProfileData, "userProfileData");
   return (
@@ -346,7 +353,7 @@ const UserProfileEdit = () => {
                                 {...register("middleName")}
                                 type="text"
                                 defaultValue={
-                                  userProfileData?.userInfo.middleName
+                                  userProfileData?.userInfo?.middleName
                                 }
                                 className="form-control"
                                 id="middleName"
@@ -433,7 +440,7 @@ const UserProfileEdit = () => {
                                 Nick Name
                               </Form.Label>
                             </Form.Floating>
-                            {console.log(userProfileData, "userProfileData")}
+                            {/* {console.log(userProfileData, "userProfileData")} */}
                             <Form.Floating className="form-group col-sm-12">
                               <Form.Control
                                 {...register("profileDescription")}
@@ -801,6 +808,44 @@ const UserProfileEdit = () => {
                                 {errors.pinCode?.message}
                               </p>
                             </Form.Floating>
+
+                            <Form.Group className="mb-3">
+                              {console.log(userProfileData)}
+                              {userProfileData && (
+                                <Form.Check
+                                  {...register("isReadyToHelp")}
+                                  label="Open To Help"
+                                  type="checkbox"
+                                  defaultChecked={
+                                    userProfileData?.isReadyToHelp
+                                  }
+                                  id="isReadyToHelp"
+                                  onChange={(e) =>
+                                    setPatchForData({
+                                      ...patchForData,
+                                      isReadyToHelp:
+                                        e.target.checked == ""
+                                          ? false
+                                          : e.target.checked,
+                                    })
+                                  }
+                                />
+                              )}
+                              {/* <Form.Check
+                                label="Open To Help"
+                                name="checked"
+                                type="checkbox"
+                                inline
+                                 {...register("isReadyToHelp")}
+                                onChange={(e) => console.log("LLL", e.target.value)
+                                  // setPatchForData({
+                                  //   ...patchForData,
+                                  //   isReadyToHelp:
+                                  //     e.target.value
+                                  // })
+                                }
+                              /> */}
+                            </Form.Group>
                           </Row>
                           <div className="p-4 pt-0">
                             <Button

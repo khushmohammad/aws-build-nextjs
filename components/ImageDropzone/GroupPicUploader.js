@@ -68,7 +68,12 @@ export const GroupPicUploader = (props) => {
     setRotation(rotation);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [".jpeg", ".png", ".jpg"],
+    },
+  });
 
   return (
     <>

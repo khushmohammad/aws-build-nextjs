@@ -4,12 +4,7 @@ import Cropper from "react-easy-crop";
 import getCroppedImg from "./ImageCrop";
 import { Card, Modal } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import {
-  allPhotos,
-  getUserDetails,
-  updateProfileAndCoverPicture,
-  updateProfilePic,
-} from "../../store/profile";
+import { allPhotos, getUserDetails } from "../../store/profile";
 import axios from "axios";
 import { updateProfileAndCoverPic } from "../../services/user.service";
 import { allPostPhotos } from "../../store/post";
@@ -44,6 +39,7 @@ export const Uploader = (props) => {
         rotation
       );
       setCroppedImage(croppedImage);
+      console.log(croppedImage);
       await updateProfileAndCoverPic("profileImage", croppedImage)
         .then((res) => {
           dispatch(getUserDetails());
@@ -81,7 +77,12 @@ export const Uploader = (props) => {
     setRotation(rotation);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [".jpeg", ".png", ".jpg"],
+    },
+  });
 
   return (
     <>
@@ -210,7 +211,7 @@ export const Uploader = (props) => {
                       showCroppedImage(), props.onHide();
                     }}
                   >
-                    Crop
+                    Crop and Upload
                   </button>
                 </div>
               </Card.Footer>

@@ -107,6 +107,7 @@ export const getAllGroups = async (page) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+    console.log("group list:: ", res.data.body);
     return res.data.body;
   } catch (err) {
     console.log(err);
@@ -122,7 +123,7 @@ export const inviteFriend = async (memberId, groupId) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return res;
+    return res.data;
   } catch (err) {
     console.log(err);
   }
@@ -218,7 +219,7 @@ export const invitationAcceptAndDelineService = async (
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return res.data.body;
+    return res.data;
   } catch (error) {
     console.log(error);
   }
@@ -323,7 +324,7 @@ export const leaveGroupService = async (groupId, data) => {
   const token = await getToken();
   try {
     const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groupMembers/leave/${groupId}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupMembers/leave/${groupId}`,
       data,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -335,15 +336,46 @@ export const leaveGroupService = async (groupId, data) => {
   }
 };
 
-export const memberInvitedListService = async (groupid) => {
+// export const memberInvitedListService = async (groupid) => {
+//   const token = await getToken();
+//   try {
+//     const res = await axios.get(
+//       `${process.env.NEXT_PUBLIC_API_PATH}/groups/invitation/invitedMembers/${groupid}`,
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+//     console.log("ashdj", res.data);
+//     return res.data.data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+export const inviteMemberListService = async (
+  groupId,
+  pageNumber,
+  inviteKey
+) => {
   const token = await getToken();
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_PATH}/groups/invitation/invitedMembers/${groupid}`,
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/invitation/inviteFriend/${groupId}?limit=10&pageNumber=${pageNumber}&inviteKey=${inviteKey}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    console.log(res.data);
-    return res.data.data;
+    return res?.data?.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const adminPromoteService = async (payload) => {
+  const token = await getToken();
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_PATH}/groups/groupAdmins/action`,
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return res?.data;
   } catch (error) {
     console.log(error);
   }

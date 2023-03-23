@@ -18,8 +18,8 @@ const HobbyModal = ({ heading, onHide, ...props }) => {
 
   // Hobbies Check Uncheck
   const hobbyIds = [];
-  allHobbies.map((allHobby) => {
-    hobbyIds.push(allHobby.hobbyId._id);
+  allHobbies?.map((allHobby) => {
+    hobbyIds?.push(allHobby.hobbyId._id);
   });
 
   // Get Hobbies API

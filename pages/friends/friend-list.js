@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Dropdown } from "react-bootstrap";
 import Card from "../../components/Card";
 import Link from "next/link";
 import Default from "../../layouts/default";
@@ -17,12 +17,15 @@ import user05 from "../../public/assets/images/user/25.png";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 import { getAllFriendList } from "../../store/friends";
+import { removeFriendFromFriendList } from "../../services/profile.service";
 
 const FriendList = () => {
   // state
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(2);
   const [friendListState, setFriendListState] = useState([]);
+
+  const [selectedItem, setSelectedItem] = useState(null);
 
   // redux method
   const dispatch = useDispatch();
@@ -52,6 +55,16 @@ const FriendList = () => {
     dispatch(getAllFriendList(params));
   }, [page]);
 
+  // remove friend
+  const RemoveFriend = async (friendId) => {
+    //setSelectedItem("Unfriend")
+    try {
+      const res = await removeFriendFromFriendList(friendId);
+      dispatch(friendsList);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <Default>
       <Head>
@@ -127,12 +140,57 @@ const FriendList = () => {
                                         </p> */}
                                       </div>
                                     </div>
-                                    <button
-                                      type="submit"
-                                      className="btn btn-primary"
-                                    >
-                                      Following
-                                    </button>
+
+                                    <Dropdown>
+                                      <Dropdown.Toggle
+                                        variant="secondary me-2 d-flex align-items-center"
+                                        className="btn btn-primary"
+                                      >
+                                        {selectedItem ? selectedItem : "Friend"}
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu className="dropdown-menu-right">
+                                        <Dropdown.Item
+                                          href="#"
+                                          onClick={() =>
+                                            setSelectedItem("Get Notification")
+                                          }
+                                        >
+                                          Get Notification
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          href="#"
+                                          onClick={() =>
+                                            setSelectedItem("Close Friend")
+                                          }
+                                        >
+                                          Close Friend
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          href="#"
+                                          onClick={() =>
+                                            setSelectedItem("Unfollow")
+                                          }
+                                        >
+                                          Unfollow
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          href="#"
+                                          onClick={() =>
+                                            RemoveFriend(userData._id)
+                                          }
+                                        >
+                                          Unfriend
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          href="#"
+                                          onClick={() =>
+                                            setSelectedItem("Block")
+                                          }
+                                        >
+                                          Block
+                                        </Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
                                   </div>
                                 </div>
                               </div>

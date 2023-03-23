@@ -1,14 +1,14 @@
-import "../styles/globals.css";
 import { persistor, store, wrapper } from "../store";
-import { Provider, useSelector } from "react-redux";
-import "../public/assets/scss/socialv.scss";
-import "../public/assets/scss/customizer.scss";
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
 import { SSRProvider } from "react-bootstrap";
 import { PersistGate } from "redux-persist/integration/react";
+import PageToPage from "../components/Loader/PageToPage";
+// css
+import "../styles/globals.css";
+import "../public/assets/scss/socialv.scss";
+import "../public/assets/scss/customizer.scss";
 import "react-datepicker/dist/react-datepicker.css";
-import Spinner from "react-bootstrap/Spinner";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -21,6 +21,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <SessionProvider session={session}>
           {/* <Provider store={store}> */}
           <PersistGate loading={null} persistor={persistor}>
+            <PageToPage />
             <Component {...pageProps} />
           </PersistGate>
           {/* </Provider> */}

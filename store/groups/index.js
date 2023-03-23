@@ -12,31 +12,26 @@ import {
   groupJoinedList,
   groupMemberListService,
   groupPrivilegesService,
+  inviteMemberListService,
 } from "../../services/groups.service";
 
 const initialState = {
   allGroups: null,
   groupInfo: null,
   groupMember: null,
-  invitedFriend: null,
+  inviteMember: null,
   groupPrivacy: null,
   groupFeeds: null,
   postDetails: null,
   groupInvited: null,
   joinRequestList: [],
   joinedGroup: null,
-  sentGroupJoinRequest: [],
   groupPrivilege: false,
 };
 
 const GroupSlice = createSlice({
   name: "groups",
   initialState,
-  reducers: {
-    allJoinRequestSent: (state, action) => {
-      state.sentGroupJoinRequest = action.payload;
-    },
-  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllGroupsList.fulfilled, (state, action) => {
@@ -68,6 +63,9 @@ const GroupSlice = createSlice({
       })
       .addCase(groupPrivileges.fulfilled, (state, action) => {
         state.groupPrivilege = action.payload;
+      })
+      .addCase(inviteMemberList.fulfilled, (state, action) => {
+        state.inviteMember = action.payload;
       });
   },
 });
@@ -148,6 +146,14 @@ export const groupPrivileges = createAsyncThunk(
   "groups/groupPrivileges",
   async (groupid) => {
     const data = await groupPrivilegesService(groupid);
+    return data;
+  }
+);
+
+export const inviteMemberList = createAsyncThunk(
+  "groups/inviteMemberList",
+  async ({ groupId, pageNumber, inviteKey }) => {
+    const data = await inviteMemberListService(groupId, pageNumber, inviteKey);
     return data;
   }
 );

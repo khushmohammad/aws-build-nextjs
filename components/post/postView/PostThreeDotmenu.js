@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { deletePostByPostId, pinPostByUser, savePostApi } from "../../../services/posts.service";
+import {
+  deletePostByPostId,
+  pinPostByUser,
+  savePostApi,
+} from "../../../services/posts.service";
 import ConfirmBox from "../../modals/ConfirmBox";
 import EditPost from "../EditPost";
 
-function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
+function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activePage }) {
   const [showModal, setShowModal] = useState(false);
 
   const [modalShowConfirmBox, setModalShowConfirmBox] = React.useState(false);
-
 
   const DeletePostByPostId = async (postId) => {
     const res = await deletePostByPostId(postId);
@@ -22,19 +25,19 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
     const res = await pinPostByUser(postId);
 
     if (res.data.success == true) {
-      refreshPostList();
+      refreshpostlist();
     }
   };
 
-  const [boxMessage, setBoxMessage] = useState('')
+  const [boxMessage, setBoxMessage] = useState("");
   const savePost = async (postid) => {
-    const res = await savePostApi(postid)
+    const res = await savePostApi(postid);
     if (res.status === 200) {
-      setModalShowConfirmBox(true)
-      setBoxMessage(res?.data?.message || "Message")
+      setModalShowConfirmBox(true);
+      setBoxMessage(res?.data?.message || "Message");
+      
     }
-
-  }
+  };
 
   return (
     <div>
@@ -44,13 +47,12 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
         </Dropdown.Toggle>
         <Dropdown.Menu className="dropdown-menu m-0 p-0">
           {is_SelfPost && is_SelfPost === true && (
-            <Dropdown.ItemText className=" p-3" role="button" >
+            <Dropdown.ItemText className=" p-3" role="button">
               <div
                 className="d-flex align-items-top"
                 onClick={() => {
                   setShowModal(true);
                 }}
-
               >
                 <div className="h4 material-symbols-outlined">
                   <i className="ri-save-line"></i>
@@ -65,7 +67,7 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
                 onHide={() => setShowModal(false)}
                 onShow={() => setShowModal(true)}
                 postid={PostId}
-                refreshPostList={() => refreshPostList()}
+                refreshPostList={() => refreshpostlist()}
               />
             </Dropdown.ItemText>
           )}
@@ -93,19 +95,23 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
               </div>
             </Dropdown.Item>
           )}
-          <Dropdown.ItemText onClick={() => savePost(PostId)} className=" p-3" role="button">
+          <Dropdown.ItemText
+            onClick={() => savePost(PostId)}
+            className=" p-3"
+            role="button"
+          >
             <div className="d-flex align-items-top">
               <div className="h4 material-symbols-outlined">
                 <i className="ri-save-line"></i>
               </div>
               <div className="data ms-2">
-                <h6>Save Post</h6>
+                <h6>{activePage != 'savedPost' ? "Save Post" : "Remove Saved Post"}</h6>
                 <p className="mb-0">Add this to your saved items</p>
               </div>
             </div>
           </Dropdown.ItemText>
 
-          <Dropdown.Item className="p-3" href="#">
+          {/* <Dropdown.Item className="p-3" href="#">
             <div className="d-flex align-items-top">
               <i className="ri-close-circle-line h4"></i>
               <div className="data ms-2">
@@ -113,7 +119,7 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
                 <p className="mb-0">See fewer posts like this.</p>
               </div>
             </div>
-          </Dropdown.Item>
+          </Dropdown.Item> */}
 
           {is_SelfPost && is_SelfPost === true && (
             <Dropdown.Item className=" p-3">
@@ -152,8 +158,11 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist }) {
         </Dropdown.Menu>
       </Dropdown>
 
-      <ConfirmBox show={modalShowConfirmBox} Message={boxMessage || "Message"} onHide={() => setModalShowConfirmBox(false)} />
-
+      <ConfirmBox
+        show={modalShowConfirmBox}
+        Message={boxMessage || "Message"}
+        onHide={() => {setModalShowConfirmBox(false),refreshpostlist()}}
+      />
     </div>
   );
 }

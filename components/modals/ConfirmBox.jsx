@@ -4,7 +4,10 @@ import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch } from "react-redux";
-import { groupActionService } from "../../services/groups.service";
+import {
+  groupActionService,
+  leaveGroupService,
+} from "../../services/groups.service";
 import { allJoinedGroupList, getAllGroupsList } from "../../store/groups";
 
 function ConfirmBox(props) {
@@ -12,6 +15,21 @@ function ConfirmBox(props) {
 
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const leaveGroup = async () => {
+    let data = {
+      memberRemoveByAdmin: false,
+      memberId: props.memberid,
+    };
+    const res = await leaveGroupService(props.groupid, data);
+    console.log(res);
+    if (res?.success) {
+      props.onHide();
+      dispatch(getAllGroupsList(1));
+      dispatch(allJoinedGroupList());
+      router.push("/groups/discover-groups");
+    }
+  };
 
   const deleteGroup = async () => {
     const res = await groupActionService(props.groupid, {
@@ -25,7 +43,7 @@ function ConfirmBox(props) {
       props.onHide();
       dispatch(getAllGroupsList(1));
       dispatch(allJoinedGroupList());
-      router.push("/groups/all-groups");
+      router.push("/groups/discover-groups");
     }
   };
 
@@ -41,7 +59,7 @@ function ConfirmBox(props) {
           <h4> {props?.Message || "Message"}</h4>
         </Modal.Title>
       </Modal.Header>
-      {props.groupid && (
+      {props.groupid && !props.memberid && (
         <Modal.Body>
           <Form>
             <Form.Floating className="mb-3">
@@ -59,7 +77,10 @@ function ConfirmBox(props) {
         </Modal.Body>
       )}
       <Modal.Footer>
-        {props?.groupid && <Button onClick={deleteGroup}>Delete</Button>}
+        {props?.memberid && <Button onClick={leaveGroup}>Leave</Button>}
+        {props?.groupid && !props.memberid && (
+          <Button onClick={deleteGroup}>Delete</Button>
+        )}
         <Button onClick={props.onHide}>
           {props.groupid ? "Cancel" : "Close"}
         </Button>

@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { allPhotos } from "../../store/profile/index.js";
 import { allPostPhotos } from "../../store/post/index.js";
+import { Loading } from "../Loader/Loading.js";
 
 const CreatePost = (props) => {
   const [postData, setPostData] = useState({
@@ -91,18 +92,18 @@ const CreatePost = (props) => {
     console.log(postData?.description?.length, "postData");
     if (postData?.description?.length > 1600) {
       setErrorMessage("Text exceeds 1600 characters");
-      setIsLoading(true);
+      // setIsLoading(true);
     } else {
       setErrorMessage(null);
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
   const submitPost = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-    await createPost(postData).then((res) => {
+    const res = await createPost(postData);
+    if (res?.success) {
       setPostData({
         description: "",
         file: null,
@@ -112,9 +113,9 @@ const CreatePost = (props) => {
       dispatch(allPhotos());
       dispatch(allPostPhotos());
       setIsLoading(false);
-      handleClose();
       props.refreshpostlist();
-    });
+      handleClose();
+    }
   };
 
   const deleteImageKey = (img, imgIndex) => {
@@ -258,7 +259,7 @@ const CreatePost = (props) => {
                 />
               </div>
               <div className="post-text ms-3 w-100">
-                {/* <input
+                <input
                   name="description"
                   type="text"
                   autoFocus
@@ -272,8 +273,8 @@ const CreatePost = (props) => {
                   className="form-control rounded"
                   placeholder="Write something here..."
                   style={{ border: "none" }}
-                /> */}
-                <div
+                />
+                {/* <div
                   contentEditable="true"
                   onInput={(e) => {
                     setPostData({
@@ -287,7 +288,7 @@ const CreatePost = (props) => {
                       Write something here...
                     </span>
                   )}
-                </div>
+                </div> */}
               </div>
 
               {errorMessage && (
@@ -499,7 +500,13 @@ const CreatePost = (props) => {
               variant="primary"
               className="d-block w-100 mt-3"
             >
-              {isLoading ? "Post" : "Post"}
+              {isLoading ? (
+                <>
+                  "Posting..." <Loading />{" "}
+                </>
+              ) : (
+                "Post"
+              )}
             </Button>
           </Form>
         </Modal.Body>

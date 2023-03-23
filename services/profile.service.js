@@ -147,13 +147,54 @@ export const searchMemberByFullName = async (input = "") => {
 export const getIcSocialMediaInfo = async (formData) => {
   const token = await getToken();
 
-
   const socialMediaForm = { socialMedia: formData };
-  
-  
+
   const res = await axios.patch(
     `${process.env.NEXT_PUBLIC_API_PATH}/profiles/integratingCoach/socialMedia`,
     socialMediaForm,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};
+
+export const profileDeactivation = async (data) => {
+  const token = await getToken();
+
+  const res = await axios.patch(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update/profileActivation`,
+    data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};
+
+export const removeFriendFromFriendList = async (friendId) => {
+  const token = await getToken();
+
+  // console.log(friendId)
+  const res = await axios.delete(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myFriends/removeFriend/${friendId}`,
+    {
+      headers: { authorization: `Bearer ${token}` },
+    }
+  );
+  return res;
+};
+
+export const profileDelete = async (data) => {
+  const token = await getToken();
+
+  const res = await axios.patch(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/myProfileUpdates/update/profileDeletion`,
+    data,
     {
       headers: {
         authorization: `Bearer ${token}`,

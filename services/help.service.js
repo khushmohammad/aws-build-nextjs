@@ -14,7 +14,7 @@ export const getHelpApi = async (params) => {
     var config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'helps/community/createHelp',
+        url: 'chats/community/createHelp',
         headers: {
             'Authorization': `Bearer ${token}`,
         },

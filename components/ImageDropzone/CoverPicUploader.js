@@ -11,7 +11,7 @@ export const CoverPicUploader = (props) => {
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [aspect, setAspect] = useState(4 / 1);
+  const [aspect, setAspect] = useState(3 / 1);
   const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
@@ -75,7 +75,12 @@ export const CoverPicUploader = (props) => {
     setRotation(rotation);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [".jpeg", ".png", ".jpg"],
+    },
+  });
 
   return (
     <>

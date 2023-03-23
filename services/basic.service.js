@@ -182,3 +182,30 @@ export const deleteNotificationApi = async (notId) => {
   });
   return res;
 };
+
+export const getAllEmailDigestNotification = async () => {
+  const token = await getToken();
+  try {
+    const res = await apiBaseURL.get(`admins/setting/getAllNotification`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    return res.data.body;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateNotificationCategory = async (category) => {
+  const token = await getToken();
+  try {
+    const res = await apiBaseURL.patch(
+      `profiles/settings/updateNotificationCategory`,
+     category,
+      { headers: { authorization: `Bearer ${token}` } }
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+

@@ -8,29 +8,44 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { groupMemberList } from "../../store/groups";
 import { useState } from "react";
-import { getUserInfoById } from "../../store/profile";
-import { getUserDetailsByUserId } from "../../services/user.service";
-import { leaveGroupService } from "../../services/groups.service";
+import {
+  adminPromoteService,
+  leaveGroupService,
+} from "../../services/groups.service";
 
 const GroupMemeber = (props) => {
   const [page, setPage] = useState(1);
-  let [memberId, setMemberId] = useState([]);
-  const [userDetail, setUserDetail] = useState(null);
   const dispatch = useDispatch();
   let limit = 4;
 
-  const members = useSelector((state) => state?.groups?.groupMember);
+  const { groupMember } = useSelector((state) => state?.groups);
 
   const userID = useSelector((state) => state?.user?.data?.userInfo?._id);
-
-  // const userDetail = useSelector((state) => state?.user?.userProfileDetail);
 
   const groupPrivilege = useSelector(
     (state) => state?.groups?.groupPrivilege?.canGroupBeDeleted
   );
 
-  const memberList = () => {
+  useEffect(() => {
     if (props.groupid !== undefined) {
+      dispatch(
+        groupMemberList({
+          limit: limit,
+          pageNumber: page,
+          groupId: props.groupid,
+        })
+      );
+    }
+  }, []);
+
+  const removeMember = async (userID) => {
+    let data = {
+      memberRemoveByAdmin: true,
+      memberId: userID,
+    };
+    const res = await leaveGroupService(props.groupid, data);
+    console.log(res);
+    if (res?.success) {
       dispatch(
         groupMemberList({
           limit: limit,
@@ -41,44 +56,19 @@ const GroupMemeber = (props) => {
     }
   };
 
-  useEffect(() => {
-    memberList();
-
-    let getmember = [];
-
-    members &&
-      members?.memberList?.map(async (data) => {
-        getmember.push(data.memberId);
-      });
-    setMemberId(getmember);
-    window.addEventListener("scroll", handleScroll); // attaching scroll event listener
-  }, []);
-
-  const getMemberDetails = async () => {
-    const res = await getUserDetailsByUserId(memberId);
-    setUserDetail(res);
-  };
-
-  useEffect(() => {
-    if (memberId && memberId.length !== 0) getMemberDetails();
-  }, [members, memberId]);
-
-  const handleScroll = () => {
-    let userScrollHeight = window.innerHeight + window.scrollY;
-    let windowBottomHeight = document.documentElement.offsetHeight;
-
-    if (userScrollHeight >= windowBottomHeight) {
-      memberList();
-    }
-  };
-
-  const removeMember = async (userID) => {
-    let data = {
-      memberRemoveByAdmin: true,
-      memberId: userID,
-    };
-    const res = await leaveGroupService(props.groupid, data);
+  const promoteOrDemote = async (action, memberId, groupId) => {
+    let data = { action, memberId, groupId };
+    const res = await adminPromoteService(data);
     console.log(res);
+    if (res?.success) {
+      dispatch(
+        groupMemberList({
+          limit: limit,
+          pageNumber: page,
+          groupId: props.groupid,
+        })
+      );
+    }
   };
 
   return (
@@ -99,9 +89,9 @@ const GroupMemeber = (props) => {
         <Container>
           <Row>
             <Col sm="12">
-              {members &&
-                userDetail !== null &&
-                members?.memberList?.map((member, index) => (
+              {groupMember &&
+                groupMember.memberCount !== 0 &&
+                groupMember?.memberList?.map((member, index) => (
                   <Card key={index}>
                     <Card.Body>
                       <ul className="request-list list-inline m-0 p-0">
@@ -109,7 +99,7 @@ const GroupMemeber = (props) => {
                           <div className="user-img img-fluid flex-shrink-0">
                             <Image
                               src={
-                                userDetail[index]?.profilePictureInfo?.file
+                                member?.memberInfo?.profilePictureInfo?.file
                                   ?.location || user5
                               }
                               alt="story-img"
@@ -120,14 +110,47 @@ const GroupMemeber = (props) => {
                           </div>
                           <div className="flex-grow-1 ms-3">
                             <h5>
-                              {userDetail[index]?.userInfo?.firstName}{" "}
-                              {userDetail[index]?.userInfo?.lastName}
+                              {member?.memberInfo?.firstName}{" "}
+                              {member?.memberInfo?.lastName}
                             </h5>
-                            <p className="mb-0">
-                              {member?.groupRoleInfo?.dropdownValue}
-                            </p>
+                            <p className="mb-0">{member?.groupRole}</p>
                           </div>
                           <div className="d-flex align-items-center mt-2 mt-md-0">
+                            {userID !== member?.memberId &&
+                              member?.memberId !==
+                                member?.groupInfo?.groupCreator &&
+                              member?.memberInfo?.userRole ===
+                                "Integrating Coach" && (
+                                <div className="confirm-click-btn">
+                                  {member?.groupRole === "Group Admin" ? (
+                                    <Button
+                                      onClick={() =>
+                                        promoteOrDemote(
+                                          0,
+                                          member?.memberId,
+                                          member?.groupId
+                                        )
+                                      }
+                                      className="me-3 btn btn-primary rounded confirm-btn"
+                                    >
+                                      Demote to member
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      onClick={() =>
+                                        promoteOrDemote(
+                                          1,
+                                          member?.memberId,
+                                          member?.groupId
+                                        )
+                                      }
+                                      className="me-3 btn btn-primary rounded confirm-btn"
+                                    >
+                                      Promote to admin
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             <div className="confirm-click-btn">
                               <Button
                                 href={
@@ -154,16 +177,16 @@ const GroupMemeber = (props) => {
                         </li>
 
                         {/* <li className="d-block text-center mb-0 pb-0">
-                      <Link href="#" className="me-3 btn btn-primary">
-                        View More Request
-                      </Link>
-                    </li> */}
+                          <Button className="me-3 btn btn-primary">
+                            View More
+                          </Button>
+                        </li> */}
                       </ul>
                     </Card.Body>
                   </Card>
                 ))}
             </Col>
-            {members?.length === 0 || members === undefined ? (
+            {groupMember?.memberCount === 0 || groupMember === undefined ? (
               <Card className="mb-0">
                 <div className="card-body text-center">
                   <h5 className="card-title">No members in this group!</h5>
