@@ -28,7 +28,10 @@ const PageToPage = () => {
     if (isMatched) {
       setLoading(false);
     }
-  }, [router]);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  }, [router || ""]);
 
   return loading && <Loading />;
 };
