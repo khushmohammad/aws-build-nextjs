@@ -10,6 +10,7 @@ import {
   profileDeactivation,
   profileDelete,
 } from "../../services/profile.service";
+import { signOut } from "next-auth/react";
 
 const schema = yup.object({
   password: yup.string().required("Password is required"),
@@ -78,9 +79,7 @@ const ConfirmPasswordModal = (props) => {
             deactivateAccount: true,
             deleteAccount: false,
           });
-          onHide();
-          showPrevModal();
-          setErrorMessage("");
+          signOut();
         }
         console.log("response delete", res);
       } catch (err) {
@@ -173,7 +172,7 @@ const ConfirmPasswordModal = (props) => {
               type="submit"
               onClick={handleSubmit(onSubmit)}
             >
-              Save Changes
+              Submit
             </Button>
           </Modal.Footer>
         </Form>

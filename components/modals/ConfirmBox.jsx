@@ -56,7 +56,7 @@ function ConfirmBox(props) {
     >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
-          <h4> {props?.Message || "Message"}</h4>
+          <h4> {props?.message || "Message not found"}</h4>
         </Modal.Title>
       </Modal.Header>
       {props.groupid && !props.memberid && (

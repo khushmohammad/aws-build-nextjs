@@ -203,3 +203,17 @@ export const profileDelete = async (data) => {
   );
   return res;
 };
+
+export const getFlagStatus = async () => {
+  const token = await getToken();
+
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_PATH}/profiles/flags/getFlagStatus`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res;
+};

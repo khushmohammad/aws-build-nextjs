@@ -20,9 +20,9 @@ const schema = yup
   })
   .required();
 
-function Commentapi({ postId }) {
+function CommentApi({ postId }) {
   // const [commentInputText, setCommentInputText] = useState('')
-  const [commentlist, setCommentlist] = useState([]);
+  const [commentList, setCommentList] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(3);
   const [showLoadMoreButton, setShowLoadMoreButton] = useState(false);
@@ -47,9 +47,9 @@ function Commentapi({ postId }) {
       const result = await res?.data?.body;
       const withUserDetails = await mergeUserBasicDetails([result]);
 
-      commentlist && commentlist.length == 0
-        ? setCommentlist([withUserDetails[0]])
-        : setCommentlist([...commentlist, withUserDetails[0]]);
+      commentList && commentList.length == 0
+        ? setCommentList([withUserDetails[0]])
+        : setCommentList([...commentList, withUserDetails[0]]);
       // setCommentInputText('')
 
       reset();
@@ -62,9 +62,9 @@ function Commentapi({ postId }) {
 
   const getCommentList = async () => {
     const res = await getCommentbyPostId(postId, page, limit, 0, "");
-    const commentrepArr = await res?.comments;
-    commentrepArr && commentrepArr.length != 0
-      ? (setCommentlist([...commentlist, ...commentrepArr]),
+    const commentReplayArr = await res?.comments;
+    commentReplayArr && commentReplayArr.length != 0
+      ? (setCommentList([...commentList, ...commentReplayArr]),
         setShowLoadMoreButton(true))
       : setShowLoadMoreButton(false);
   };
@@ -80,11 +80,11 @@ function Commentapi({ postId }) {
           className="post-comments list-inline p-0 m-0"
           style={{ maxHeight: "300px", overflow: "auto" }}
         >
-          {commentlist &&
-            commentlist.map((comment, i) => {
+          {commentList &&
+            commentList.map((comment, i) => {
               return (
                 <React.Fragment key={i}>
-                  {commentlist && (
+                  {commentList && (
                     <>
                       <CommentList
                         postId={postId}
@@ -144,10 +144,10 @@ const CommentReplyViewOne = ({ postId, parentId, commmetLevel }) => {
       updatedLevel,
       parentId
     );
-    const commentrepArr = await res?.comments;
-    // setCommentReplylist(commentrepArr)
-    commentrepArr && commentrepArr.length != 0
-      ? (setCommentReplylist([...commentReplylist, ...commentrepArr]),
+    const commentReplayArr = await res?.comments;
+    // setCommentReplylist(commentReplayArr)
+    commentReplayArr && commentReplayArr.length != 0
+      ? (setCommentReplylist([...commentReplylist, ...commentReplayArr]),
         setShowLoadMoreButton(true))
       : setShowLoadMoreButton(false);
   };
@@ -360,4 +360,4 @@ const CommentList = ({ postId, comment, refreshcommetlist }) => {
   );
 };
 
-export default Commentapi;
+export default CommentApi;

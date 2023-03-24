@@ -8,6 +8,7 @@ import * as yup from "yup";
 import Link from "next/link";
 import Auth from "../../layouts/auth";
 import ReCAPTCHA from "react-google-recaptcha";
+import { getFlagStatus } from "../../services/profile.service";
 
 const schema = yup
   .object({
@@ -53,7 +54,7 @@ const Login = () => {
   }, []);
 
   const onSubmit = (data) => {
-    // console.log(data);
+    console.log("<<<data>>>", data);
     handleClick(data);
   };
 
@@ -68,7 +69,16 @@ const Login = () => {
       });
 
       if (res.ok) {
-        router.push("/");
+        try {
+          const response = await getFlagStatus();
+          if (response?.data?.body[0]?.markupForDeletion === true) {
+            router.push("/auth/confirm-deletion");
+          } else {
+            router.push("/");
+          }
+        } catch (err) {
+          console.log("error", err);
+        }
       } else {
         setApiError("Invalid User Name or Password");
       }

@@ -38,19 +38,12 @@ export const getFeeds = async (params) => {
     },
   ];
   let obj = arr.find((o) => o.page === params.activePage);
-  
-  const response = await apiBaseURL.get(obj.apiPath, {
+
+  const res = await apiBaseURL.get(obj.apiPath, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (response.status == 200) {
-    const postslist = await response?.data?.body?.feeds;
-    const PostCount = await response?.data?.body?.postCount?.postCount;
-    const postWithUserDetails = await mergeUserBasicDetails(postslist);
-    const res = { postWithUserDetails, PostCount };
-    return res;
-  } else {
-    throw new Error(404);
-  }
+
+  return res;
 };
 
 // getPostsByPostId
@@ -89,9 +82,6 @@ export const getAllLikesByPostId = async (postId) => {
     if (response.status == 200) {
       const allLikessArr = await response?.data?.body?.allBody?.postLikes;
 
-      
-      
-
       const newarray = await Promise.all(
         allLikessArr &&
           allLikessArr.map(async (likeData) => {
@@ -100,12 +90,11 @@ export const getAllLikesByPostId = async (postId) => {
             const userData = await res?.data?.body;
 
             const newdata = await { ...likeData, userDetails: userData };
-            
-            
+
             return newdata;
           })
       );
-      
+
       return newarray;
     }
   } catch (err) {
@@ -251,7 +240,7 @@ export const postCommentByPostId = async (
 
 export const postCommentDeletebyPostId = async (postId, commentId) => {
   const token = await getToken();
-  
+
   var data = new FormData();
   data.append("commentOrReplyId", commentId);
   data.append("postId", postId);
@@ -318,11 +307,11 @@ export const getCommentbyPostId = async (
 
     if (res.status == 200) {
       const allCommentList = await res?.data?.body;
-      
+
       if (allCommentList == undefined || allCommentList.length == 0) {
         return [];
       }
-     
+
       const dataWithUserDetails = await mergeUserBasicDetails(
         allCommentList.comments
       );
@@ -355,7 +344,6 @@ export const savePostApi = async (postId) => {
       }
     );
 
-   
     return response;
   } catch (err) {
     console.log(err);
@@ -365,7 +353,6 @@ export const savePostApi = async (postId) => {
 export const getSavePostListApi = async (page = 1, limit = 10) => {
   const token = await getToken();
 
-  
   try {
     const response = await apiBaseURL.get(
       `posts/userPost/getAllSavedPosts?pageNumber=${page}&limit=${limit}`,

@@ -20,39 +20,41 @@ import { SpinnerLoader } from "../../Loader/Loading";
 const Post = ({ activePage, groupId, postDetailObj, userId }) => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const [posts, setposts] = useState([]);
-  const router = useRouter();
+  const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
   const StorePosts = useSelector((state) => state?.allFeed?.allFeeds?.postList);
   const loading = useSelector((state) => state?.allFeed?.status);
   const error = useSelector((state) => state?.allFeed?.error);
 
-  const GetPostNet = async (pagenum = page, limitnum = limit) => {
-    const groupanduserId = userId && userId ? userId : groupId;
+  // get post
+  const GetPostNet = async (pageNum = page, limitNum = limit) => {
+    const groupAndUserId = userId && userId ? userId : groupId;
 
     const params = {
       activePage: activePage,
-      page: pagenum,
-      limit: limitnum,
-      groupanduserId: groupanduserId && groupanduserId,
+      page: pageNum,
+      limit: limitNum,
+      groupAndUserId: groupAndUserId && groupAndUserId,
     };
 
     if (activePage == "PostDetail") {
-      setposts([]);
-      setposts(postDetailObj);
+      setPosts([]);
+      setPosts(postDetailObj);
     } else {
       dispatch(getAllFeedsList(params));
     }
   };
 
+  // load more post on scroll
+
   useEffect(() => {
     if (page && page == 1) {
-      StorePosts?.length == 0 ? setposts("") : setposts(StorePosts);
+      StorePosts?.length == 0 ? setPosts("") : setPosts(StorePosts);
     } else {
       StorePosts?.length == 0
         ? ""
         : Array.isArray(StorePosts)
-        ? setposts((prev) => [...prev, ...StorePosts])
+        ? setPosts((prev) => [...prev, ...StorePosts])
         : "";
     }
   }, [StorePosts]);
@@ -79,13 +81,25 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       setPage((prev) => prev + 1);
     }
   };
-  // post view
+  // post refresh mathod
 
   const onClickRefreshPostList = () => {
-    setposts([]);
+    setPosts([]);
     GetPostNet(1, limit);
   };
 
+  // onclick post hide
+
+  const [hidePost, setHidePost] = useState([]);
+
+  const onClickHidePost = (postId, type) => {
+    if (type == "delete") {
+      setHidePost((prev) => ({ ...prev, [postId]: "delete" }));
+    } else {
+      setHidePost((prev) => ({ ...prev, [postId]: "save" }));
+    }
+  };
+  console.log(hidePost, "first");
   return (
     <div>
       {activePage != "PostDetail" && activePage != "savedPost" ? (
@@ -97,7 +111,19 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
       ) : (
         ""
       )}
+
       <div style={{ position: "relative", marginBottom: "7rem" }}>
+        {error && (
+          <Card>
+            <Card.Body>
+              <div className="col-sm-12 text-center">
+                <p className="p-3  text-danger text-center">
+                  {error || "No posts found!"}
+                </p>
+              </div>
+            </Card.Body>
+          </Card>
+        )}
         {posts &&
           Array.isArray(posts) &&
           posts.length > 0 &&
@@ -110,105 +136,139 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
               isPin,
               is_SelfPost,
               share,
+              userInfo,
+              profileImage,
             } = data;
-
-            const userDetails = data && data?.userDetails;
-            const userprofilePicture = data && data?.userDetails;
-
-            // console.log(posts, "posts")
 
             return (
               <Card className="card-block card-stretch card-height" key={index}>
                 {data && data?.isDeleted === false ? (
-                  <Card.Body>
-                    <div className="user-post-data">
-                      <div className="d-flex justify-content-between">
-                        <div className="me-3">
-                          {userprofilePicture && (
-                            <Image
-                              className="rounded-circle img-fluid"
-                              src={
-                                userprofilePicture?.profilePictureInfo?.file
-                                  ?.location || user2
-                              }
-                              alt=""
-                              height={53}
-                              width={53}
-                            />
-                          )}
-                        </div>
-                        <div className="w-100">
+                  <>
+                    {hidePost &&
+                    hidePost[_id] != "save" &&
+                    hidePost[_id] != "delete" ? (
+                      <Card.Body>
+                        {console.log("post content")}
+                        <div className="user-post-data">
                           <div className="d-flex justify-content-between">
-                            <div>
-                              <Link href={`user/${userDetails?.userInfo?._id}`}>
-                                <h5 className="mb-0 d-inline-flex">
-                                  {/* shivam{" "}
-                                <span className="material-symbols-outlined">
-                                  play_arrow
-                                </span> */}{" "}
-                                  {userDetails &&
-                                    `${
-                                      userDetails?.userInfo?.firstName || ""
-                                    }   ${
-                                      userDetails?.userInfo?.lastName || ""
-                                    } `}
-                                </h5>
-                              </Link>
+                            <div className="me-3">
+                              <Image
+                                className="rounded-circle img-fluid"
+                                src={profileImage?.location || user2}
+                                alt=""
+                                height={53}
+                                width={53}
+                              />
 
-                              {isPin == true && is_SelfPost ? (
-                                <span className="material-symbols-outlined">
-                                  push_pin
-                                </span>
-                              ) : (
-                                ""
+                              {console.log(
+                                profileImage?.location,
+                                "profileImage?.location"
                               )}
-                              <p className="mb-0 text-primary">
-                                {/* {createdAt && getPostTime(createdAt)} */}
-                                {createdAt && moment(createdAt).fromNow()}
-                              </p>
                             </div>
-                            <div className="card-post-toolbar">
-                              {_id && (
-                                <PostThreeDotmenu
-                                  postLength={posts.length}
-                                  refreshpostlist={() =>
-                                    onClickRefreshPostList()
-                                  }
-                                  PostId={_id}
-                                  isPin={isPin}
-                                  is_SelfPost={is_SelfPost}
-                                  activePage={activePage}
-                                />
-                              )}
+                            <div className="w-100">
+                              <div className="d-flex justify-content-between">
+                                <div>
+                                  <Link href={`user/${userInfo?._id}`}>
+                                    <h5 className="mb-0 d-inline-flex">
+                                      {`${userInfo?.firstName || ""}   ${
+                                        userInfo?.lastName || ""
+                                      } `}
+                                    </h5>
+                                  </Link>
+
+                                  {isPin == true && is_SelfPost ? (
+                                    <span className="material-symbols-outlined">
+                                      push_pin
+                                    </span>
+                                  ) : (
+                                    ""
+                                  )}
+                                  <p className="mb-0 text-primary">
+                                    {createdAt && moment(createdAt).fromNow()}
+                                  </p>
+                                </div>
+                                <div className="card-post-toolbar">
+                                  {_id && (
+                                    <PostThreeDotmenu
+                                      postLength={posts.length}
+                                      refreshpostlist={() =>
+                                        onClickRefreshPostList()
+                                      }
+                                      PostId={_id}
+                                      isPin={isPin}
+                                      is_SelfPost={is_SelfPost}
+                                      activePage={activePage}
+                                      onClickHidePost={(e, type) =>
+                                        onClickHidePost(e, type)
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="mt-3">
-                      {description && (
-                        <PostContentSection stringContent={description} />
-                      )}
-                    </div>
-                    {fileInfo && (
-                      <>
-                        {activePage != "PostDetail" ? (
-                          <PostMediaGrid mediaContent={data && data} />
-                        ) : (
-                          <MediaComponent mediaData={fileInfo} />
+                        <div className="mt-3">
+                          {description && (
+                            <PostContentSection stringContent={description} />
+                          )}
+                        </div>
+                        {fileInfo && (
+                          <>
+                            {activePage != "PostDetail" ? (
+                              <PostMediaGrid mediaContent={data && data} />
+                            ) : (
+                              <MediaComponent mediaData={fileInfo} />
+                            )}
+                          </>
                         )}
-                      </>
+                        {_id && (
+                          <PostFooter
+                            currentPostId={_id}
+                            refreshpostlist={onClickRefreshPostList}
+                            share={share}
+                          />
+                        )}
+                      </Card.Body>
+                    ) : hidePost && hidePost[_id] == "delete" ? (
+                      <Card.Body>
+                        {console.log("delete")}
+                        <div className="col-sm-12 text-center">
+                          <p className="p-3  text-dark text-center">
+                            Post Deleted Successfully
+                          </p>
+                        </div>
+                      </Card.Body>
+                    ) : (
+                      <Card.Body>
+                        {console.log("save")}
+                        <div className="col-sm-12 text-center">
+                          <p className="p-3  text-dark text-center">
+                            {activePage != "savedPost"
+                              ? "Content Moved to Saved Post ."
+                              : "Content Moved to Feed Page."}
+
+                            <span>
+                              {" "}
+                              <Link
+                                href={
+                                  activePage != "savedPost"
+                                    ? "/post/saved-post"
+                                    : "/"
+                                }
+                              >
+                                Click Here
+                              </Link>
+                            </span>
+                          </p>
+                        </div>
+                      </Card.Body>
                     )}
-                    {_id && (
-                      <PostFooter
-                        currentPostId={_id}
-                        refreshpostlist={onClickRefreshPostList}
-                        share={share}
-                      />
-                    )}
-                  </Card.Body>
+                  </>
                 ) : (
                   <Card.Body>
+                    {console.log("not found")}
+
                     <h4
                       className="justify-content-center  d-flex align-items-center"
                       style={{ height: "18vh" }}
@@ -221,7 +281,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
             );
           })}
 
-        {activePage != "PostDetail" && loading && loading == "loading" ? (
+        {activePage != "PostDetail" && loading == "loading" ? (
           <div
             className=""
             style={{
@@ -235,7 +295,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
           >
             <Card.Body>
               <div className="col-sm-12 text-center">
-               <SpinnerLoader/>
+                <SpinnerLoader />
               </div>
             </Card.Body>
           </div>
@@ -267,7 +327,8 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                 </Card.Body>
               </div>
             )}
-          {activePage == "PostDetail" && posts.length == 0 && (
+
+          {/* {activePage == "PostDetail" && posts.length == 0 && (
             <div
               className="card card-block card-stretch card-height"
               style={{
@@ -285,7 +346,7 @@ const Post = ({ activePage, groupId, postDetailObj, userId }) => {
                 </div>
               </Card.Body>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

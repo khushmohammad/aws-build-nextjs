@@ -8,7 +8,14 @@ import {
 import ConfirmBox from "../../modals/ConfirmBox";
 import EditPost from "../EditPost";
 
-function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activePage }) {
+function PostThreeDotmenu({
+  isPin,
+  is_SelfPost,
+  PostId,
+  refreshpostlist,
+  activePage,
+  onClickHidePost,
+}) {
   const [showModal, setShowModal] = useState(false);
 
   const [modalShowConfirmBox, setModalShowConfirmBox] = React.useState(false);
@@ -18,7 +25,8 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
 
     const postDeleted = res.status;
     if (postDeleted == 200) {
-      refreshpostlist();
+      // refreshpostlist();
+      onClickHidePost(PostId, "delete");
     }
   };
   const pinPost = async (postId) => {
@@ -35,7 +43,6 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
     if (res.status === 200) {
       setModalShowConfirmBox(true);
       setBoxMessage(res?.data?.message || "Message");
-      
     }
   };
 
@@ -72,7 +79,7 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
             </Dropdown.ItemText>
           )}
 
-          {is_SelfPost && is_SelfPost === true && (
+          {is_SelfPost && activePage == "myProfile" && is_SelfPost === true && (
             <Dropdown.Item className=" p-3" href="#">
               <div
                 className="d-flex align-items-top"
@@ -95,9 +102,9 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
               </div>
             </Dropdown.Item>
           )}
-          <Dropdown.ItemText
+          <Dropdown.Item
             onClick={() => savePost(PostId)}
-            className=" p-3"
+            className=" p-3 "
             role="button"
           >
             <div className="d-flex align-items-top">
@@ -105,11 +112,15 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
                 <i className="ri-save-line"></i>
               </div>
               <div className="data ms-2">
-                <h6>{activePage != 'savedPost' ? "Save Post" : "Remove Saved Post"}</h6>
+                <h6>
+                  {activePage != "savedPost"
+                    ? "Save Post"
+                    : "Remove Saved Post"}
+                </h6>
                 <p className="mb-0">Add this to your saved items</p>
               </div>
             </div>
-          </Dropdown.ItemText>
+          </Dropdown.Item>
 
           {/* <Dropdown.Item className="p-3" href="#">
             <div className="d-flex align-items-top">
@@ -137,7 +148,7 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
               </div>
             </Dropdown.Item>
           )}
-          <Dropdown.Item className=" p-3" href="#">
+          {/* <Dropdown.Item className=" p-3" href="#">
             <div className="d-flex align-items-top">
               <i className="ri-user-unfollow-line h4"></i>
               <div className="data ms-2">
@@ -154,14 +165,16 @@ function PostThreeDotmenu({ isPin, is_SelfPost, PostId, refreshpostlist ,activeP
                 <p className="mb-0">Turn on notifications for this post</p>
               </div>
             </div>
-          </Dropdown.Item>
+          </Dropdown.Item> */}
         </Dropdown.Menu>
       </Dropdown>
 
       <ConfirmBox
         show={modalShowConfirmBox}
-        Message={boxMessage || "Message"}
-        onHide={() => {setModalShowConfirmBox(false),refreshpostlist()}}
+        message={boxMessage || "Message"}
+        onHide={() => {
+          setModalShowConfirmBox(false), onClickHidePost(PostId, "save");
+        }}
       />
     </div>
   );

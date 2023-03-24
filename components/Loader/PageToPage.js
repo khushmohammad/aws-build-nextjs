@@ -21,6 +21,14 @@ const PageToPage = () => {
       router.events.off("routeChangeError", handleComplete);
     };
   });
+  const disableLoaderPath = ["/auth/login"];
+  useEffect(() => {
+    const isMatched =
+      disableLoaderPath && disableLoaderPath.find((e) => router.pathname == e);
+    if (isMatched) {
+      setLoading(false);
+    }
+  }, [router]);
 
   return loading && <Loading />;
 };

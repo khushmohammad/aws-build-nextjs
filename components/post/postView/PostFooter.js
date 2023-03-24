@@ -25,7 +25,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PostComments from "./PostComments";
 import TotalCommentBlock from "./TotalCommentBlock";
-import Commentapi from "./Commentapi";
+
+import CommentApi from "./Commentapi";
 
 function PostFooter({ currentPostId, refreshpostlist, share }) {
   const [likesWithUserDetails, setLikesListWithUserDetails] = useState([]);
@@ -301,7 +302,7 @@ function PostFooter({ currentPostId, refreshpostlist, share }) {
         {currentPostId && (
           <>
             {/* <PostComments postId={currentPostId} /> */}
-            <Commentapi postId={currentPostId} />
+            <CommentApi postId={currentPostId} />
           </>
         )}
       </div>
